@@ -124,7 +124,7 @@
     const NoteCard = {
         name: 'note-card',
         template: `
-            <div class="notes-item card" :class="'type-' + note.type">
+            <div class="notes-item card">
                 <div class="tile card-body d-block">
                     <div class="tile-header flex-center justify-between">
                         <div class="text-gray text-tiny w-100 d-flex align-center">
@@ -151,8 +151,8 @@
                     </div>
                     <div class="tile-content p-0">
                         <div :class="['flex-wrap', { 'd-flex': !isPost }]">
-                            <img v-if="note.thumbnail" :src="note.thumbnail" class="thumbnail" alt=""/>
-                            <div class="article-content" v-html="superContent" @click="handleDelegate"></div>
+                            <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
+                            <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
                         </div>
                         <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
                             <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
@@ -359,7 +359,6 @@
                 return [...$config.tabs, ...tabs];
             },
             theEnd() {
-                console.log(this.noteList.length, JSON.stringify(this.paging))
                 return this.noteList.length >= this.paging.total;
             },
         },

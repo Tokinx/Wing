@@ -107,9 +107,8 @@ function ajax_get_all_posts_callback() {
 		}
 		// 格式化文章内容
 		if ( $post->type === 'post' ) {
-			$post->content = mb_strimwidth(strip_shortcodes(strip_tags($post->content)), 0, 210, '...');
+			$post->content = mb_strimwidth(strip_shortcodes(strip_tags($post->content)), 0, 200, '...');
 		}
-
 
 		$post->thumbnail = replace_domain($post->thumbnail);
 
