@@ -28,33 +28,59 @@ class WingPjax {
         this.init();
     }
 
+    // 初始化
     init() {
-        this.delegate(document.body, 'click', this.configure.selector, (e, node) => {
+        const { configure } = this;
+        this.delegate(document.body, 'click', configure.selector, (e, node) => {
             if ( e.ctrlKey || e.metaKey || e.shiftKey || e.altKey ) return;
-            const isNewWindow = node.target === '_blank' || (node.rel && ['external'].some(word => node.rel.includes(word)));
-            const isCross = node.href.indexOf(this.configure.origin) !== 0;
-            if ( isNewWindow || isCross ) {
-                if ( isNewWindow ) window.open(node.href); // 新窗口打开
-                else if ( isCross ) location.href = node.href; // 跨域重定向
+            const newWindow = node.target === '_blank' || node.rel.indexOf('external') > -1;
+            const crossDomain = node.href.indexOf(configure.origin) !== 0;
+            if ( newWindow || crossDomain ) {
+                if ( newWindow ) {
+                    // 新窗口打开
+                    window.open(node.href);
+                } else if ( crossDomain ) {
+                    // 跨域重定向
+                    location.href = node.href;
+                }
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
             // 移除hash参数，判断是否切换了页面
-            if ( node.href.replace(/#.*$/, '') === location.href.replace(/#.*$/, '') ) return;
+            if ( this.clearHash(node.href) === this.clearHash(location.href) ) return;
             if ( !node.hash ) e.preventDefault();
             this.replace(node.href);
         });
+        let oldUrl = '';
         window.addEventListener('popstate', (e) => {
             if ( !e.state ) return;
             const node = new URL(e.state.url);
-            // TODO：如何获取上一个页面的URL？如果上一个页面跟当前页面相同，则不需要重新渲染
-            // if ( node.href.replace(/#.*$/, '') === location.href.replace(/#.*$/, '') ) return;
+            if ( node.href.replace(/#.*$/, '') === oldUrl.replace(/#.*$/, '') ) return;
             if ( !node.hash ) e.preventDefault();
-            else return;
+            oldUrl = '';
             this.replace(node.href, true);
         });
+        window.addEventListener('hashchange', (e) => {
+            oldUrl = e.newURL;
+        });
     };
+
+    // 清除Clear
+    getHash(url) {
+        const { hash } = new URL(url);
+        return hash;
+    };
+
+    // 清除Clear
+    clearHash(url) {
+        return url.replace(this.getHash(url), '');
+    };
+
+    // 获取滚动条位置
+    getScrollTop() {
+        return document.documentElement.scrollTop || document.body.scrollTop;
+    }
 
     // 事件委托
     delegate(element, eventType, selector, fn) {
@@ -72,32 +98,33 @@ class WingPjax {
     };
 
     replace(url, back) {
-        const { configure, formatter, display } = this;
-        configure.before().then(() => {
+        const that = this;
+        that.configure.before().then(() => {
             this.request(url, {
                 success(html) {
-                    const data = formatter(html, url);
-
+                    const data = that.formatter(html, url);
                     if ( !back ) {
-                        history.pushState({ url, title: data.title, module: "pjax" }, data.title, url);
+                        history.pushState({
+                            url: that.clearHash(url),
+                            title: data.title
+                        }, data.title, url);
                     }
-
-                    configure.complete(data, display).then(() => {
+                    that.configure.complete(data, that.display).then(() => {
                         this.after(data);
                     });
                 },
-                after({ title, head }, elName) {
+                after({ title, head }) {
                     document.title = title;
-                    configure.after(elName, head);
+                    that.configure.after(head);
                 },
-                error: configure.error,
+                error: that.configure.error,
             });
         });
     };
 
     // 数据请求
     request(url, staff) {
-        const injection = (html) => {
+        fetch(url).then(rv => rv.text()).then((html) => {
             try {
                 staff.success(html);
             } catch (e) {
@@ -108,26 +135,24 @@ class WingPjax {
                     location.href = url; // 直接跳转到URL
                 });
             }
-        };
-        fetch(url).then(rv => rv.text()).then(injection);
+        });
     };
 
     // 显示
     display({ body }, affect) {
-        return Promise.all(affect.map(elName => new Promise(resolve => {
-            if ( !elName ) return;
-            const [oldNode, newNode] = [document.querySelector(elName), body.querySelector(elName)];
+        return Promise.all(affect.map(name => new Promise(resolve => {
+            if ( !name ) return;
+            const [oldNode, newNode] = [document.querySelector(name), body.querySelector(name)];
             if ( oldNode && newNode ) oldNode.parentNode.replaceChild(newNode, oldNode);
-            Promise.all(
-                [...newNode.querySelectorAll('script')].map(script => new Promise(resolve => {
+            Promise.all([...newNode.querySelectorAll('script')].map(script => {
+                    return new Promise(resolve => {
                         if ( script.hasAttribute('data-no-instant') ) return;
                         const temp = document.createElement('script');
                         try {
                             if ( script.src ) {
                                 temp.src = script.src;
                                 temp.onload = resolve;
-                            }
-                            if ( script.innerHTML ) {
+                            } else if ( script.innerHTML ) {
                                 temp.innerHTML = script.innerHTML;
                                 resolve();
                             }
@@ -139,16 +164,15 @@ class WingPjax {
                         parentNode.removeChild(script);
                         parentNode.insertBefore(temp, nextSibling);
                     })
-                )
+                })
             ).then(resolve);
-            console.log('script loaded');
         })));
     };
 
     // 获取并输出格式化数据
     formatter(html, url) {
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        return { url, title: doc.title, body: doc.body, head: doc.head };
+        const { title, body, head } = new DOMParser().parseFromString(html, 'text/html');
+        return { url, title, body, head };
     };
 }
 
@@ -183,6 +207,7 @@ window.$vm = new Vue({
             // selector: '.header-nav a, .footer-nav a, .article-list a',
             origin: $base.origin,
             before() {
+                $h.scrollTo();
                 $vm.animation = 'animation-start';
                 // 清除当前页面创建的实例
                 Object.keys($h.tasks).forEach(name => {
@@ -196,7 +221,6 @@ window.$vm = new Vue({
                 return $vm.sleep().then(() => display(data, ['#core']));
             },
             after() {
-                $h.scrollTo();
                 $vm.sleep(100).then(() => {
                     $vm.animation = 'animation-end';
                     $vm.overload();
