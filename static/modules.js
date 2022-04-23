@@ -438,7 +438,7 @@ const CommentItem = {
 const LinkSettings = {
     name: 'link-settings',
     template: `
-        <div v-if="visible" class="modal active">
+        <div v-if="visible" class="modal modal-lg active">
             <a href="javascript: void(0);" class="modal-overlay" @click="hide" aria-label="Close"></a>
             <div class="modal-container">
                 <div class="modal-header">
@@ -447,9 +447,9 @@ const LinkSettings = {
                 </div>
                 <form method="post" action>
                     <div class="modal-body article" ref="body">
-                        <div v-if="loading" class="loading" style="position: absolute;top: 0;right: 0;left: 0;bottom: 0;background: rgba(255, 255, 255, 80%);z-index: 1;"></div>
-                        <ul class="article-cards columns reset-ul">
-                            <li v-for="(item, index) of links" :key="index" class="column col-6 col-sm-12 p-2">
+                        <div v-if="loading" class="loading" style="position: absolute;inset: 0;z-index: 1;"></div>
+                        <ul class="article-cards columns reset-ul" :style="{ opacity: loading ? 0.3 : 1 }">
+                            <li v-for="(item, index) of links" :key="index" class="column col-4 col-sm-6 p-2">
                                 <a href="javascript: void(0);" class="btn btn-error btn-sm flex-center" @click="handleRemoveLink(index)">
                                     <i class="czs-trash-l"></i>
                                 </a>
