@@ -90,7 +90,7 @@ const $h = {
     scrollTo({ el, to = 0, duration = 500, callback } = {}) {
         const target = (el ? document.querySelector(el) : document.scrollingElement);
         let scrollTop = target.scrollTop;
-        const rate = 2;
+        const rate = 6;
 
         const animationToTop = function () {
             scrollTop = scrollTop + (to - scrollTop) / rate;
