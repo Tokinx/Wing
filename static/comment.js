@@ -26,7 +26,7 @@ $h.tasks.affiliate = () => {
                     </template>
                 </ol>
                 <div class="text-center load-next-comments">
-                    <button v-if="isNextPage" class="btn btn-link" :class="{ loading }" @click="loadNextComments">
+                    <button v-if="isNextPage || loading" class="btn btn-link" :class="{ loading }" @click="loadNextComments">
                         {{ !parameter.page ? '加载评论' : '继续加载' }}
                     </button>
                     <span v-else-if="commentList.length">🎉加载完毕</span>
