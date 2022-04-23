@@ -99,7 +99,7 @@ function ajax_get_all_posts_callback() {
 		// 获取图片
 		foreach ($post->fields as $key => $value) {
 			if ( $key === 'images' && is_array($value) ) {
-				$ids = explode(',', $value[0]);
+				$ids          = explode(',', $value[0]);
 				$post->images = array_map(function ($id) {
 					return wp_get_attachment_url($id);
 				}, $ids);
@@ -107,7 +107,7 @@ function ajax_get_all_posts_callback() {
 		}
 		// 格式化文章内容
 		if ( $post->type === 'post' ) {
-			$post->content = mb_strimwidth(strip_shortcodes(strip_tags($post->content)), 0, 180, '...');
+			$post->content = mb_strimwidth(strip_shortcodes(strip_tags($post->content)), 0, 210, '...');
 		}
 
 

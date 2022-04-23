@@ -124,7 +124,7 @@
     const NoteCard = {
         name: 'note-card',
         template: `
-            <div class="notes-item card">
+            <div class="notes-item card" :class="'type-' + note.type">
                 <div class="tile card-body d-block">
                     <div class="tile-header flex-center justify-between">
                         <div class="text-gray text-tiny w-100 d-flex align-center">
@@ -134,7 +134,7 @@
                             <time v-else>{{ note_date }}</time>
                         </div>
 
-                        <div v-if="logged && note.type !== 'post'" class="dropdown">
+                        <div v-if="logged && !isPost" class="dropdown">
                             <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
                                 <i class="dashicons dashicons-ellipsis"></i>
                             </a>
@@ -149,9 +149,11 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="tile-content d-flex flex-wrap p-0">
-                        <div class="article-content" v-html="superContent" @click="handleDelegate"></div>
-                        <img v-if="note.thumbnail" :src="note.thumbnail" class="thumbnail" alt=""/>
+                    <div class="tile-content p-0">
+                        <div :class="['flex-wrap', { 'd-flex': !isPost }]">
+                            <img v-if="note.thumbnail" :src="note.thumbnail" class="thumbnail" alt=""/>
+                            <div class="article-content" v-html="superContent" @click="handleDelegate"></div>
+                        </div>
                         <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
                             <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
                                 <img class="s-rounded" :src="url" alt=""/>
@@ -310,10 +312,7 @@
                     </div>
                     <div class="notes-list" :style="{opacity:loading?0.5:1}">
                         <note-card v-for="(note, index) in noteList" :key="note.id" v-bind="{ logged, note }" @event="data => handleNoteCard(data, note, index)" @topic="handleTopic" />
-                        <template v-if="paging.total">
-                            <div v-if="loading" class="loading"></div>
-                            <div v-else-if="theEnd" class="text-center" style="opacity: 0.5;">没有更多了</div>
-                        </template>
+                        <div v-if="paging.total && !loading && theEnd" class="text-center" style="opacity: 0.5;">没有更多了</div>
                     </div>
                 </main>
                 <aside class="notes-aside">
@@ -360,6 +359,7 @@
                 return [...$config.tabs, ...tabs];
             },
             theEnd() {
+                console.log(this.noteList.length, JSON.stringify(this.paging))
                 return this.noteList.length >= this.paging.total;
             },
         },
@@ -408,7 +408,7 @@
             // 加载下一页
             handleNextPage() {
                 // 加载完毕、每日回顾不需要加载下一页
-                if ( this.theEnd || this.search.type === 'review' ) return;
+                if ( this.loading || this.theEnd || this.search.type === 'review' ) return;
                 this.paging.page++;
                 this.getNoteList();
             },
