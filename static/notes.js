@@ -247,9 +247,12 @@
         },
         methods: {
             handleDelegate(e) {
-                if ( e.target && e.target.dataset && e.target.dataset.topic ) {
-                    const topic = e.target.dataset.topic;
-                    this.$emit('topic', topic.replace('#', ''));
+                const { dataset } = e.target;
+                if ( dataset && dataset.topic ) {
+                    this.$emit('topic', dataset.topic.replace('#', ''));
+                }
+                if ( dataset && dataset.quote ) {
+                    QuoteDialog(dataset.quote);
                 }
             },
             handleMenuClick(item) {
@@ -284,6 +287,47 @@
             }
         }
     };
+
+    // 显示引用卡片
+    const QuoteDialog = (note_id) => {
+        const Dialog = Vue.extend({
+            template: `
+                <div class="modal active quote-dialog">
+                    <a href="javascript:void(0);" class="modal-overlay" @click="$el.remove()"></a>
+                    <div class="modal-container p-0">
+                        <div v-if="loading" class="loading loading-full"></div>
+                        <a href="javascript:void(0);" class="btn btn-clear m-0" @click="$el.remove()"></a>
+                        ${NoteCard.template}
+                    </div>
+                </div>
+            `,
+            mixins: [NoteCard],
+            data() {
+                return { loading: false, note: null }
+            },
+            created() {
+                this.getNote();
+            },
+            methods: {
+                getNote() {
+                    this.loading = true;
+                    $h.ajax({ query: { action: 'get_all_posts', type: 'single', ids: note_id, page: 1, rows: 1 } })
+                    .then(({ data }) => {
+                        if ( data && data.length ) {
+                            this.note = data[0];
+                        } else {
+                            this.$el.remove();
+                            this.$toast({ type: 'warning', message: '无法找到该引用' });
+                        }
+                    }).finally(() => {
+                        this.loading = false;
+                    });
+                },
+            }
+        });
+        const vm = new Dialog({ el: document.createElement('div') });
+        document.querySelector('#notes').appendChild(vm.$el);
+    }
 
     $h.tasks.notes = () => $h.store.notes = new Vue({
         el: '#notes',
@@ -388,8 +432,11 @@
             handleNoteCard({ event }, note, index) {
                 switch (event) {
                     case 'quote':
-                        this.$refs.editor.insertText(['', note.type, note.id].join('/'));
-                        $h.scrollTo();
+                        $h.scrollTo({
+                            callback: () => {
+                                this.$refs.editor.insertText(['', note.type, note.id].join('/'));
+                            }
+                        });
                         break;
                     case 'edit':
                         // 编辑

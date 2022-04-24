@@ -29,7 +29,8 @@ function ajax_get_all_posts_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 	global $_cache;
 	// 参数
-	$type = check_get_value('type', $_GET, 'all');
+	$type = check_get_value('type', $_GET, 'single');
+	$ids  = check_get_value('ids', $_GET);
 	$rows = check_get_value('rows', $_GET, 10);
 	$page = check_get_value('page', $_GET, 1);
 
@@ -68,6 +69,10 @@ function ajax_get_all_posts_callback() {
 	if ( $type === 'all' ) {
 		$args['post_type'] = ['post', 'note'];
 	}
+	if ( $type === 'single' && $ids ) {
+		$args['post_type'] = ['post', 'note'];
+		$args['post__in']  = explode(',', $ids);
+	}
 	if ( check_get_value('topics', $_GET) ) {
 		$args['tax_query'][] = [
 			'taxonomy' => 'topic',
@@ -75,6 +80,7 @@ function ajax_get_all_posts_callback() {
 			'terms'    => explode(',', check_get_value('topics', $_GET)),
 		];
 	}
+
 
 	$posts = get_posts($args); // 文章
 

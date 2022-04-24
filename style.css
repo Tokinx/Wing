@@ -3649,6 +3649,16 @@ body .layout #main,
   padding: 2rem;
   border-radius: 0.8rem;
 }
+body .layout #notes .chip,
+.default .layout #notes .chip {
+  margin: 0 0.1rem;
+  border-radius: 0.1rem;
+  background-color: rgba(50, 116, 255, 0.1);
+}
+body .layout #notes .chip:hover,
+.default .layout #notes .chip:hover {
+  background-color: rgba(50, 116, 255, 0.2);
+}
 body .layout #notes .notes-core,
 .default .layout #notes .notes-core {
   width: 100%;
@@ -3678,16 +3688,6 @@ body .layout #notes .notes-core .editor-box .btn-private:not(:hover):focus::afte
 body .layout #notes .notes-core .editor-box .btn-private .dashicons,
 .default .layout #notes .notes-core .editor-box .btn-private .dashicons {
   font-size: 1rem;
-}
-body .layout #notes .notes-core .chip,
-.default .layout #notes .notes-core .chip {
-  margin: 0 0.1rem;
-  border-radius: 0.1rem;
-  background-color: rgba(50, 116, 255, 0.1);
-}
-body .layout #notes .notes-core .chip:hover,
-.default .layout #notes .notes-core .chip:hover {
-  background-color: rgba(50, 116, 255, 0.2);
 }
 body .layout #notes .notes-tabbar,
 .default .layout #notes .notes-tabbar {
@@ -3927,6 +3927,35 @@ body .layout #notes .topic-list,
   padding: 0 0 0 0.5rem;
   border-radius: unset;
   border-left: 1px solid rgba(188, 195, 206, 0.2);
+}
+body .layout #notes .quote-dialog .loading,
+.default .layout #notes .quote-dialog .loading {
+  border-radius: 0.5rem;
+}
+body .layout #notes .quote-dialog .btn-clear,
+.default .layout #notes .quote-dialog .btn-clear {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+body .layout #notes .quote-dialog .modal-container,
+.default .layout #notes .quote-dialog .modal-container {
+  position: relative;
+  box-shadow: none;
+  border-radius: 0.5rem;
+}
+body .layout #notes .quote-dialog .modal-container .notes-item,
+.default .layout #notes .quote-dialog .modal-container .notes-item {
+  margin: 0;
+  min-height: 10rem;
+}
+body .layout #notes .quote-dialog .modal-container .notes-item .tile,
+.default .layout #notes .quote-dialog .modal-container .notes-item .tile {
+  padding: 1rem;
+}
+body .layout #notes .quote-dialog .modal-container .notes-item .tile-footer,
+.default .layout #notes .quote-dialog .modal-container .notes-item .tile-footer {
+  display: none;
 }
 body .layout .article-list,
 .default .layout .article-list {
@@ -4520,6 +4549,9 @@ body #app.animation-end #main .content::after,
   border-radius: 0.5rem;
   border: 2px solid rgba(188, 195, 206, 0.2);
 }
+.editor .loading {
+  border-radius: 0.5rem;
+}
 .editor .loading ~ * {
   opacity: 0.5;
 }
@@ -4768,6 +4800,9 @@ body .dashicons {
 .dark .chip {
   background-color: rgba(188, 195, 206, 0.1);
 }
+.dark .loading-full {
+  background-color: rgba(42, 48, 57, 0.5);
+}
 .dark #app.layout .uni-bg, .dark body #app.layout #main, body .dark #app.layout #main,
 .dark .default #app.layout #main,
 .default .dark #app.layout #main {
@@ -4851,6 +4886,9 @@ body .dashicons {
   }
   body:not(.default) .chip {
     background-color: rgba(188, 195, 206, 0.1);
+  }
+  body:not(.default) .loading-full {
+    background-color: rgba(42, 48, 57, 0.5);
   }
   body:not(.default) #app.layout .uni-bg, body:not(.default) #app.layout #main {
     background-color: #2a3039;
