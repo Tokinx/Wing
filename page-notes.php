@@ -7,6 +7,7 @@ get_header(); ?>
     <script>
         window.NotesConfig = {
             logged: <?= json_encode(is_user_logged_in()) ?>,
+            lately: <?= json_encode(get_theme_mod( 'biji_setting_lately', true )) ?>,
             editor: {
                 placeholder: '在想什么，记下来吧？',
                 features: ['topic', 'emoji', 'ul', 'ol', 'bold', 'italic', 'image']

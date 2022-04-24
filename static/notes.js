@@ -156,7 +156,7 @@
                         </div>
                         <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
                             <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
-                                <img class="s-rounded" :src="url" alt=""/>
+                                <img class="s-rounded" :src="url" alt @click="handleViewImage(url)"/>
                             </div>
                         </div>
                     </div>
@@ -180,6 +180,7 @@
         `,
         props: {
             logged: { type: Boolean, default: false },
+            lately: { type: Boolean, default: true },
             note: { type: Object, default: () => ({}) }
         },
         data() {
@@ -238,7 +239,11 @@
                 return (this.note.category || []).map(({ name }) => name).join(', ');
             },
             note_date() {
-                return dayjs(this.note.date).format('YYYY-MM-DD HH:mm:ss');
+                if( !this.note.date ) return '';
+                if ( this.lately ) {
+                    return Lately && Lately.format(this.note.date);
+                }
+                return dayjs && dayjs(this.note.date).format('YYYY-MM-DD HH:mm:ss');
             },
             // 防抖
             debounceMenuClick() {
@@ -252,7 +257,7 @@
                     this.$emit('topic', dataset.topic.replace('#', ''));
                 }
                 if ( dataset && dataset.quote ) {
-                    QuoteDialog(dataset.quote);
+                    QuoteDialog(dataset.quote, this.lately);
                 }
             },
             handleMenuClick(item) {
@@ -284,12 +289,15 @@
                         })
                         break;
                 }
+            },
+            handleViewImage(url) {
+                window.ViewImage && ViewImage.view(this.note.images, url);
             }
         }
     };
 
     // 显示引用卡片
-    const QuoteDialog = (note_id) => {
+    const QuoteDialog = (note_id, lately) => {
         const Dialog = Vue.extend({
             template: `
                 <div class="modal active quote-dialog">
@@ -303,7 +311,7 @@
             `,
             mixins: [NoteCard],
             data() {
-                return { loading: false, note: null }
+                return { loading: false, lately, note: null }
             },
             created() {
                 this.getNote();
@@ -331,7 +339,7 @@
 
     $h.tasks.notes = () => $h.store.notes = new Vue({
         el: '#notes',
-        components: { HeatMap, TopicList, NoteCard, Editor: $modules.Editor, },
+        components: { HeatMap, TopicList, NoteCard, Editor: $modules.Editor },
         template: `
             <div id="notes" class="d-flex">
                 <main class="notes-core">
@@ -355,7 +363,7 @@
                         </ul>
                     </div>
                     <div class="notes-list" :style="{opacity:loading?0.5:1}">
-                        <note-card v-for="(note, index) in noteList" :key="note.id" v-bind="{ logged, note }" @event="data => handleNoteCard(data, note, index)" @topic="handleTopic" />
+                        <note-card v-for="(note, index) in noteList" :key="note.id" v-bind="{ logged, lately, note }" @event="data => handleNoteCard(data, note, index)" @topic="handleTopic" />
                         <div v-if="paging.total && !loading && theEnd" class="text-center" style="opacity: 0.5;">没有更多了</div>
                     </div>
                 </main>
@@ -370,6 +378,7 @@
         data() {
             return {
                 logged: false,// 登录状态
+                lately: true, // 格式化时间
                 loading: false,// 加载状态
                 private: false,// 私密笔记
                 form: {
