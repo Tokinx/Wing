@@ -291,7 +291,7 @@
                 }
             },
             handleViewImage(url) {
-                window.ViewImage && ViewImage.view(this.note.images, url);
+                window.ViewImage && ViewImage.display(this.note.images, url);
             }
         }
     };

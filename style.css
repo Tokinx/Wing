@@ -4968,9 +4968,23 @@ body:not(.default) #app.layout #main .article-item {
   position: fixed;
   inset: 0;
   z-index: 500;
-  padding: 5%;
+  padding: 3%;
   display: flex;
   flex-direction: column;
+  animation: view-image-in 300ms;
+}
+.view-image__out {
+  animation: view-image-out 300ms;
+}
+@keyframes view-image-in {
+  0% {
+    opacity: 0;
+  }
+}
+@keyframes view-image-out {
+  100% {
+    opacity: 0;
+  }
 }
 .view-image-btn {
   width: 32px;
@@ -4984,10 +4998,6 @@ body:not(.default) #app.layout #main .article-item {
 }
 .view-image-btn:hover {
   background-color: rgba(255, 255, 255, 0.5);
-}
-.view-image-btn svg {
-  position: relative;
-  z-index: -1;
 }
 .view-image-close {
   margin-left: 28px;
@@ -5006,14 +5016,69 @@ body:not(.default) #app.layout #main .article-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 5%;
+  padding-bottom: 3%;
 }
-.view-image-container img {
+.view-image-lead {
   position: relative;
-  z-index: 1;
+  height: 100%;
+  display: flex;
+  z-index: 9;
+}
+.view-image-lead img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+}
+.view-image-lead__in {
+  animation: view-image-lead-in 300ms;
+}
+.view-image-lead__out {
+  animation: view-image-lead-out 300ms forwards;
+}
+@keyframes view-image-lead-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+@keyframes view-image-lead-out {
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+[class*=__out] ~ .view-image-loading {
+  display: block;
+}
+.view-image-loading {
+  position: absolute;
+  inset: 50%;
+  width: 8rem;
+  height: 2rem;
+  color: #AAB2BD;
+  overflow: hidden;
+  text-align: center;
+  margin: -1rem -4rem;
+  z-index: 1;
+  display: none;
+}
+.view-image-loading::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0;
+  transform: translateX(-100%) translateY(-50%);
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
+  animation: view-image-loading 800ms -100ms ease-in-out infinite;
+}
+@keyframes view-image-loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 .view-image-tools {
   position: relative;
@@ -5022,6 +5087,8 @@ body:not(.default) #app.layout #main .article-item {
   justify-content: space-between;
   align-content: center;
   color: #fff;
+  margin-bottom: constant(safe-area-inset-bottom);
+  margin-bottom: env(safe-area-inset-bottom);
 }
 .view-image-tools__count {
   width: 60px;
