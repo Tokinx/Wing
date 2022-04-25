@@ -1,125 +1,140 @@
 <?php
-include_once('core-cache.php'); // 缓存
-include_once('core-settings.php'); // 主题设置
-include_once('core-notes.php'); // 笔记
+include_once( 'core-cache.php' ); // 缓存
+include_once( 'core-settings.php' ); // 主题设置
+include_once( 'core-notes.php' ); // 笔记
+include_once( 'theme-update-checker.php' ); // 主题更新
+
+// 获取主题更新
+new ThemeUpdateChecker( THEME_NAME, biji_update_server() );
+
+function biji_update_server() {
+	// 收集一些数据便于统计用户使用情况
+	return 'https://dev.biji.io/?' . http_build_query( [
+			'theme'                    => THEME_NAME,
+			'target_url'               => home_url(),
+			'target_admin_email'       => get_option( 'admin_email' ),
+			'target_wordpress_version' => $GLOBALS['wp_version'],
+			'target_theme_version'     => THEME_VERSION,
+		] );
+}
 
 // 数据缓存
-$_cache = new FileCache(THEME_PATH.'/cache', 3600*1);
+$_cache = new FileCache( THEME_PATH . '/cache', 3600 * 1 );
 
 // 注册导航
-if ( function_exists('register_nav_menus') ) {
-	register_nav_menus([
-		'header_nav' => __('站点导航'),
-		'footer_nav' => __('底部导航'),
-	]);
+if ( function_exists( 'register_nav_menus' ) ) {
+	register_nav_menus( [
+		'header_nav' => __( '站点导航' ),
+		'footer_nav' => __( '底部导航' ),
+	] );
 }
 
 // 注册侧边栏
-if ( function_exists('register_sidebar') ) {
-	register_sidebar([
-		'name'          => __('侧边栏'),
+if ( function_exists( 'register_sidebar' ) ) {
+	register_sidebar( [
+		'name'          => __( '侧边栏' ),
 		'id'            => 'aside-widget-area',
-		'description'   => __('侧边栏小工具'),
+		'description'   => __( '侧边栏小工具' ),
 		'before_widget' => '<div class="reset-ul uni-bg flex-center %2$s">',
 		'after_widget'  => '</div>',
 		// 'before_title' => '<h3 class="widget-title">',
 		// 'after_title' => '</h3>',
-	]);
+	] );
 }
 
 // 拦截纯英文评论
-function scp_comment_post($incoming_comment) {
-	if ( !get_theme_mod('biji_setting_enc', false) && !preg_match('/[一-龥]/u', $incoming_comment['comment_content']) ) {
-		wp_send_json(['message' => '评论必须包含中文！'], 403);
+function scp_comment_post( $incoming_comment ) {
+	if ( ! get_theme_mod( 'biji_setting_enc', false ) && ! preg_match( '/[一-龥]/u', $incoming_comment['comment_content'] ) ) {
+		wp_send_json( [ 'message' => '评论必须包含中文！' ], 403 );
 	}
 
 	return $incoming_comment;
 }
 
-add_filter('preprocess_comment', 'scp_comment_post');
+add_filter( 'preprocess_comment', 'scp_comment_post' );
 
 // Gravatar头像使用镜像服务器
-function biji_replace_avatar($avatar) {
-	if ( get_theme_mod('biji_setting_avatar') ) {
-		$cdn  = get_theme_mod('biji_setting_avatar');
+function biji_replace_avatar( $avatar ) {
+	if ( get_theme_mod( 'biji_setting_avatar' ) ) {
+		$cdn  = get_theme_mod( 'biji_setting_avatar' );
 		$path = "";
-		if ( strpos($cdn, "/avatar") || strpos($cdn, "/gravatar") ) {
+		if ( strpos( $cdn, "/avatar" ) || strpos( $cdn, "/gravatar" ) ) {
 			$path = "avatar";
 		}
-		$avatar = preg_replace("/(.*?).gravatar.com\/$path/", $cdn, $avatar);
+		$avatar = preg_replace( "/(.*?).gravatar.com\/$path/", $cdn, $avatar );
 	}
 
 	return $avatar;
 }
 
-add_filter('get_avatar', 'biji_replace_avatar');
-add_filter('get_avatar_url', 'biji_replace_avatar');
+add_filter( 'get_avatar', 'biji_replace_avatar' );
+add_filter( 'get_avatar_url', 'biji_replace_avatar' );
 
 // 静态资源使用 CDN
 function static_cdn() {
-	ob_start('static_cdn_replace');
+	ob_start( 'static_cdn_replace' );
 }
 
 // 替换资源
-function static_cdn_replace($content) {
-	if ( get_theme_mod('biji_setting_cdn') ) {
-		$regex   = function ($dirs, $type) {
-			return '/'.str_replace('/', '\/', preg_replace('#^\w+://#', '//', site_url())).'\/(('.$dirs.')\/[^\s\?\\\'\"\;\>\<]{1,}.('.$type.'))([\"\\\'\s\?]{1})/';
+function static_cdn_replace( $content ) {
+	if ( get_theme_mod( 'biji_setting_cdn' ) ) {
+		$regex   = function ( $dirs, $type ) {
+			return '/' . str_replace( '/', '\/', preg_replace( '#^\w+://#', '//', site_url() ) ) . '\/((' . $dirs . ')\/[^\s\?\\\'\"\;\>\<]{1,}.(' . $type . '))([\"\\\'\s\?]{1})/';
 		};
-		$cdn     = get_theme_mod('biji_setting_cdn');
+		$cdn     = get_theme_mod( 'biji_setting_cdn' );
 		$suffix  = 'png|jpg|jpeg|gif|bmp|zip|rar|7z|gz';
-		$dirs    = str_replace('-', '\-', 'wp-content|wp-includes');
-		$content = preg_replace($regex($dirs, $suffix), ''.preg_replace('#^\w+://#', '//', $cdn).'/$1$4', $content);
+		$dirs    = str_replace( '-', '\-', 'wp-content|wp-includes' );
+		$content = preg_replace( $regex( $dirs, $suffix ), '' . preg_replace( '#^\w+://#', '//', $cdn ) . '/$1$4', $content );
 	}
 
 	return $content;
 }
 
-add_action('template_redirect', 'static_cdn');
+add_action( 'template_redirect', 'static_cdn' );
 
 // 替换域名
-function replace_domain($url) {
-	if ( get_theme_mod('biji_setting_cdn') ) {
-		$cdn = get_theme_mod('biji_setting_cdn');
-		$url = str_replace(site_url(), $cdn, $url);
+function replace_domain( $url ) {
+	if ( get_theme_mod( 'biji_setting_cdn' ) ) {
+		$cdn = get_theme_mod( 'biji_setting_cdn' );
+		$url = str_replace( site_url(), $cdn, $url );
 	}
 
 	return $url;
 }
 
 // 首页过滤分类文章
-function exclude_category($query) {
-	if ( !get_theme_mod('biji_setting_exclude') ) {
+function exclude_category( $query ) {
+	if ( ! get_theme_mod( 'biji_setting_exclude' ) ) {
 		return;
 	}
 
-	$exclude_array = explode(",", get_theme_mod('biji_setting_exclude'));
+	$exclude_array = explode( ",", get_theme_mod( 'biji_setting_exclude' ) );
 	$exclude       = '';
-	foreach ($exclude_array as $k => $ex) {
+	foreach ( $exclude_array as $k => $ex ) {
 		if ( $ex > 0 ) {
-			$ex *= -1;
+			$ex *= - 1;
 		}
-		$exclude .= $ex.',';
+		$exclude .= $ex . ',';
 	}
 	if ( $query->is_home() && $query->is_main_query() ) {
-		$query->set('cat', $exclude);
+		$query->set( 'cat', $exclude );
 	}
 }
 
-add_action('pre_get_posts', 'exclude_category');
+add_action( 'pre_get_posts', 'exclude_category' );
 
 // 缩略图技术 by：http://www.bgbk.org
-if ( !defined('THEME_THUMBNAIL_PATH') ) {
-	define('THEME_THUMBNAIL_PATH', '/cache/thumbnail'); //存储目录
+if ( ! defined( 'THEME_THUMBNAIL_PATH' ) ) {
+	define( 'THEME_THUMBNAIL_PATH', '/cache/thumbnail' ); //存储目录
 }
-function biji_build_empty_index($path) {
+function biji_build_empty_index( $path ) {
 	// 生成空白首页
-	$index = $path.'/index.php';
-	if ( is_file($index) ) {
+	$index = $path . '/index.php';
+	if ( is_file( $index ) ) {
 		return;
 	}
-	wp_mkdir_p($path);
-	file_put_contents($index, "<?php\n// Silence is golden.\n");
+	wp_mkdir_p( $path );
+	file_put_contents( $index, "<?php\n// Silence is golden.\n" );
 }
 
 /**
@@ -129,29 +144,29 @@ function biji_build_empty_index($path) {
  * @param int $width 宽度
  * @param int $height 高度
  */
-function crop_thumbnail($url, $width, $height = null) {
+function crop_thumbnail( $url, $width, $height = null ) {
 	$width     = (int) $width;
-	$height    = empty($height) ? $width : (int) $height;
-	$hash      = md5($url);
-	$file_path = constant('WP_CONTENT_DIR').constant('THEME_THUMBNAIL_PATH')."/$hash-$width-$height.jpg";
-	$file_url  = content_url(constant('THEME_THUMBNAIL_PATH')."/$hash-$width-$height.jpg");
-	if ( is_file($file_path) ) {
+	$height    = empty( $height ) ? $width : (int) $height;
+	$hash      = md5( $url );
+	$file_path = constant( 'WP_CONTENT_DIR' ) . constant( 'THEME_THUMBNAIL_PATH' ) . "/$hash-$width-$height.jpg";
+	$file_url  = content_url( constant( 'THEME_THUMBNAIL_PATH' ) . "/$hash-$width-$height.jpg" );
+	if ( is_file( $file_path ) ) {
 		return $file_url;
 	}
-	$editor = wp_get_image_editor($url);
-	if ( is_wp_error($editor) ) {
+	$editor = wp_get_image_editor( $url );
+	if ( is_wp_error( $editor ) ) {
 		return $url;
 	}
 	$size = $editor->get_size();
-	$dims = image_resize_dimensions($size['width'], $size['height'], $width, $height, true);
+	$dims = image_resize_dimensions( $size['width'], $size['height'], $width, $height, true );
 	//if( !$dims ) return $url;
-	$cmp = min($size['width']/$width, $size['height']/$height);
-	if ( is_wp_error($editor->crop($dims[2], $dims[3], $width*$cmp, $height*$cmp, $width, $height)) ) {
+	$cmp = min( $size['width'] / $width, $size['height'] / $height );
+	if ( is_wp_error( $editor->crop( $dims[2], $dims[3], $width * $cmp, $height * $cmp, $width, $height ) ) ) {
 		return $url;
 	}
-	biji_build_empty_index(constant('WP_CONTENT_DIR').constant('THEME_THUMBNAIL_PATH'));
+	biji_build_empty_index( constant( 'WP_CONTENT_DIR' ) . constant( 'THEME_THUMBNAIL_PATH' ) );
 
-	return is_wp_error($editor->save($file_path, 'image/jpg')) ? $url : $file_url;
+	return is_wp_error( $editor->save( $file_path, 'image/jpg' ) ) ? $url : $file_url;
 }
 
 /**
@@ -161,24 +176,24 @@ function crop_thumbnail($url, $width, $height = null) {
  * @param string $height 高度
  * @param string $_post 文章
  */
-function get_thumbnail($width = 0, $height = 0, $_post = null) {
+function get_thumbnail( $width = 0, $height = 0, $_post = null ) {
 	global $post;
 	$_post = $_post ?: $post;
-	if ( has_post_thumbnail($_post->ID) ) {
-		$thumbnail = get_post_thumbnail_url($_post->ID);
+	if ( has_post_thumbnail( $_post->ID ) ) {
+		$thumbnail = get_post_thumbnail_url( $_post->ID );
 		if ( $width === 0 && $height === 0 ) {
 			return $thumbnail;
 		} else {
-			return crop_thumbnail($thumbnail, $width, $height);
+			return crop_thumbnail( $thumbnail, $width, $height );
 		}
 	} else {
 		$content = $_post->post_content;
-		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
-		if ( count($strResult[1]) > 0 ) {
+		preg_match_all( '/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER );
+		if ( count( $strResult[1] ) > 0 ) {
 			if ( $width === 0 && $height === 0 ) {
 				return $strResult[1][0];
 			} else {
-				return crop_thumbnail($strResult[1][0], $width, $height);
+				return crop_thumbnail( $strResult[1][0], $width, $height );
 			}
 		} else {
 			return '';
@@ -186,11 +201,11 @@ function get_thumbnail($width = 0, $height = 0, $_post = null) {
 	}
 }
 
-function get_post_thumbnail_url($post_id = null) {
+function get_post_thumbnail_url( $post_id = null ) {
 	$post_id      = $post_id ?: get_the_ID();
-	$thumbnail_id = get_post_thumbnail_id($post_id);
+	$thumbnail_id = get_post_thumbnail_id( $post_id );
 	if ( $thumbnail_id ) {
-		$thumbnail = wp_get_attachment_image_src($thumbnail_id, 'full');
+		$thumbnail = wp_get_attachment_image_src( $thumbnail_id, 'full' );
 
 		return $thumbnail[0];
 	}
@@ -199,8 +214,8 @@ function get_post_thumbnail_url($post_id = null) {
 }
 
 /* Mini Pagenavi v1.0 by Willin Kan. Edit by zwwooooo */
-if ( !function_exists('the_pagination') ) {
-	function the_pagination($p = 2) {
+if ( ! function_exists( 'the_pagination' ) ) {
+	function the_pagination( $p = 2 ) {
 		if ( is_singular() ) {
 			return;
 		}
@@ -211,37 +226,37 @@ if ( !function_exists('the_pagination') ) {
 		}
 		$paged = $paged ?: 1;
 		$links = "";
-		if ( $paged > $p+1 ) {
-			$links .= get_pagination_link(1);
+		if ( $paged > $p + 1 ) {
+			$links .= get_pagination_link( 1 );
 		}
-		if ( $paged > $p+2 ) {
-			$links .= get_pagination_link(-1);
+		if ( $paged > $p + 2 ) {
+			$links .= get_pagination_link( - 1 );
 		}
-		for ($i = $paged-$p; $i <= $paged+$p; $i++) {
+		for ( $i = $paged - $p; $i <= $paged + $p; $i ++ ) {
 			if ( $i > 0 && $i <= $max_page ) {
-				$links .= get_pagination_link($i, $paged);
+				$links .= get_pagination_link( $i, $paged );
 			}
 		}
-		if ( $paged < $max_page-$p-1 ) {
-			$links .= get_pagination_link(-1);
+		if ( $paged < $max_page - $p - 1 ) {
+			$links .= get_pagination_link( - 1 );
 		}
-		if ( $paged < $max_page-$p ) {
-			$links .= get_pagination_link($max_page);
+		if ( $paged < $max_page - $p ) {
+			$links .= get_pagination_link( $max_page );
 		}
 
 		echo $links ? "<ul class='pagination'>$links</ul>" : "";
 	}
 
-	function get_pagination_link($num, $paged = null) {
+	function get_pagination_link( $num, $paged = null ) {
 		$active = $num === $paged ? 'active' : '';
-		$link   = $num == -1 ? "..." : "<a href='".esc_html(get_pagenum_link($num))."' title='第 {$num} 页'>{$num}</a>";
+		$link   = $num == - 1 ? "..." : "<a href='" . esc_html( get_pagenum_link( $num ) ) . "' title='第 {$num} 页'>{$num}</a>";
 
 		return "<li class='page-item {$active}'>$link</li>";
 	}
 }
 
 // 格式化评论字段
-function formatter_comment($comment, $friends = []) {
+function formatter_comment( $comment, $friends = [] ) {
 	$res = (object) [];
 
 	$formatter = [
@@ -262,29 +277,29 @@ function formatter_comment($comment, $friends = []) {
 	];
 
 	// 用户标注
-	if ( user_can($comment->user_id, "administrator") ) {
+	if ( user_can( $comment->user_id, "administrator" ) ) {
 		$res->sign = 'admin';
-	} else if ( in_array($comment->comment_author_email, $friends) ) {
+	} else if ( in_array( $comment->comment_author_email, $friends ) ) {
 		$res->sign = 'friends';
 	} else {
 		$res->sign = '';
 	}
 
-	$res->avatar = get_avatar_url($comment->comment_author_email);
+	$res->avatar = get_avatar_url( $comment->comment_author_email );
 
-	foreach ($formatter as $old => $new) {
+	foreach ( $formatter as $old => $new ) {
 		$res->{$new} = $comment->{$old};
 	}
 	// 评论@回复
-	if ( $res->parent > 0 && get_comment($res->parent)) {
-		$res->content = '<a href="#comment-'.$res->parent.'">@'.get_comment_author($res->parent).'</a> '.$res->content;
+	if ( $res->parent > 0 && get_comment( $res->parent ) ) {
+		$res->content = '<a href="#comment-' . $res->parent . '">@' . get_comment_author( $res->parent ) . '</a> ' . $res->content;
 	}
 
 	return $res;
 }
 
 // 格式化文章字段
-function formatter_article($post, $formatter = null) {
+function formatter_article( $post, $formatter = null ) {
 	$formatter = $formatter ?: [
 		"ID"             => "id",
 		"post_type"      => "type",
@@ -301,12 +316,12 @@ function formatter_article($post, $formatter = null) {
 
 	$res = (object) [];
 
-	foreach ($formatter as $old => $new) {
+	foreach ( $formatter as $old => $new ) {
 		$res->{$new} = $post->{$old};
 	}
 
-	$res->permalink = get_permalink($post->ID);
-	$res->thumbnail = get_thumbnail(0, 0, $post);
+	$res->permalink = get_permalink( $post->ID );
+	$res->thumbnail = get_thumbnail( 0, 0, $post );
 
 	return $res;
 }
@@ -315,19 +330,19 @@ function formatter_article($post, $formatter = null) {
 function get_my_archives() {
 	$previous_year = $year = 0;
 	$archives      = [];
-	$posts         = get_posts('numberposts=-1&orderby=post_date&order=DESC');
-	foreach ($posts as $post) {
-		$year = date('Y', strtotime($post->post_date));
+	$posts         = get_posts( 'numberposts=-1&orderby=post_date&order=DESC' );
+	foreach ( $posts as $post ) {
+		$year = date( 'Y', strtotime( $post->post_date ) );
 		if ( $year != $previous_year ) {
-			$archives[$year] = [
+			$archives[ $year ] = [
 				"year"     => $year,
 				"articles" => []
 			];
 		}
-		$previous_year                 = $year;
-		$archives[$year]["articles"][] = [
-			"month-day" => date('m-d', strtotime($post->post_date)),
-			"permalink" => get_permalink($post->ID),
+		$previous_year                   = $year;
+		$archives[ $year ]["articles"][] = [
+			"month-day" => date( 'm-d', strtotime( $post->post_date ) ),
+			"permalink" => get_permalink( $post->ID ),
 			"title"     => $post->post_title,
 			"comments"  => $post->comment_count
 		];
@@ -342,26 +357,26 @@ function get_readers_wall() {
 	$childSql = "SELECT * FROM $wpdb->comments LEFT OUTER JOIN $wpdb->posts ON ($wpdb->posts.ID=$wpdb->comments.comment_post_ID) WHERE comment_date > date_sub( NOW(), INTERVAL 3 MONTH ) AND user_id='0' AND post_password='' AND comment_approved='1' AND comment_type='comment'";
 	$sql      = "SELECT COUNT(comment_ID) AS cnt, comment_author, comment_author_url, comment_author_email FROM ($childSql) AS tempcmt GROUP BY comment_author_email ORDER BY cnt DESC LIMIT 12";
 
-	return $wpdb->get_results($sql);
+	return $wpdb->get_results( $sql );
 }
 
 // 图片转base64，捕获异常
-function imgToBase64($url = ''): string {
+function imgToBase64( $url = '' ): string {
 	try {
-		if ( strpos($url, 'http') !== 0 ) {
-			$url = 'https:'.$url;
+		if ( strpos( $url, 'http' ) !== 0 ) {
+			$url = 'https:' . $url;
 		}
 		$stream_opts  = [
-			"ssl"  => ["verify_peer" => false, "verify_peer_name" => false], // 忽略SSL
-			"http" => ["timeout" => 5], // 超时时间 5 秒
+			"ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
+			"http" => [ "timeout" => 5 ], // 超时时间 5 秒
 		];
-		$base64string = chunk_split(base64_encode(file_get_contents("$url", false, stream_context_create($stream_opts))));
+		$base64string = chunk_split( base64_encode( file_get_contents( "$url", false, stream_context_create( $stream_opts ) ) ) );
 		// 正则提取Content-Type
-		preg_match('/Content-Type: (.*?);/', implode(';', $http_response_header), $match);
+		preg_match( '/Content-Type: (.*?);/', implode( ';', $http_response_header ), $match );
 		$mime = $match[1] ?? 'image/png';
 
-		return "data:".$mime.";base64,$base64string";
-	} catch (Error $e) {
+		return "data:" . $mime . ";base64,$base64string";
+	} catch ( Error $e ) {
 		return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 	}
 }

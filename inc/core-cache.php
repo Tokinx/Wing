@@ -1,5 +1,5 @@
 <?php
-if ( !class_exists('FileCache') ) :
+if ( ! class_exists( 'FileCache' ) ) :
 	class FileCache {
 		private $cache_dir;
 		private $cache_time;
@@ -11,7 +11,7 @@ if ( !class_exists('FileCache') ) :
 		 * @param string $cache_dir 缓存目录
 		 * @param int $cache_time 缓存时间
 		 */
-		public function __construct($cache_dir, $cache_time = 3600) {
+		public function __construct( $cache_dir, $cache_time = 3600 ) {
 			$this->cache_dir  = $cache_dir;
 			$this->cache_time = $cache_time;
 		}
@@ -22,12 +22,12 @@ if ( !class_exists('FileCache') ) :
 		 * @param string $key 缓存键
 		 * @param bool $decode 是否解码
 		 */
-		public function get($key, $decode = true) {
-			$this->cache_file = $this->cache_dir.'/'.$key.'.json';
-			if ( $this->has($key) ) {
-				$content = file_get_contents($this->cache_file);
+		public function get( $key, $decode = true ) {
+			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
+			if ( $this->has( $key ) ) {
+				$content = file_get_contents( $this->cache_file );
 
-				return $decode ? json_decode($content) : $content;
+				return $decode ? json_decode( $content ) : $content;
 			}
 
 			return false;
@@ -39,9 +39,9 @@ if ( !class_exists('FileCache') ) :
 		 * @param string $key 缓存键
 		 * @param mixed $value 缓存值
 		 */
-		public function set($key, $value) {
-			$this->cache_file = $this->cache_dir.'/'.$key.'.json';
-			file_put_contents($this->cache_file, json_encode($value));
+		public function set( $key, $value ) {
+			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
+			file_put_contents( $this->cache_file, json_encode( $value ) );
 		}
 
 		/**
@@ -49,10 +49,10 @@ if ( !class_exists('FileCache') ) :
 		 *
 		 * @param string $key 缓存键
 		 */
-		public function delete($key) {
-			$this->cache_file = $this->cache_dir.'/'.$key.'.json';
-			if ( file_exists($this->cache_file) ) {
-				unlink($this->cache_file);
+		public function delete( $key ) {
+			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
+			if ( file_exists( $this->cache_file ) ) {
+				unlink( $this->cache_file );
 			}
 		}
 
@@ -61,11 +61,11 @@ if ( !class_exists('FileCache') ) :
 		 *
 		 * @param string $key 缓存键
 		 */
-		public function has($key) {
-			$this->cache_file = $this->cache_dir.'/'.$key.'.json';
+		public function has( $key ) {
+			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
 
-			if ( file_exists($this->cache_file) ) {
-				return time()-filemtime($this->cache_file) < $this->cache_time;
+			if ( file_exists( $this->cache_file ) ) {
+				return time() - filemtime( $this->cache_file ) < $this->cache_time;
 			}
 
 			return false;
@@ -76,10 +76,10 @@ if ( !class_exists('FileCache') ) :
 		 *
 		 * @param string $key 缓存键
 		 */
-		public function get_file_time($key) {
-			$this->cache_file = $this->cache_dir.'/'.$key.'.json';
-			if ( $this->has($key) ) {
-				return filemtime($this->cache_file);
+		public function get_file_time( $key ) {
+			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
+			if ( $this->has( $key ) ) {
+				return filemtime( $this->cache_file );
 			}
 
 			return false;

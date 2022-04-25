@@ -8,37 +8,37 @@
 
 function check_nonce() {
 	$nonce = "";
-	if ( isset($_REQUEST['_wpnonce']) ) {
+	if ( isset( $_REQUEST['_wpnonce'] ) ) {
 		$nonce = $_REQUEST['_wpnonce'];
-	} elseif ( isset($_SERVER['HTTP_X_WP_NONCE']) ) {
+	} elseif ( isset( $_SERVER['HTTP_X_WP_NONCE'] ) ) {
 		$nonce = $_SERVER['HTTP_X_WP_NONCE'];
 	}
 	// 判断用户是否已登陆
-	if ( !wp_verify_nonce($nonce, 'wp_rest') && !is_user_logged_in() ) {
+	if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) && ! is_user_logged_in() ) {
 //		wp_send_json( [ 'message' => '非法访问，请求被拒绝' ], 401 );
 	}
 
 	return true;
 }
 
-function check_get_value($key, $arr, $default = '') {
-	return array_key_exists($key, $arr) && isset($arr[$key]) ? $_GET[$key] : $default;
+function check_get_value( $key, $arr, $default = '' ) {
+	return array_key_exists( $key, $arr ) && isset( $arr[ $key ] ) ? $_GET[ $key ] : $default;
 }
 
 function ajax_get_all_posts_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 	global $_cache;
 	// 参数
-	$type = check_get_value('type', $_GET, 'single');
-	$ids  = check_get_value('ids', $_GET);
-	$rows = check_get_value('rows', $_GET, 10);
-	$page = check_get_value('page', $_GET, 1);
+	$type = check_get_value( 'type', $_GET, 'single' );
+	$ids  = check_get_value( 'ids', $_GET );
+	$rows = check_get_value( 'rows', $_GET, 10 );
+	$page = check_get_value( 'page', $_GET, 1 );
 
 	// 查询条件
 	$args = [
 		'post_type'      => $type,
 		'posts_per_page' => $rows,
-		'offset'         => ($page-1)*$rows,
+		'offset'         => ( $page - 1 ) * $rows,
 		'post_status'    => 'publish',
 		'orderby'        => 'date',
 		'order'          => 'DESC',
@@ -48,159 +48,158 @@ function ajax_get_all_posts_callback() {
 
 	// 私密笔记
 	if ( $type === 'private' ) {
-		if ( !is_user_logged_in() ) {
-			wp_send_json_error('非法访问，请求被拒绝', 401);
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( '非法访问，请求被拒绝', 401 );
 		}
 		$args['post_type']   = 'note';
 		$args['post_status'] = 'private';
 	}
 	// 每日回顾
 	if ( $type === 'review' ) {
-		if ( !is_user_logged_in() ) {
-			wp_send_json_error('非法访问，请求被拒绝', 401);
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( '非法访问，请求被拒绝', 401 );
 		}
-		if ( date('Y-m-d', $_cache->get_file_time('review')) === date('Y-m-d') ) {
-			wp_send_json_success($_cache->get('review'));
+		if ( date( 'Y-m-d', $_cache->get_file_time( 'review' ) ) === date( 'Y-m-d' ) ) {
+			wp_send_json_success( $_cache->get( 'review' ) );
 		}
 		$args['post_type'] = 'note';
 		$args['orderby']   = 'rand';
 		$args['order']     = '';
 	}
 	if ( $type === 'all' ) {
-		$args['post_type'] = ['post', 'note'];
+		$args['post_type'] = [ 'post', 'note' ];
 	}
 	if ( $type === 'single' && $ids ) {
-		$args['post_type'] = ['post', 'note'];
-		$args['post__in']  = explode(',', $ids);
+		$args['post_type'] = [ 'post', 'note' ];
+		$args['post__in']  = explode( ',', $ids );
 	}
-	if ( check_get_value('topics', $_GET) ) {
+	if ( check_get_value( 'topics', $_GET ) ) {
 		$args['tax_query'][] = [
 			'taxonomy' => 'topic',
 			'field'    => 'name',
-			'terms'    => explode(',', check_get_value('topics', $_GET)),
+			'terms'    => explode( ',', check_get_value( 'topics', $_GET ) ),
 		];
 	}
 
+	$posts = get_posts( $args ); // 文章
 
-	$posts = get_posts($args); // 文章
-
-	$args['posts_per_page'] = -1;
+	$args['posts_per_page'] = - 1;
 	$args['fields']         = 'ids';
-	$count                  = get_posts($args); // 文章数量
+	$count                  = get_posts( $args ); // 文章数量
 
-	$posts = array_map(function ($post) {
-		$post = formatter_article($post);
+	$posts = array_map( function ( $post ) {
+		$post = formatter_article( $post );
 		// 获取tags和topic
 		$post->tags = [];
-		$tags       = get_the_terms($post->id, 'topic');
-		if ( is_array($tags) ) {
-			$post->tags = array_map(function ($tag) {
-				return ['id' => $tag->term_id, 'name' => $tag->name];
-			}, $tags);
+		$tags       = get_the_terms( $post->id, 'topic' );
+		if ( is_array( $tags ) ) {
+			$post->tags = array_map( function ( $tag ) {
+				return [ 'id' => $tag->term_id, 'name' => $tag->name ];
+			}, $tags );
 		}
 		// 获取分类
-		$post->category = get_the_terms($post->id, 'category');
+		$post->category = get_the_terms( $post->id, 'category' );
 		// 获取自定义字段
-		$post->fields = get_post_meta($post->id, '', true);
+		$post->fields = get_post_meta( $post->id, '', true );
 		// 获取图片
-		foreach ($post->fields as $key => $value) {
-			if ( $key === 'images' && is_array($value) ) {
-				$ids          = explode(',', $value[0]);
-				$post->images = array_map(function ($id) {
-					return wp_get_attachment_url($id);
-				}, $ids);
+		foreach ( $post->fields as $key => $value ) {
+			if ( $key === 'images' && is_array( $value ) ) {
+				$ids          = explode( ',', $value[0] );
+				$post->images = array_map( function ( $id ) {
+					return wp_get_attachment_url( $id );
+				}, $ids );
 			}
 		}
 		// 格式化文章内容
 		if ( $post->type === 'post' ) {
-			$post->content = mb_strimwidth(strip_shortcodes(strip_tags($post->content)), 0, 200, '...');
+			$post->content = mb_strimwidth( strip_shortcodes( strip_tags( $post->content ) ), 0, 200, '...' );
 		}
 
-		$post->thumbnail = replace_domain($post->thumbnail);
+		$post->thumbnail = replace_domain( $post->thumbnail );
 
 		return $post;
-	}, $posts);
+	}, $posts );
 
 	$result = [
 		'success' => true,
 		'data'    => $posts,
-		'total'   => count($count),
+		'total'   => count( $count ),
 	];
 
 	if ( $type === 'review' ) {
 		// 缓存每日回顾
-		$_cache->set('review', $posts); // 缓存数据
+		$_cache->set( 'review', $posts ); // 缓存数据
 	}
 
-	wp_send_json($result);
+	wp_send_json( $result );
 }
 
-add_action('wp_ajax_get_all_posts', 'ajax_get_all_posts_callback');
-add_action('wp_ajax_nopriv_get_all_posts', 'ajax_get_all_posts_callback');
+add_action( 'wp_ajax_get_all_posts', 'ajax_get_all_posts_callback' );
+add_action( 'wp_ajax_nopriv_get_all_posts', 'ajax_get_all_posts_callback' );
 
 // 获取文章相关信息（前后文章、作者信息）TODO：相关文章
 function ajax_affiliate_info_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
-	if ( array_key_exists('post_id', $_GET) ) {
+	if ( array_key_exists( 'post_id', $_GET ) ) {
 		$data = (object) [
 			"id" => $_GET['post_id']
 		];
 		// 获取文章信息
-		$post            = get_post($data->id);
+		$post            = get_post( $data->id );
 		$GLOBALS['post'] = $post;
-		$data->post      = formatter_article($post);
+		$data->post      = formatter_article( $post );
 		// 上下篇文章
 		$adjacent       = (object) [
-			"prev" => get_previous_post() ? formatter_article(get_previous_post()) : new stdClass(),
-			"next" => get_next_post() ? formatter_article(get_next_post()) : new stdClass()
+			"prev" => get_previous_post() ? formatter_article( get_previous_post() ) : new stdClass(),
+			"next" => get_next_post() ? formatter_article( get_next_post() ) : new stdClass()
 		];
 		$data->adjacent = $adjacent;
 		// 作者信息
 		$data->author = (object) [
 			"id"           => $post->post_author,
-			"display_name" => get_the_author_meta('display_name', $post->post_author),
-			"description"  => get_the_author_meta('description', $post->post_author),
-			"avatar"       => get_avatar_url($post->post_author),
+			"display_name" => get_the_author_meta( 'display_name', $post->post_author ),
+			"description"  => get_the_author_meta( 'description', $post->post_author ),
+			"avatar"       => get_avatar_url( $post->post_author ),
 		];
 
-		wp_send_json_success($data);
+		wp_send_json_success( $data );
 	} else {
-		wp_send_json_error("参数错误", 400);
+		wp_send_json_error( "参数错误", 400 );
 	}
 }
 
-add_action('wp_ajax_get_affiliate_info', 'ajax_affiliate_info_callback');
-add_action('wp_ajax_nopriv_get_affiliate_info', 'ajax_affiliate_info_callback');
+add_action( 'wp_ajax_get_affiliate_info', 'ajax_affiliate_info_callback' );
+add_action( 'wp_ajax_nopriv_get_affiliate_info', 'ajax_affiliate_info_callback' );
 
 // AJAX 提交评论
 function ajax_comment_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
-	$json    = json_decode(file_get_contents('php://input'), true);
-	$comment = wp_handle_comment_submission(wp_unslash($json));
-	if ( is_wp_error($comment) ) {
+	$json    = json_decode( file_get_contents( 'php://input' ), true );
+	$comment = wp_handle_comment_submission( wp_unslash( $json ) );
+	if ( is_wp_error( $comment ) ) {
 		$data = $comment->get_error_data();
-		if ( !empty($data) ) {
-			wp_send_json_error($comment->get_error_message(), $comment->get_error_code());
+		if ( ! empty( $data ) ) {
+			wp_send_json_error( $comment->get_error_message(), $comment->get_error_code() );
 		}
 	} else {
 		$user = wp_get_current_user();
-		do_action('set_comment_cookies', $comment, $user);
-		$comment = formatter_comment($comment);
-		wp_send_json_success($comment);
+		do_action( 'set_comment_cookies', $comment, $user );
+		$comment = formatter_comment( $comment );
+		wp_send_json_success( $comment );
 	}
 	wp_die();
 }
 
-add_action('wp_ajax_submit_comment', 'ajax_comment_callback');
-add_action('wp_ajax_nopriv_submit_comment', 'ajax_comment_callback');
+add_action( 'wp_ajax_submit_comment', 'ajax_comment_callback' );
+add_action( 'wp_ajax_nopriv_submit_comment', 'ajax_comment_callback' );
 
 // AJAX 加载评论
 function ajax_get_next_comments_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
-	if ( array_key_exists('post', $_GET) ) {
+	if ( array_key_exists( 'post', $_GET ) ) {
 		global $in_comment_loop;
 		$in_comment_loop = true;
 
@@ -208,12 +207,12 @@ function ajax_get_next_comments_callback() {
 			'post'   => null,
 			'type'   => 'all',
 			'page'   => 1,
-			'rows'   => get_option('comments_per_page'),
+			'rows'   => get_option( 'comments_per_page' ),
 			'order'  => 'DESC',
 			'filter' => '',
 		];
 
-		$parsed_args = wp_parse_args($_GET, $defaults);
+		$parsed_args = wp_parse_args( $_GET, $defaults );
 
 		$comment_args = [
 			'post_id' => $parsed_args['post'],
@@ -223,49 +222,49 @@ function ajax_get_next_comments_callback() {
 		];
 
 		if ( is_user_logged_in() ) {
-			$comment_args['include_unapproved'] = [get_current_user_id()];
+			$comment_args['include_unapproved'] = [ get_current_user_id() ];
 		} else {
 			$unapproved_email = wp_get_unapproved_comment_author_email();
 
 			if ( $unapproved_email ) {
-				$comment_args['include_unapproved'] = [$unapproved_email];
+				$comment_args['include_unapproved'] = [ $unapproved_email ];
 			}
 		}
 
-		$comments = get_comments($comment_args);
+		$comments = get_comments( $comment_args );
 		$sorted   = [];
 		// 过滤类型
-		if ( count($comments) && 'all' !== $parsed_args['type'] ) {
-			$comments_by_type = separate_comments($comments);
+		if ( count( $comments ) && 'all' !== $parsed_args['type'] ) {
+			$comments_by_type = separate_comments( $comments );
 			$comments         = [];
-			if ( !empty($comments_by_type[$parsed_args['type']]) ) {
-				$comments = $comments_by_type[$parsed_args['type']];
+			if ( ! empty( $comments_by_type[ $parsed_args['type'] ] ) ) {
+				$comments = $comments_by_type[ $parsed_args['type'] ];
 			}
 		}
 
-		if ( count($comments) ) {
-			$filter  = explode(',', $parsed_args['filter']);
-			$friends = explode(PHP_EOL, get_theme_mod('biji_setting_friend'));
+		if ( count( $comments ) ) {
+			$filter  = explode( ',', $parsed_args['filter'] );
+			$friends = explode( PHP_EOL, get_theme_mod( 'biji_setting_friend' ) );
 			// 处理评论
 			$_comments = [];
-			foreach ($comments as $o1) {
-				if ( count($filter) && in_array($o1->comment_ID, $filter) ) {
+			foreach ( $comments as $o1 ) {
+				if ( count( $filter ) && in_array( $o1->comment_ID, $filter ) ) {
 					continue;
 				} // 过滤
-				$_comments[] = formatter_comment($o1, $friends);
+				$_comments[] = formatter_comment( $o1, $friends );
 			}
 
 			// 评论嵌套
-			usort($_comments, function ($a, $b) {
+			usort( $_comments, function ( $a, $b ) {
 				return $a->parent < $b->parent;
-			});
+			} );
 			$temp = $_comments;
-			foreach ($_comments as $o1) {
+			foreach ( $_comments as $o1 ) {
 				if ( $temp[0]->parent == 0 ) {
 					break;
 				}
-				$parentIndex = -1;
-				foreach ($temp as $o2Index => $o2) {
+				$parentIndex = - 1;
+				foreach ( $temp as $o2Index => $o2 ) {
 					if ( $temp[0]->parent == $o2->id ) {
 						$parentIndex = $o2Index;
 						break;
@@ -274,107 +273,107 @@ function ajax_get_next_comments_callback() {
 				if ( $parentIndex < 0 ) {
 					continue;
 				}
-				if ( isset($temp[$parentIndex]) && isset($temp[$parentIndex]->children) ) {
-					$temp[$parentIndex]->children[] = $temp[0];
+				if ( isset( $temp[ $parentIndex ] ) && isset( $temp[ $parentIndex ]->children ) ) {
+					$temp[ $parentIndex ]->children[] = $temp[0];
 				} else {
-					$temp[$parentIndex]->children = [$temp[0]];
+					$temp[ $parentIndex ]->children = [ $temp[0] ];
 				}
-				if ( count($temp[$parentIndex]->children) > 1 ) {
-					usort($temp[$parentIndex]->children, function ($a, $b) {
+				if ( count( $temp[ $parentIndex ]->children ) > 1 ) {
+					usort( $temp[ $parentIndex ]->children, function ( $a, $b ) {
 						return $a->date_gmt > $b->date_gmt;
-					});
+					} );
 				}
-				array_shift($temp);
+				array_shift( $temp );
 			}
 			$sorted = $temp;
 
-			usort($sorted, function ($a, $b) use ($parsed_args) {
-				if ( strtoupper($parsed_args['order']) === 'ASC' ) {
+			usort( $sorted, function ( $a, $b ) use ( $parsed_args ) {
+				if ( strtoupper( $parsed_args['order'] ) === 'ASC' ) {
 					return $a->date_gmt > $b->date_gmt;
 				}
 
 				return $a->date_gmt < $b->date_gmt;
-			});
+			} );
 		}
 		$in_comment_loop = false;
-		$page            = $parsed_args['rows']*max(($parsed_args['page']-1), 0);
+		$page            = $parsed_args['rows'] * max( ( $parsed_args['page'] - 1 ), 0 );
 		$rows            = $parsed_args['rows'];
 		$result          = [
 			'success' => true,
 			'page'    => $parsed_args['page'],
 			'rows'    => $rows,
-			'total'   => (string) ceil(count($sorted)/$rows),
-			'data'    => array_slice($sorted, $page, $rows),
+			'total'   => (string) ceil( count( $sorted ) / $rows ),
+			'data'    => array_slice( $sorted, $page, $rows ),
 		];
-		wp_send_json($result);
+		wp_send_json( $result );
 	}
-	wp_send_json_error("参数错误", 400);
+	wp_send_json_error( "参数错误", 400 );
 }
 
-add_action('wp_ajax_get_next_comments', 'ajax_get_next_comments_callback');
-add_action('wp_ajax_nopriv_get_next_comments', 'ajax_get_next_comments_callback');
+add_action( 'wp_ajax_get_next_comments', 'ajax_get_next_comments_callback' );
+add_action( 'wp_ajax_nopriv_get_next_comments', 'ajax_get_next_comments_callback' );
 
 // 点赞
 function ajax_praise_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
-	if ( array_key_exists('post_id', $_GET) ) {
+	if ( array_key_exists( 'post_id', $_GET ) ) {
 		$post_id     = $_GET["post_id"];
 		$cookie_name = "praise_$post_id";
-		$praise      = get_post_meta($post_id, 'praise', true) ?: 0;
-		$domain      = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;  // make cookies work with localhost
-		$isUp        = array_key_exists($cookie_name, $_COOKIE) ? -1 : 1;                       // 区分点赞和取消
-		$praise      = $praise+(1*$isUp);
-		$expires     = time()+(99999999*$isUp);
-		update_post_meta($post_id, 'praise', max($praise, 0));
-		setcookie($cookie_name, $post_id, $expires, '/', $domain, false);
+		$praise      = get_post_meta( $post_id, 'praise', true ) ?: 0;
+		$domain      = ( $_SERVER['HTTP_HOST'] != 'localhost' ) ? $_SERVER['HTTP_HOST'] : false;  // make cookies work with localhost
+		$isUp        = array_key_exists( $cookie_name, $_COOKIE ) ? - 1 : 1;                       // 区分点赞和取消
+		$praise      = $praise + ( 1 * $isUp );
+		$expires     = time() + ( 99999999 * $isUp );
+		update_post_meta( $post_id, 'praise', max( $praise, 0 ) );
+		setcookie( $cookie_name, $post_id, $expires, '/', $domain, false );
 
-		echo get_post_meta($post_id, 'praise', true)+(get_post_meta($post_id, 'dotGood', true) ?: 0);
+		echo get_post_meta( $post_id, 'praise', true ) + ( get_post_meta( $post_id, 'dotGood', true ) ?: 0 );
 	}
 	wp_die();
 }
 
-add_action('wp_ajax_submit_praise', 'ajax_praise_callback');
-add_action('wp_ajax_nopriv_submit_praise', 'ajax_praise_callback');
+add_action( 'wp_ajax_submit_praise', 'ajax_praise_callback' );
+add_action( 'wp_ajax_nopriv_submit_praise', 'ajax_praise_callback' );
 
 // 设置文章媒体信息
 function ajax_post_meta_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
 	// 仅限管理员
-	if ( is_super_admin() && array_key_exists('post_id', $_GET) && array_key_exists('key', $_GET) ) {
-		$json    = json_decode(file_get_contents('php://input'));
+	if ( is_super_admin() && array_key_exists( 'post_id', $_GET ) && array_key_exists( 'key', $_GET ) ) {
+		$json    = json_decode( file_get_contents( 'php://input' ) );
 		$post_id = $_GET["post_id"];
 		$key     = $_GET["key"];
 		$content = $json->content;
-		update_post_meta($post_id, $key, $content);
+		update_post_meta( $post_id, $key, $content );
 		if ( $key === 'links' ) {
-			the_friendly_links($post_id);
+			the_friendly_links( $post_id );
 			wp_die();
 		} else {
-			wp_send_json_success(get_post_meta($post_id, $key, true));
+			wp_send_json_success( get_post_meta( $post_id, $key, true ) );
 		}
 	}
-	wp_send_json_error("参数错误", 400);
+	wp_send_json_error( "参数错误", 400 );
 }
 
-add_action('wp_ajax_submit_post_meta', 'ajax_post_meta_callback');
-add_action('wp_ajax_nopriv_submit_post_meta', 'ajax_post_meta_callback');
+add_action( 'wp_ajax_submit_post_meta', 'ajax_post_meta_callback' );
+add_action( 'wp_ajax_nopriv_submit_post_meta', 'ajax_post_meta_callback' );
 
 // 获取文章媒体信息
 function ajax_get_post_meta_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
-	if ( is_admin() && array_key_exists('post_id', $_GET) && array_key_exists('key', $_GET) ) {
+	if ( is_admin() && array_key_exists( 'post_id', $_GET ) && array_key_exists( 'key', $_GET ) ) {
 		$post_id = $_GET["post_id"];
 		$key     = $_GET["key"];
-		wp_send_json_success(get_post_meta($post_id, $key, true) ?? []);
+		wp_send_json_success( get_post_meta( $post_id, $key, true ) ?? [] );
 	}
-	wp_send_json_error("参数错误", 400);
+	wp_send_json_error( "参数错误", 400 );
 }
 
-add_action('wp_ajax_get_post_meta', 'ajax_get_post_meta_callback');
-add_action('wp_ajax_nopriv_get_post_meta', 'ajax_get_post_meta_callback');
+add_action( 'wp_ajax_get_post_meta', 'ajax_get_post_meta_callback' );
+add_action( 'wp_ajax_nopriv_get_post_meta', 'ajax_get_post_meta_callback' );
 
 // 获取热力图数据
 function ajax_get_heatmap_callback() {
@@ -389,16 +388,16 @@ function ajax_get_heatmap_callback() {
 
 	$calendar = [];
 
-	$after_day = array_key_exists('after_day', $_GET) ? $_GET['after_day'] : 60;
+	$after_day = array_key_exists( 'after_day', $_GET ) ? $_GET['after_day'] : 60;
 
-	for ($i = 0; $i < $after_day; $i++) {
-		$day            = date('Y-m-d', strtotime("-$i day"));
-		$calendar[$day] = new stdClass();
+	for ( $i = 0; $i < $after_day; $i ++ ) {
+		$day              = date( 'Y-m-d', strtotime( "-$i day" ) );
+		$calendar[ $day ] = new stdClass();
 	}
 
 	// 获取当前用户最近60天的数据，按时间排序
 	$args = [
-		'post_type'      => ['post', 'note'],
+		'post_type'      => [ 'post', 'note' ],
 		'posts_per_page' => '-1',
 		'post_status'    => 'publish',
 		'orderby'        => 'date',
@@ -409,38 +408,38 @@ function ajax_get_heatmap_callback() {
 		],
 	];
 
-	$comments = get_comments($args); // 评论
+	$comments = get_comments( $args ); // 评论
 
-	$posts = get_posts($args); // 文章
+	$posts = get_posts( $args ); // 文章
 
-	foreach ($comments as $comment) {
-		$date = date('Y-m-d', strtotime($comment->comment_date));
-		if ( array_key_exists($date, $calendar) ) {
-			if ( !isset($calendar[$date]->comments) ) {
-				$calendar[$date]->comments = 0;
+	foreach ( $comments as $comment ) {
+		$date = date( 'Y-m-d', strtotime( $comment->comment_date ) );
+		if ( array_key_exists( $date, $calendar ) ) {
+			if ( ! isset( $calendar[ $date ]->comments ) ) {
+				$calendar[ $date ]->comments = 0;
 			}
-			$calendar[$date]->comments++;
+			$calendar[ $date ]->comments ++;
 		}
 	}
 
-	foreach ($posts as $post) {
-		$date = date('Y-m-d', strtotime($post->post_date));
-		if ( array_key_exists($date, $calendar) ) {
+	foreach ( $posts as $post ) {
+		$date = date( 'Y-m-d', strtotime( $post->post_date ) );
+		if ( array_key_exists( $date, $calendar ) ) {
 			// 移除html标签和空格
 			// $text = preg_replace('/\s/', '', strip_tags($post->post_content));
 
 			// 判断文章类型
 			if ( $post->post_type === 'note' ) {
-				if ( !isset($calendar[$date]->notes) ) {
-					$calendar[$date]->notes = 0;
+				if ( ! isset( $calendar[ $date ]->notes ) ) {
+					$calendar[ $date ]->notes = 0;
 				}
-				$calendar[$date]->notes++;
+				$calendar[ $date ]->notes ++;
 				// $calendar[$date]['notes_length'] += strlen($text);
 			} else {
-				if ( !isset($calendar[$date]->posts) ) {
-					$calendar[$date]->posts = 0;
+				if ( ! isset( $calendar[ $date ]->posts ) ) {
+					$calendar[ $date ]->posts = 0;
 				}
-				$calendar[$date]->posts++;
+				$calendar[ $date ]->posts ++;
 				// $calendar[$date]['posts_length'] += strlen($text);
 			}
 			// $calendar[$date] =
@@ -448,21 +447,21 @@ function ajax_get_heatmap_callback() {
 	}
 
 	// 获取文章总数
-	$_posts = wp_count_posts('post');
+	$_posts = wp_count_posts( 'post' );
 	// 获取笔记总数
-	$_notes = wp_count_posts('note');
+	$_notes = wp_count_posts( 'note' );
 	// 最老一篇笔记
-	$last = get_posts([
+	$last = get_posts( [
 		'post_type'      => 'note',
 		'posts_per_rows' => 1,
 		'orderby'        => 'date',
 		'order'          => 'ASC',
-	]);
+	] );
 	$days = 0;
-	if ( $last && count($last) ) {
+	if ( $last && count( $last ) ) {
 		$last_date = $last[0]->post_date;
 		// 判断两个日期相差的天数
-		$days = ceil((strtotime(date('Y-m-d'))-strtotime($last_date))/86400);
+		$days = ceil( ( strtotime( date( 'Y-m-d' ) ) - strtotime( $last_date ) ) / 86400 );
 	}
 
 	$result = [
@@ -472,47 +471,47 @@ function ajax_get_heatmap_callback() {
 		'calendar' => $calendar,
 	];
 
-	$_cache->set('heatmap', $result); // 缓存数据
+	$_cache->set( 'heatmap', $result ); // 缓存数据
 
-	wp_send_json_success($result);
+	wp_send_json_success( $result );
 }
 
-add_action('wp_ajax_get_heatmap', 'ajax_get_heatmap_callback');
-add_action('wp_ajax_nopriv_get_heatmap', 'ajax_get_heatmap_callback');
+add_action( 'wp_ajax_get_heatmap', 'ajax_get_heatmap_callback' );
+add_action( 'wp_ajax_nopriv_get_heatmap', 'ajax_get_heatmap_callback' );
 
 // 获取话题数据
 function ajax_get_topics_callback() {
 	check_nonce(); // 校验nonce，防止滥用接口
 
-	$topics = get_terms('topic', [
-		'hide_empty' => false,
+	$topics = get_terms( 'topic', [
+		'hide_empty' => true,
 		'orderby'    => 'count',
 		'order'      => 'DESC',
-	]);
-	$topics = array_map(function ($topic) {
+	] );
+	$topics = array_map( function ( $topic ) {
 		return [
 			'id'    => $topic->term_id,
 			'name'  => $topic->name,
 			'count' => $topic->count,
 		];
-	}, $topics);
-	wp_send_json_success($topics);
+	}, $topics );
+	wp_send_json_success( $topics );
 }
 
-add_action('wp_ajax_get_topics', 'ajax_get_topics_callback');
-add_action('wp_ajax_nopriv_get_topics', 'ajax_get_topics_callback');
+add_action( 'wp_ajax_get_topics', 'ajax_get_topics_callback' );
+add_action( 'wp_ajax_nopriv_get_topics', 'ajax_get_topics_callback' );
 
 // 删除热力图缓存
 function update_heatmap_cache() {
 	// 判断是否为登陆用户
-	if ( !is_user_logged_in() ) {
+	if ( ! is_user_logged_in() ) {
 		return;
 	}
 	global $_cache;
-	$_cache->delete('heatmap');
+	$_cache->delete( 'heatmap' );
 }
 
-add_action('save_post', 'update_heatmap_cache');
-add_action('comment_post', 'update_heatmap_cache');
+add_action( 'save_post', 'update_heatmap_cache' );
+add_action( 'comment_post', 'update_heatmap_cache' );
 
 // End of page.

@@ -6,8 +6,8 @@ get_header(); ?>
     <div id="notes"></div>
     <script>
         window.NotesConfig = {
-            logged: <?= json_encode(is_user_logged_in()) ?>,
-            lately: <?= json_encode(get_theme_mod( 'biji_setting_lately', true )) ?>,
+            logged: <?= json_encode( is_user_logged_in() ) ?>,
+            lately: <?= json_encode( get_theme_mod( 'biji_setting_lately', true ) ) ?>,
             editor: {
                 placeholder: '在想什么，记下来吧？',
                 features: ['topic', 'emoji', 'ul', 'ol', 'bold', 'italic', 'image']
@@ -37,5 +37,5 @@ get_header(); ?>
             },
         };
     </script>
-    <script src="<?= get_template_directory_uri().'/static/notes.js?'.THEME_VERSION ?>"></script>
+    <script src="<?= get_template_directory_uri() . '/static/notes.js?' . THEME_VERSION ?>"></script>
 <?php get_footer(); ?>

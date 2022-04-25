@@ -43,13 +43,15 @@ function theme_customize_register( $wp_customize ) {
 						'label'       => '首页过滤分类',
 						'description' => $category_checkbox . '
 						<script>
-							var biji_setting_exclude = jQuery("#_customize-input-biji_setting_exclude").hide();
-							function bijiHandleExcludeChange(result = []) {
-								jQuery(".biji_setting_exclude:checked").each(function() {
-									result.push(this.value);
-								});
-								biji_setting_exclude.val(String(result)).trigger("input");
-							}
+							(($) => {
+								const biji_setting_exclude = $("#_customize-input-biji_setting_exclude").hide();
+								function bijiHandleExcludeChange(result = []) {
+									$(".biji_setting_exclude:checked").each(function() {
+										result.push(this.value);
+									});
+									biji_setting_exclude.val(String(result)).trigger("input");
+								}
+							})(jQuery)
 						</script>',
 						// 'input_attrs' => ['placeholder' => "例如：1, 2, 3"],
 					]
@@ -69,6 +71,15 @@ function theme_customize_register( $wp_customize ) {
 					"control" => [
 						'label'       => '文章过去时间',
 						'description' => '开启后文章时间显示为：XX前',
+						'type'        => 'checkbox',
+					]
+				],
+				[
+					"id"      => "biji_setting_view_image",
+					"setting" => [ "default" => true ],
+					"control" => [
+						'label'       => '开启图片灯箱',
+						'description' => '开启后文章图片可以使用灯箱放大查看',
 						'type'        => 'checkbox',
 					]
 				],

@@ -8,7 +8,7 @@
  * http://www.gnu.org/licenses/gpl.html
  */
 
-if ( !class_exists( 'ThemeUpdateChecker' ) ):
+if ( ! class_exists( 'ThemeUpdateChecker' ) ):
 
 	/**
 	 * A custom theme update checker.
@@ -88,7 +88,7 @@ if ( !class_exists( 'ThemeUpdateChecker' ) ):
 			$options = apply_filters( self::$filterPrefix . 'options-' . $this->theme, $options );
 
 			$url = $this->metadataUrl;
-			if ( !empty( $queryArgs ) ) {
+			if ( ! empty( $queryArgs ) ) {
 				$url = add_query_arg( $queryArgs, $url );
 			}
 
@@ -99,7 +99,7 @@ if ( !class_exists( 'ThemeUpdateChecker' ) ):
 			$themeUpdate = null;
 			$code        = wp_remote_retrieve_response_code( $result );
 			$body        = wp_remote_retrieve_body( $result );
-			if ( ( $code == 200 ) && !empty( $body ) ) {
+			if ( ( $code == 200 ) && ! empty( $body ) ) {
 				$themeUpdate = ThemeUpdate::fromJson( $body );
 				//The update should be newer than the currently installed version.
 				if ( ( $themeUpdate != null ) && version_compare( $themeUpdate->version, $this->getInstalledVersion(), '<=' ) ) {
@@ -165,7 +165,7 @@ if ( !class_exists( 'ThemeUpdateChecker' ) ):
 		 * @return mixed
 		 */
 		public function onTransientUpdate( $value ) {
-			if ( !$this->automaticCheckDone ) {
+			if ( ! $this->automaticCheckDone ) {
 				$this->checkForUpdates();
 				$this->automaticCheckDone = true;
 			}
@@ -184,7 +184,7 @@ if ( !class_exists( 'ThemeUpdateChecker' ) ):
 			$state = get_option( $this->optionName );
 
 			//Is there an update to insert?
-			if ( !empty( $state ) && isset( $state->update ) && !empty( $state->update ) ) {
+			if ( ! empty( $state ) && isset( $state->update ) && ! empty( $state->update ) ) {
 				$updates->response[ $this->theme ] = $state->update->toWpFormat();
 			}
 
@@ -250,7 +250,7 @@ if ( !class_exists( 'ThemeUpdateChecker' ) ):
 
 endif;
 
-if ( !class_exists( 'ThemeUpdate' ) ):
+if ( ! class_exists( 'ThemeUpdate' ) ):
 
 	/**
 	 * A simple container class for holding information about an available update.
@@ -274,13 +274,13 @@ if ( !class_exists( 'ThemeUpdate' ) ):
 		 */
 		public static function fromJson( $json ) {
 			$apiResponse = json_decode( $json );
-			if ( empty( $apiResponse ) || !is_object( $apiResponse ) ) {
+			if ( empty( $apiResponse ) || ! is_object( $apiResponse ) ) {
 				return null;
 			}
 
 			//Very, very basic validation.
-			$valid = isset( $apiResponse->version ) && !empty( $apiResponse->version ) && isset( $apiResponse->details_url ) && !empty( $apiResponse->details_url );
-			if ( !$valid ) {
+			$valid = isset( $apiResponse->version ) && ! empty( $apiResponse->version ) && isset( $apiResponse->details_url ) && ! empty( $apiResponse->details_url );
+			if ( ! $valid ) {
 				return null;
 			}
 
@@ -303,7 +303,7 @@ if ( !class_exists( 'ThemeUpdate' ) ):
 				'url'         => $this->details_url,
 			];
 
-			if ( !empty( $this->download_url ) ) {
+			if ( ! empty( $this->download_url ) ) {
 				$update['package'] = $this->download_url;
 			}
 
