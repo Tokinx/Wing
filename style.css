@@ -4972,6 +4972,8 @@ body:not(.default) #app.layout #main .article-item {
   display: flex;
   flex-direction: column;
   animation: view-image-in 300ms;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 .view-image__out {
   animation: view-image-out 300ms;
@@ -4999,13 +5001,10 @@ body:not(.default) #app.layout #main .article-item {
 .view-image-btn:hover {
   background-color: rgba(255, 255, 255, 0.5);
 }
-.view-image-close {
-  margin-left: 28px;
-}
 .view-image-close__full {
   position: absolute;
   inset: 0;
-  background-color: rgba(102, 102, 102, 0.5);
+  background-color: rgba(48, 55, 66, 0.3);
   z-index: unset;
   cursor: zoom-out;
   margin: 0;
@@ -5019,20 +5018,20 @@ body:not(.default) #app.layout #main .article-item {
   padding-bottom: 3%;
 }
 .view-image-lead {
-  position: relative;
-  height: 100%;
-  display: flex;
-  z-index: 9;
+  display: contents;
 }
 .view-image-lead img {
+  position: relative;
+  z-index: 1;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  border-radius: 3px;
 }
-.view-image-lead__in {
+.view-image-lead__in img {
   animation: view-image-lead-in 300ms;
 }
-.view-image-lead__out {
+.view-image-lead__out img {
   animation: view-image-lead-out 300ms forwards;
 }
 @keyframes view-image-lead-in {
@@ -5066,10 +5065,10 @@ body:not(.default) #app.layout #main .article-item {
   content: "";
   position: absolute;
   inset: 50% 0;
-  transform: translateX(-100%) translateY(-50%);
   width: 100%;
   height: 3px;
   background: rgba(255, 255, 255, 0.5);
+  transform: translateX(-100%) translateY(-50%);
   animation: view-image-loading 800ms -100ms ease-in-out infinite;
 }
 @keyframes view-image-loading {
@@ -5087,6 +5086,9 @@ body:not(.default) #app.layout #main .article-item {
   justify-content: space-between;
   align-content: center;
   color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 5px;
   margin-bottom: constant(safe-area-inset-bottom);
   margin-bottom: env(safe-area-inset-bottom);
 }
@@ -5094,10 +5096,12 @@ body:not(.default) #app.layout #main .article-item {
   width: 60px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
-.view-image-tools__flip div {
-  display: inline-flex;
+.view-image-tools__flip {
+  display: flex;
+  gap: 10px;
 }
-.view-image-tools__flip div:not(:last-child) {
-  margin-right: 10px;
+.view-image-tools [class*=-close] {
+  margin: 0 10px;
 }
