@@ -3808,23 +3808,16 @@ body .layout #notes .article-dialog .btn-clear {
   transform: scale(1.2);
   flex-shrink: 0;
 }
-body .layout #notes .article-dialog .modal-header {
-  border-bottom: 1px solid rgba(188, 195, 206, 0.1);
-}
 body .layout #notes .article-dialog .modal-title {
   margin: 0;
 }
 body .layout #notes .article-dialog .modal-container {
   position: relative;
-  box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(188, 195, 206, 0.1);
   border-radius: 0.5rem;
   padding: 2%;
   height: 80%;
   max-height: unset;
-  max-width: 720px;
-}
-body .layout #notes .article-dialog .modal-container > div {
-  padding: 3%;
+  max-width: 680px;
 }
 body .layout #notes .article-dialog .modal-container .notes-item {
   margin: 0;
@@ -3840,6 +3833,21 @@ body .layout #notes .article-dialog .modal-container .notes-item .tile-header, b
 }
 body .layout #notes .article-dialog .modal-body {
   overflow-x: hidden;
+}
+body .layout #notes .article-dialog .modal-body.note .affiliate .tile {
+  padding: 0.8rem;
+  background: rgba(188, 195, 206, 0.05);
+  border: 2px dashed rgba(188, 195, 206, 0.2);
+  border-radius: 0.2rem;
+}
+body .layout #notes .article-dialog .modal-body.note .affiliate .tile-icon {
+  display: none;
+}
+body .layout #notes .article-dialog .modal-body.note .affiliate .tile-centered {
+  flex-flow: row;
+}
+body .layout #notes .article-dialog .modal-body.note .affiliate .tile-content {
+  text-align: left;
 }
 body .layout .article-list {
   display: flex;
@@ -4163,7 +4171,7 @@ body .layout #comments .comment-list > li.comment > .children .children {
   margin: 0;
 }
 body .layout .load-next-comments {
-  margin: 8% 0;
+  margin: 5rem 0;
 }
 body .layout #footer {
   color: #bcc3ce;
@@ -4240,7 +4248,6 @@ body .layout #core {
     position: absolute;
     bottom: 0;
     animation: trans-to-top 300ms;
-    height: 70%;
   }
   @keyframes trans-to-top {
     0% {
@@ -4521,7 +4528,7 @@ body .text-white {
   color: #fff !important;
 }
 body .divider {
-  border-color: rgba(188, 195, 206, 0.15);
+  border-color: rgba(188, 195, 206, 0.1);
 }
 body .loading-full {
   position: absolute;
@@ -4578,9 +4585,6 @@ body .dashicons {
 }
 .dark #app.layout .modal-container {
   background-color: #303742;
-}
-.dark #app.layout .modal-container .card {
-  background-color: rgba(188, 195, 206, 0.1);
 }
 .dark #app.layout .modal-container .form-input {
   color: #bcc3ce;
@@ -4639,10 +4643,6 @@ body .dashicons {
 .dark #app.layout #comments #comment_form .form-input:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
-.dark #app.layout #comments .comment-list > li.comment {
-  background-color: rgba(48, 55, 66, 0.6);
-  box-shadow: none;
-}
 
 /* 定义 dark 模式的颜色 */
 @media (prefers-color-scheme: dark) {
@@ -4663,9 +4663,6 @@ body .dashicons {
   }
   body:not(.default) #app.layout .modal-container {
     background-color: #303742;
-  }
-  body:not(.default) #app.layout .modal-container .card {
-    background-color: rgba(188, 195, 206, 0.1);
   }
   body:not(.default) #app.layout .modal-container .form-input {
     color: #bcc3ce;
@@ -4723,9 +4720,5 @@ body:not(.default) #app.layout #main .article-item {
   }
   body:not(.default) #app.layout #comments #comment_form .form-input:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
-  }
-  body:not(.default) #app.layout #comments .comment-list > li.comment {
-    background-color: rgba(48, 55, 66, 0.6);
-    box-shadow: none;
   }
 }

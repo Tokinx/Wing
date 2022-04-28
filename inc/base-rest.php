@@ -1,11 +1,10 @@
 <?php
 
 /**
- * TODO:
- * [/]为避免接口滥用，后面需要校验nonce：wp_verify_nonce($nonce, 'wp_rest');
- * [/]热力图结果需要缓存，否则每次都会访问数据库，而且缓存的数据不是最新的，需要更新缓存
+ * REST API base class.
  **/
 
+// 校验nonce，防止滥用接口
 function check_nonce() {
 	$nonce = "";
 	if ( isset( $_REQUEST['_wpnonce'] ) ) {
@@ -15,7 +14,7 @@ function check_nonce() {
 	}
 	// 判断用户是否已登陆
 	if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) && ! is_user_logged_in() ) {
-//		wp_send_json( [ 'message' => '非法访问，请求被拒绝' ], 401 );
+		wp_send_json( [ 'message' => '非法访问，请求被拒绝' ], 401 );
 	}
 
 	return true;
@@ -25,8 +24,9 @@ function check_get_value( $key, $arr, $default = '' ) {
 	return array_key_exists( $key, $arr ) && isset( $arr[ $key ] ) ? $_GET[ $key ] : $default;
 }
 
+// 获取文章信息
 function ajax_get_all_posts_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 	global $_cache;
 	// 参数
 	$type = check_get_value( 'type', $_GET, 'single' );
@@ -87,7 +87,7 @@ function ajax_get_all_posts_callback() {
 	$args['fields']         = 'ids';
 	$count                  = get_posts( $args ); // 文章数量
 
-	$posts = array_map( function ( $post ) {
+	$posts = array_map( function ( $post ) use ( $type ) {
 		$post = formatter_article( $post );
 		// 获取tags和topic
 		$post->tags = [];
@@ -106,13 +106,21 @@ function ajax_get_all_posts_callback() {
 			if ( $key === 'images' && is_array( $value ) ) {
 				$ids          = explode( ',', $value[0] );
 				$post->images = array_map( function ( $id ) {
-					return wp_get_attachment_url( $id );
+					$url = wp_get_attachment_url( $id );
+
+					return $url;
+					// return replace_domain( $url );
 				}, $ids );
 			}
 		}
 		// 格式化文章内容
 		if ( $post->type === 'post' ) {
-			$post->content = mb_strimwidth( strip_shortcodes( strip_tags( $post->content ) ), 0, 200, '...' );
+			if ( $type === 'single' ) {
+				$post->content = static_cdn_replace( $post->content );
+				$post->content = dangopress_esc_html( $post->content );
+			} else {
+				$post->content = mb_strimwidth( strip_shortcodes( strip_tags( $post->content ) ), 0, 200, '...' );
+			}
 		}
 
 		$post->thumbnail = replace_domain( $post->thumbnail );
@@ -139,7 +147,7 @@ add_action( 'wp_ajax_nopriv_get_all_posts', 'ajax_get_all_posts_callback' );
 
 // 获取文章相关信息（前后文章、作者信息）TODO：相关文章
 function ajax_affiliate_info_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	if ( array_key_exists( 'post_id', $_GET ) ) {
 		$data = (object) [
@@ -174,7 +182,7 @@ add_action( 'wp_ajax_nopriv_get_affiliate_info', 'ajax_affiliate_info_callback' 
 
 // AJAX 提交评论
 function ajax_comment_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	$json    = json_decode( file_get_contents( 'php://input' ), true );
 	$comment = wp_handle_comment_submission( wp_unslash( $json ) );
@@ -197,25 +205,25 @@ add_action( 'wp_ajax_nopriv_submit_comment', 'ajax_comment_callback' );
 
 // AJAX 加载评论
 function ajax_get_next_comments_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
-	if ( array_key_exists( 'post', $_GET ) ) {
+	if ( array_key_exists( 'post_id', $_GET ) ) {
 		global $in_comment_loop;
 		$in_comment_loop = true;
 
 		$defaults = [
-			'post'   => null,
-			'type'   => 'all',
-			'page'   => 1,
-			'rows'   => get_option( 'comments_per_page' ),
-			'order'  => 'DESC',
-			'filter' => '',
+			'post_id' => null,
+			'type'    => 'all',
+			'page'    => 1,
+			'rows'    => get_option( 'comments_per_page' ),
+			'order'   => 'DESC',
+			'filter'  => '',
 		];
 
 		$parsed_args = wp_parse_args( $_GET, $defaults );
 
 		$comment_args = [
-			'post_id' => $parsed_args['post'],
+			'post_id' => $parsed_args['post_id'],
 			'orderby' => 'comment_date_gmt',
 			'order'   => $parsed_args['order'],
 			'status'  => 'approve',
@@ -315,7 +323,7 @@ add_action( 'wp_ajax_nopriv_get_next_comments', 'ajax_get_next_comments_callback
 
 // 点赞
 function ajax_praise_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	if ( array_key_exists( 'post_id', $_GET ) ) {
 		$post_id     = $_GET["post_id"];
@@ -338,7 +346,7 @@ add_action( 'wp_ajax_nopriv_submit_praise', 'ajax_praise_callback' );
 
 // 设置文章媒体信息
 function ajax_post_meta_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	// 仅限管理员
 	if ( is_super_admin() && array_key_exists( 'post_id', $_GET ) && array_key_exists( 'key', $_GET ) ) {
@@ -362,7 +370,7 @@ add_action( 'wp_ajax_nopriv_submit_post_meta', 'ajax_post_meta_callback' );
 
 // 获取文章媒体信息
 function ajax_get_post_meta_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	if ( is_admin() && array_key_exists( 'post_id', $_GET ) && array_key_exists( 'key', $_GET ) ) {
 		$post_id = $_GET["post_id"];
@@ -377,14 +385,14 @@ add_action( 'wp_ajax_nopriv_get_post_meta', 'ajax_get_post_meta_callback' );
 
 // 获取热力图数据
 function ajax_get_heatmap_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	global $_cache;
 
-	// if ($_cache->has('heatmap')) {
-	//   echo $_cache->get('heatmap', false);
-	//   wp_die();
-	// };
+	if ( $_cache->has( 'heatmap' ) ) {
+		wp_send_json_success($_cache->get( 'heatmap' ));
+		wp_die();
+	};
 
 	$calendar = [];
 
@@ -402,7 +410,7 @@ function ajax_get_heatmap_callback() {
 		'post_status'    => 'publish',
 		'orderby'        => 'date',
 		'order'          => 'ASC',
-		'author'         => get_current_user_id(),
+		'author__in'     => get_current_user_id(),
 		'date_query'     => [
 			'after' => "-$after_day day",
 		],
@@ -467,7 +475,7 @@ function ajax_get_heatmap_callback() {
 	$result = [
 		'notes'    => $_notes->publish,
 		'posts'    => $_posts->publish,
-		'days'     => $days,
+		'days'     => (string) max( $days, 1 ),
 		'calendar' => $calendar,
 	];
 
@@ -481,7 +489,7 @@ add_action( 'wp_ajax_nopriv_get_heatmap', 'ajax_get_heatmap_callback' );
 
 // 获取话题数据
 function ajax_get_topics_callback() {
-	check_nonce(); // 校验nonce，防止滥用接口
+	check_nonce();
 
 	$topics = get_terms( 'topic', [
 		'hide_empty' => true,

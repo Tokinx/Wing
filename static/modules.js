@@ -17,7 +17,7 @@ const $modules = new function () {
                                 </div>
                             </figure>
                         </div>
-                        <div class="tile-content my-2">
+                        <div class="tile-content my-2 p-0">
                             <div class="tile-title text-ellipsis">{{ author.display_name }}</div>
                             <small class="text-gray d-block">{{ author.description }}</small>
                         </div>
@@ -77,8 +77,13 @@ const $modules = new function () {
         },
         created() {
             this.getAffiliateInfo();
+        },
+        mounted() {
             this.$nextTick(() => {
-                new QRCode(this.$refs.qr, { text: location.href, correctLevel: QRCode.CorrectLevel.L });
+                new QRCode(this.$refs.qr, {
+                    text: JSON.stringify([location.href]),
+                    correctLevel: QRCode.CorrectLevel.L
+                });
             });
         },
         methods: {
@@ -636,6 +641,407 @@ const $modules = new function () {
             },
         },
     };
+
+
+    // 热力图
+    this.HeatMap = {
+        name: 'heat-map',
+        components: {
+            // Block
+            'heat-map-item': {
+                props: {
+                    day: String,
+                    states: { type: Object, default: () => ({}) },
+                },
+                template: `
+                    <div class="heatmap-map__item tooltip" :data-tooltip="tooltip">
+                        <div v-if="states" class="heatmap-map__item-block">
+                            <div v-for="(key, index) in Object.keys(states)" :key="index" :class="['heatmap-map__item-inner', key, { active: states[key] }]">
+                            </div>
+                        </div>
+                    </div>
+                `,
+                computed: {
+                    tooltip() {
+                        return `${this.day}\n${Object.keys(this.states).map(key => `${key}: ${this.states[key]}`).join('\n')}`;
+                    }
+                },
+            },
+        },
+        template: `
+            <div class="heatmap">
+                <div class="heatmap-mvp d-flex">
+                    <div class="heatmap-mvp__item">
+                        <h5>{{heatmap.days}}</h5>
+                        <span>DAYS</span>
+                    </div>
+                    <div class="heatmap-mvp__item">
+                        <h5>{{heatmap.notes}}</h5>
+                        <span>NOTES</span>
+                    </div>
+                    <div class="heatmap-mvp__item">
+                        <h5>{{heatmap.posts}}</h5>
+                        <span>POSTS</span>
+                    </div>
+                </div>
+                <div class="heatmap-map d-flex">
+                    <heat-map-item v-for="(item,index) in calendar" :key="index" v-bind="item"/>
+                </div>
+            </div>
+        `,
+        data() {
+            return {
+                loading: false,
+                heatmap: { calendar: [...Array(60)], days: '-', notes: '-', posts: '-' }
+            }
+        },
+        computed: {
+            calendar() {
+                const { calendar } = this.heatmap;
+                return Object.keys(calendar).map(day => ({ day, states: calendar[day] }));
+            }
+        },
+        created() {
+            this.getHeatmap();
+        },
+        methods: {
+            getHeatmap() {
+                this.loading = true;
+                $h.ajax({ query: { action: 'get_heatmap' } })
+                .then(({ data }) => {
+                    this.heatmap = data;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+            },
+        }
+    };
+    // 话题列表
+    this.TopicList = {
+        name: 'topic-list',
+        template: `
+            <ul class="topic-list menu">
+                <li v-for="topic in topics" :key="topic.id" class="menu-item" @click="handleTopic(topic)">
+                    <a href="javascript:void(0);" :class="{ active: active ===topic.name }">{{ topic.name }}</a>
+                    <div class="menu-badge">
+                        <label class="label text-tiny">{{ topic.count }}</label>
+                    </div>
+                </li>
+            </ul>
+        `,
+        props: {
+            active: String,
+        },
+        data() {
+            return {
+                loading: false,
+                topics: [],
+            }
+        },
+        created() {
+            this.getTopics();
+        },
+        methods: {
+            getTopics() {
+                this.loading = true;
+                $h.ajax({
+                    query: { action: 'get_topics' }
+                })
+                .then(({ data }) => {
+                    this.topics = data;
+                }).finally(() => {
+                    this.loading = false;
+                });
+            },
+            handleTopic(topic) {
+                this.$emit('topic', topic.name);
+            },
+        }
+    };
+    // 笔记卡片
+    this.NoteCard = {
+        name: 'note-card',
+        template: `
+            <div class="notes-item card uni-card">
+                <div class="tile card-body d-block">
+                    <div class="tile-header flex-center justify-between">
+                        <div class="text-gray text-tiny w-100 d-flex align-center">
+                            <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0" @click="handleArticle">
+                                <a :href="note.permalink">{{ note.title }}</a>
+                            </h3>
+                            <time v-else>{{ note_date }}</time>
+                        </div>
+
+                        <div v-if="logged && !isPost" class="dropdown">
+                            <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
+                                <i class="dashicons dashicons-ellipsis"></i>
+                            </button>
+                            <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
+                                <div v-if="loading" class="loading loading-full"></div>
+                                <li class="menu-item">
+                                    <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
+                                        class="align-center" style="display: flex;">
+                                        <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tile-content p-0">
+                        <div :class="['flex-wrap', { 'd-flex': !isPost }]">
+                            <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
+                            <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
+                        </div>
+                        <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
+                            <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
+                                <img class="s-rounded" :src="url" alt @click="handleViewImage(url)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tile-footer text-gray text-tiny flex-center justify-between">
+                        <div class="flex-center">
+                            <button v-if="category" class="btn btn-link btn-sm text-gray d-flex align-center">
+                                <i class="czs-read mr-1"></i> {{ category }}
+                            </button>
+                            <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleArticle">
+                                <i class="czs-talk mr-1"></i> {{ note.comment_count }}
+                            </button>
+                        </div>
+
+                        <time v-if="isPost">{{ note_date }}</time>
+                        <span v-else class="flex-center">
+                            <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `,
+        props: {
+            logged: { type: Boolean, default: false },
+            lately: { type: Boolean, default: true },
+            note: { type: Object, default: () => ({}) }
+        },
+        data() {
+            return {
+                loading: false,
+                menu: [
+                    { id: 'quote', icon: 'dashicons dashicons-format-quote', name: '引用' },
+                    { id: 'edit', icon: 'dashicons dashicons-edit', name: '编辑' },
+                    { id: 'delete', icon: 'dashicons dashicons-trash', name: '删除' },
+                    { id: 'like', icon: 'dashicons dashicons-heart', name: '喜欢' },
+                ],
+            }
+        },
+        computed: {
+            isPost() {
+                return this.note.type === 'post';
+            },
+            superContent() {
+                let content = this.note.content;
+                if ( !content ) return '';
+                if ( this.isPost ) return content;
+                // 高亮话题 #话题1 话题2
+                (content.match(/#([^#|^<]+)/g) || []).forEach(topic => {
+                    content = content.replace(topic, `<span class="chip c-hand text-primary" data-topic="${topic}">${topic}</span>`);
+                });
+
+                // 高亮引用 /note/5841
+                (content.match(/(\/note\/\d+)/g) || []).forEach(quote => {
+                    const id = quote.replace('/note/', '');
+                    content = content.replace(quote, `<a href="javascript:void(0);" class="text-primary" data-quote="${id}">${quote}</a>`);
+                });
+
+                // url转link
+                let url_regex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z\d][a-zA-Z\d-]+[a-zA-Z\d]\.[^\s|^<]{2,}|www\.[a-zA-Z\d][a-zA-Z\d-]+[a-zA-Z\d]\.[^\s|^<]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z\d]+\.[^\s|^<]{2,}|www\.[a-zA-Z\d]+\.[^\s|^<]{2,})/g;
+                let url_match = content.match(url_regex);
+                if ( url_match ) {
+                    url_match.forEach(url => {
+                        content = content.replace(url, `<a href="${url}" target="_blank" class="chip text-primary" style="text-decoration: none;"><i class="dashicons dashicons-external"></i> Link</a>`);
+                    });
+                }
+
+                return content;
+            },
+            category() {
+                return (this.note.category || []).map(({ name }) => name).join(', ');
+            },
+            note_date() {
+                if ( !this.note.date ) return '';
+                if ( this.lately ) {
+                    return Lately && Lately.format(this.note.date);
+                }
+                return dayjs && dayjs(this.note.date).format('YYYY-MM-DD HH:mm:ss');
+            },
+            // 防抖
+            debounceMenuClick() {
+                return $h.debounce(this.handleMenuClick, 500);
+            },
+        },
+        methods: {
+            handleDelegate(e) {
+                const { dataset } = e.target;
+                if ( dataset && dataset.topic ) {
+                    this.$emit('topic', dataset.topic.replace('#', ''));
+                }
+                if ( dataset && dataset.quote ) {
+                    this.openArticleDialog(dataset.quote);
+                }
+            },
+            handleArticle(e) {
+                if ( e.ctrlKey || e.metaKey || e.shiftKey || e.altKey ) return;
+                e.stopPropagation();
+                e.preventDefault();
+                this.openArticleDialog(this.note.id);
+                return false;
+            },
+            openArticleDialog(post_id, type = 'post') {
+                $modules.ArticleDialog(post_id, type);
+            },
+            handleMenuClick(item) {
+                // 防抖
+                if ( this.loading ) return;
+                const { id, type } = this.note;
+                console.log(item)
+                switch (item.id) {
+                    case 'quote':
+                        this.$emit('event', { event: item.id });
+                        break;
+                    case 'edit':
+                        this.$emit('event', { event: item.id });
+                        break;
+                    case 'delete':
+                        this.loading = true;
+                        $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: true } })
+                        .then(({ code, message }) => {
+                            if ( !!code ) {
+                                this.$toast({ type: 'error', message });
+                            } else {
+                                this.$toast({ type: 'success', message: '删除成功' });
+                                this.$emit('event', { event: item.id });
+                            }
+                        }).finally(() => {
+                            this.loading = false;
+                        })
+                        break;
+                }
+            },
+            handleViewImage(url) {
+                window.ViewImage && ViewImage.display(this.note.images, url);
+            }
+        }
+    };
+
+
+    // 显示笔记、文章
+    this.ArticleDialog = (post_id) => {
+        const Dialog = Vue.extend({
+            template: `
+                <div class="modal active article-dialog">
+                    <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
+                    <div v-if="loading" class="loading"></div>
+                    <div v-else class="modal-container uni-shadow">
+                        <div class="flex-center justify-between align-start p-2">
+                            <div class="modal-title article-header m-0">
+                                <h1 v-if="note.title" itemprop="name headline" class="article-title h3 mb-2">{{ note.title }}</h1>
+                                <ul class="article-info d-flex text-gray text-tiny reset-ul m-0">
+                                    <li>
+                                        <i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
+                                    </li>
+                                    <li>
+                                        <i class="czs-heart"></i> <span id="Praise">{{ note_praise }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></a>
+                        </div>
+                        <div ref="body" :class="['modal-body p-0 px-2', note.type]" @scroll="debounceScroll">
+                            <template  v-if="note.type === 'note'">
+                                <div class="divider" style="margin-bottom: 1rem;"></div>
+                                <note-card v-bind="{ lately, note }"/>
+                            </template>
+                            <template v-else>
+                                <article class="article-content" v-html="note.content"></article>
+                            </template>
+                            <comment-area ref="comments" />
+                        </div>
+                    </div>
+                </div>
+            `,
+            components: {
+                'note-card': $modules.NoteCard,
+                'comment-area': {
+                    mixins: [$modules.CommentArea],
+                    data() {
+                        return { post_id, ...$config.comment };
+                    },
+                },
+            },
+            data() {
+                return { loading: false, note: {}, ...$config };
+            },
+            computed: {
+                note_date() {
+                    if ( !this.note.date ) return '';
+                    if ( this.lately ) {
+                        return Lately && Lately.format(this.note.date);
+                    }
+                    return dayjs && dayjs(this.note.date).format('YYYY-MM-DD');
+                },
+                note_praise() {
+                    return String(this.note.fields && (this.note.fields.praise || 0));
+                },
+                debounceScroll() {
+                    return $h.throttle(this.handleScroll, 300);
+                },
+            },
+            created() {
+                this.getNote();
+            },
+            methods: {
+                getNote() {
+                    this.loading = true;
+                    $h.ajax({ query: { action: 'get_all_posts', type: 'single', ids: post_id, page: 1, rows: 1 } })
+                    .then(({ data }) => {
+                        if ( data && data.length ) {
+                            const { id, type, permalink } = this.note = data[0];
+                            const href = type === 'note' ? `${$config.permalink}?note=${id}` : permalink;
+                            if ( history.state ) {
+                                history.state.url = href;
+                            }
+                            history.replaceState(history.state, null, href);
+                        } else {
+                            this.close();
+                            this.$toast({ type: 'warning', message: '资源已被删除' });
+                        }
+                    }).finally(() => {
+                        this.loading = false;
+                        this.$nextTick(() => {
+                            this.handleScroll({ target: this.$refs.body });
+                            _exReload && _exReload();
+                        });
+                    });
+                },
+                handleScroll(e) {
+                    const { scrollTop, scrollHeight, clientHeight } = e.target;
+                    if ( (scrollTop !== 0 && scrollHeight < scrollTop + clientHeight + 100)
+                        || (scrollHeight - 100) <= clientHeight ) {
+                        if ( this.$refs.comments || this.$refs.comments.pagination.rolling ) {
+                            this.$refs.comments.loadNextComments();
+                        }
+                    }
+                },
+                // 销毁实例
+                destroy() {
+                    if ( history.state ) history.state.url = $config.permalink;
+                    history.replaceState(history.state, null, $config.permalink);
+                    this.$el.remove();
+                }
+            },
+        });
+        const vm = new Dialog({ el: document.createElement('div') });
+        document.querySelector('#notes').appendChild(vm.$el);
+    }
 
 
     // 友情链接设置
