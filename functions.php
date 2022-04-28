@@ -105,10 +105,10 @@ function bark_push_msg( $comment_id ) {
 	if ( (int) $comment->comment_parent <= 0 || $comment->comment_approved === 'spam' ) {
 		return false;
 	}
-	$token     = get_theme_mod( 'biji_setting_bark' );
-	$blog_name = get_bloginfo( 'name' );
-	$title     = get_the_title( $comment->comment_post_ID );
-	$message   = $comment->comment_author . '：' . $comment->comment_content;
+	$token     = trim( get_theme_mod( 'biji_setting_bark' ) );
+	$blog_name = trim( get_bloginfo( 'name' ) );
+	$title     = trim( get_the_title( $comment->comment_post_ID ) ) ?: $blog_name;
+	$message   = trim( $comment->comment_author . '：' . $comment->comment_content );
 	$avatar    = get_avatar_url( $comment->comment_author_email );
 	$replay    = htmlspecialchars( get_comment_link( $comment_id ) );
 	if ( strpos( $avatar, 'http' ) !== 0 ) {
@@ -148,7 +148,7 @@ function comment_mail_notify( $comment_id ) {
 						<tr>
 							<td style="color: #000; line-height: 1.6;">
 								<h1 style="font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center">
-								' . get_the_title( $comment->comment_post_ID ) . '
+								' . get_the_title( $comment->comment_post_ID ) ?: get_bloginfo( "name" ) . '
 								</h1>
 								<div style="height: 240px;background-color: #3274ff;"></div>
 								<div style="margin: -120px 4% 0;background-color: #fff;font-size: 18px;padding: 8%;box-shadow: 0 0 0 1px rgb(0, 85, 255, 0.1), 3px 3px 0 rgb(0, 85, 255, 0.1);font-size: 14px;">

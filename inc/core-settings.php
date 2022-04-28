@@ -43,15 +43,13 @@ function theme_customize_register( $wp_customize ) {
 						'label'       => '首页过滤分类',
 						'description' => $category_checkbox . '
 						<script>
-							(($) => {
-								const biji_setting_exclude = $("#_customize-input-biji_setting_exclude").hide();
-								function bijiHandleExcludeChange(result = []) {
-									$(".biji_setting_exclude:checked").each(function() {
-										result.push(this.value);
-									});
-									biji_setting_exclude.val(String(result)).trigger("input");
-								}
-							})(jQuery)
+							const biji_setting_exclude = jQuery("#_customize-input-biji_setting_exclude").hide();
+							function bijiHandleExcludeChange(result = []) {
+								jQuery(".biji_setting_exclude:checked").each(function() {
+									result.push(this.value);
+								});
+								biji_setting_exclude.val(String(result)).trigger("input");
+							}
 						</script>',
 						// 'input_attrs' => ['placeholder' => "例如：1, 2, 3"],
 					]
