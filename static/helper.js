@@ -1,5 +1,6 @@
 // Helper
 const $h = {
+    bus: new Vue(),
     tasks: {},
     store: {},
     // 更新URL

@@ -6,7 +6,7 @@
 				$thumbnail = get_thumbnail();
 				$maskTag   = ! post_password_required() ? 'a' : 'div';
 				?>
-                <article class="card article-item">
+                <article class="card uni-card article-item">
                 <<?= $maskTag ?> href="<?php the_permalink(); ?>" class="article-mask">
 				<?php if ( $thumbnail ) { ?>
                     <div class="article-thumbnail" style="background-image: url('<?= $thumbnail; ?>');"></div>

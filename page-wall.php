@@ -13,7 +13,7 @@ if ( have_posts() ) {
         <ul class="article-cards columns reset-ul">
 			<?php foreach ( get_readers_wall() as $comment ) { ?>
                 <li class="column col-3 col-sm-4 col-xs-6 p-2">
-                    <div class="card flex-center text-center p-2">
+                    <div class="card uni-card flex-center text-center p-2">
                         <a class="text-gray text-tiny m-2"
                            href="<?= ( $comment->comment_author_url ?: 'javascript:void(0);' ) ?>"
                            target="<?= ( $comment->comment_author_url ? '_blank' : '_self' ) ?>"
