@@ -159,10 +159,10 @@ function comment_mail_notify( $comment_id ) {
 												' . trim( $parent->comment_content ) . '
 											</div>
 										</div>
-										<img src="' . imgToBase64( get_avatar_url( $to ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
+										<img src="' . get_image_base64( get_avatar_url( $to ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
 									</div>
 									<div>
-									<img src="' . imgToBase64( get_avatar_url( trim( $comment->comment_author_email ) ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
+									<img src="' . get_image_base64( get_avatar_url( trim( $comment->comment_author_email ) ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
 										<div style="display: inline-block;width: 80%;">
 											<span style="color: #666;">' . $comment->comment_author . '</span>
 											<div style="background-color: #3274ff;color:#fff;border-radius: 10px;border-top-left-radius: 0;padding: 5% 8%;">

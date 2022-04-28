@@ -361,7 +361,7 @@ function get_readers_wall() {
 }
 
 // 图片转base64，捕获异常
-function imgToBase64( $url = '' ): string {
+function get_image_base64( $url = '' ) {
 	try {
 		if ( strpos( $url, 'http' ) !== 0 ) {
 			$url = 'https:' . $url;
