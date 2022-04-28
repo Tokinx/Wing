@@ -237,7 +237,7 @@ add_filter( 'the_content', 'password_protected_change' );
 
 // 获取皮肤模式
 function the_skin_mode() {
-	$mode = $_COOKIE['skin-mode'] ?? get_theme_mod( 'biji_setting_mode', '' );
+	$mode = $_COOKIE['skin-mode'] ?? get_theme_mod( 'biji_setting_mode', 'auto' );
 	print $mode;
 }
 

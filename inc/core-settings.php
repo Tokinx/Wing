@@ -101,12 +101,12 @@ function theme_customize_register( $wp_customize ) {
 				],
 				[
 					"id"      => "biji_setting_mode",
-					"setting" => [ "default" => "" ],
+					"setting" => [ "default" => "auto" ],
 					"control" => [
 						'label'   => '主题色彩模式',
 						'type'    => 'radio',
 						'choices' => [
-							''        => "自适应",
+							'auto'    => "自适应",
 							'default' => "标准",
 							'dark'    => "暗黑",
 //							'relax'   => "护眼",

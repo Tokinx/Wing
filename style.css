@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.0
+	Version: 0.5.1
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -4646,79 +4646,79 @@ body .dashicons {
 
 /* 定义 dark 模式的颜色 */
 @media (prefers-color-scheme: dark) {
-  body:not(.default) {
+  body.auto {
     background: #232830;
   }
-  body:not(.default) .chip {
+  body.auto .chip {
     background-color: rgba(188, 195, 206, 0.1);
   }
-  body:not(.default) .loading-full {
+  body.auto .loading-full {
     background-color: rgba(42, 48, 57, 0.5);
   }
-  body:not(.default) #app.layout .uni-bg, body:not(.default) #app.layout #main {
+  body.auto #app.layout .uni-bg, body.auto #app.layout #main {
     background-color: #2a3039;
   }
-  body:not(.default) #app.layout .modal-overlay {
+  body.auto #app.layout .modal-overlay {
     background-color: rgba(48, 55, 66, 0.8);
   }
-  body:not(.default) #app.layout .modal-container {
+  body.auto #app.layout .modal-container {
     background-color: #303742;
   }
-  body:not(.default) #app.layout .modal-container .form-input {
+  body.auto #app.layout .modal-container .form-input {
     color: #bcc3ce;
     background-color: rgba(188, 195, 206, 0.1);
   }
-  body:not(.default) #app.layout .modal-container .form-input:not(:focus) {
+  body.auto #app.layout .modal-container .form-input:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
-  body:not(.default) #app.layout #header .logo .fullname a {
+  body.auto #app.layout #header .logo .fullname a {
     color: #f7f8f9;
   }
-  body:not(.default) #app.layout #header .header__right .dark-mode-btn {
+  body.auto #app.layout #header .header__right .dark-mode-btn {
     display: none;
   }
-  body:not(.default) #app.layout #header .header__right .light-mode-btn {
+  body.auto #app.layout #header .header__right .light-mode-btn {
     display: inline-flex;
   }
-  body:not(.default) #app.layout #aside {
+  body.auto #app.layout #aside {
     background: #303742;
   }
-  body:not(.default) #app.layout #aside .header-nav li:not([class*=current-]),
-body:not(.default) #app.layout #aside .footer-nav li:not([class*=current-]) {
+  body.auto #app.layout #aside .header-nav li:not([class*=current-]),
+body.auto #app.layout #aside .footer-nav li:not([class*=current-]) {
     color: #bcc3ce;
   }
-  body:not(.default) #app.layout #main {
+  body.auto #app.layout #main {
     color: #f7f8f9;
   }
-  body:not(.default) #app.layout #main .content::after, body:not(.default) #app.layout #main {
+  body.auto #app.layout #main .content::after, body.auto #app.layout #main {
     background-color: #2a3039;
   }
-  body:not(.default) #app.layout #main .notes-mask:not(:hover) .card-title,
-body:not(.default) #app.layout #main .article-mask:not(:hover) .card-title {
+  body.auto #app.layout #main .notes-mask:not(:hover) .card-title,
+body.auto #app.layout #main .article-mask:not(:hover) .card-title {
     color: #f7f8f9 !important;
   }
-  body:not(.default) #app.layout #main .notes-item,
-body:not(.default) #app.layout #main .article-item {
+  body.auto #app.layout #main .notes-item,
+body.auto #app.layout #main .article-item {
     background-color: rgba(102, 117, 140, 0.1);
     box-shadow: unset;
   }
-  body:not(.default) #app.layout #main .pagination li a {
+  body.auto #app.layout #main .pagination li a {
     color: #f7f8f9;
   }
-  body:not(.default) #app.layout #notes .notes-item .tile-header h3 a:not(:hover) {
+  body.auto #app.layout #notes .notes-item .tile-header h3 a:not(:hover) {
     color: #fff;
   }
-  body:not(.default) #app.layout #notes .notes-tabbar {
+  body.auto #app.layout #notes .notes-tabbar {
     background-color: #2a3039;
   }
-  body:not(.default) #app.layout #comments #comment_form .userinfo {
+  body.auto #app.layout #comments #comment_form .userinfo {
     background-color: #303742;
     box-shadow: 0 0 2rem 1px rgba(188, 195, 206, 0.2), 0 0 0 999rem rgba(48, 55, 66, 0.2);
   }
-  body:not(.default) #app.layout #comments #comment_form .form-input {
+  body.auto #app.layout #comments #comment_form .form-input {
     color: #bcc3ce;
   }
-  body:not(.default) #app.layout #comments #comment_form .form-input:not(:focus) {
+  body.auto #app.layout #comments #comment_form .form-input:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
 }
