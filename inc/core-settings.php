@@ -60,7 +60,7 @@ function theme_customize_register( $wp_customize ) {
 					"id"      => "biji_setting_prettify",
 					"setting" => [ "default" => true ],       // , "transport" => "postMessage"
 					"control" => [
-						'label'       => '文章代码高亮',
+						'label'       => '开启代码高亮',
 						'description' => '如安装了代码高亮插件，可以关闭此选项',
 						'type'        => 'checkbox',
 					]
@@ -69,7 +69,7 @@ function theme_customize_register( $wp_customize ) {
 					"id"      => "biji_setting_lately",
 					"setting" => [ "default" => true ],
 					"control" => [
-						'label'       => '文章过去时间',
+						'label'       => '开启时间格式化',
 						'description' => '开启后文章时间显示为：XX前',
 						'type'        => 'checkbox',
 					]
@@ -84,6 +84,24 @@ function theme_customize_register( $wp_customize ) {
 					]
 				],
 				[
+					"id"      => "biji_setting_author_information",
+					"setting" => [ "default" => true ],
+					"control" => [
+						'label'       => '开启作者信息栏',
+						'description' => '文章结尾显示作者信息栏，支持点赞和二维码',
+						'type'        => 'checkbox',
+					]
+				],
+				[
+					"id"      => "biji_setting_adjacent_articles",
+					"setting" => [ "default" => false ],
+					"control" => [
+						'label'       => '开启相邻文章',
+						'description' => '文章结尾显示前一篇、后一篇文章',
+						'type'        => 'checkbox',
+					]
+				],
+				[
 					"id"      => "biji_setting_mode",
 					"setting" => [ "default" => "" ],
 					"control" => [
@@ -93,7 +111,7 @@ function theme_customize_register( $wp_customize ) {
 							''        => "自适应",
 							'default' => "标准",
 							'dark'    => "暗黑",
-							// 'relax' => "护眼",
+//							'relax'   => "护眼",
 						]
 					]
 				],

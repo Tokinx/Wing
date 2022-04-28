@@ -26,7 +26,7 @@ function biji_enqueue_scripts() {
 	wp_enqueue_style( 'style', get_template_directory_uri() . '/style.css', [], THEME_VERSION );
 
 	wp_deregister_script( 'jquery' ); // 禁用jQuery
-	wp_enqueue_script( 'vue', '//cdn.staticfile.org/vue/2.6.14/vue.min.js', [], THEME_VERSION, true );
+	wp_enqueue_script( 'vue', '//cdn.staticfile.org/vue/2.6.14/vue.min.js', [], THEME_VERSION, false );
 	// 开启代码高亮
 	if ( get_theme_mod( 'biji_setting_prettify', true ) ) {
 		wp_enqueue_script( 'prettify', '//cdn.staticfile.org/prettify/r298/prettify.js', [], THEME_VERSION, true );
@@ -102,7 +102,7 @@ function bark_push_msg( $comment_id ) {
 		return false;
 	}
 	$comment = get_comment( $comment_id );
-	if ( ( $comment->comment_parent == '' ) || ( $comment->comment_approved == 'spam' ) ) {
+	if ( (int) $comment->comment_parent <= 0 || $comment->comment_approved === 'spam' ) {
 		return false;
 	}
 	$token     = get_theme_mod( 'biji_setting_bark' );
@@ -266,6 +266,17 @@ function the_visitor_info() {
 			$data['url'] = $_COOKIE[ 'comment_author_url_' . COOKIEHASH ];
 		}
 	}
+	print json_encode( $data, JSON_UNESCAPED_SLASHES );
+}
+
+// 获取作者信息
+function the_author_info( $post_id = null ) {
+	$post = get_post( $post_id );
+	$data = [
+		"display_name" => get_the_author_meta( 'display_name', $post->post_author ),
+		"description"  => get_the_author_meta( 'description', $post->post_author ),
+		"avatar"       => get_avatar_url( $post->post_author ),
+	];
 	print json_encode( $data, JSON_UNESCAPED_SLASHES );
 }
 

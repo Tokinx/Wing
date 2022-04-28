@@ -23,7 +23,7 @@
         window.Lately && Lately.init();
 		<?php } ?>
 		<?php if (get_theme_mod( 'biji_setting_view_image', true )) { ?>
-        window.ViewImage && ViewImage.init();
+        window.ViewImage && ViewImage.init('article img:not(.avatar)');
 		<?php } ?>
 		<?php if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
         window.prettyPrint && prettyPrint();

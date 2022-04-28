@@ -1,103 +1,4 @@
 const $base = window.BaseData || {};
-/**
- * ViewImage Native JavaScript Lightbox Plugin
- *
- * @name ViewImage.js
- * @version 2.0.0
- * @author Tokinx
- * @license MIT License - http://www.opensource.org/licenses/mit-license.php
- *
- * For usage and examples, visit:
- * https://tokinx.github.io/ViewImage/
- *
- * Copyright (c) 2017, biji.io
- */
-(() => {
-    window.ViewImage = new function () {
-        this.target = 'article img';
-        this.listener = (e) => {
-            const el = e.target.closest(this.target);
-            if ( !el ) return;
-            const root = this.target.replace(/\s.+/, '');
-            const images = [...document.querySelectorAll(`${root === 'img' ? '' : root} img`)].map(img => img.src);
-            this.display(images, e.target.src);
-            e.stopPropagation();
-            e.preventDefault();
-        };
-        this.init = (val) => {
-            if ( val ) this.target = val;
-            ['removeEventListener', 'addEventListener'].forEach(method => {
-                document[method]('click', this.listener, false);
-            });
-        }
-        this.display = (images, src) => {
-            let index = images.indexOf(src);
-            const $el = new DOMParser().parseFromString(`
-                <div class="view-image">
-                    <div class="view-image-container">
-                        <div class="view-image-lead"></div>
-                        <div class="view-image-loading"></div>
-                        <div class="view-image-close view-image-close__full"></div>
-                    </div>
-                    <div class="view-image-tools">
-                        <div class="view-image-tools__count">
-                            <span><b class="view-image-index">${index + 1}</b>/${images.length}</span>
-                        </div>
-                        <div class="view-image-tools__flip">
-                            <div class="view-image-btn view-image-tools__flip-prev">
-                                <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="white" fill-opacity="0.01"/><path d="M31 36L19 24L31 12" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </div>
-                            <div class="view-image-btn view-image-tools__flip-next">
-                                <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="white" fill-opacity="0.01"/><path d="M19 12L31 24L19 36" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </div>
-                        </div>
-                        <div class="view-image-btn view-image-close">
-                            <svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="white" fill-opacity="0.01"/><path d="M8 8L40 40" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 40L40 8" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </div>
-                    </div>
-                </div>
-            `, 'text/html').body.firstChild,
-                keyFn = function (e) {
-                    const keyMap = { Escape: 'close', ArrowLeft: 'tools__flip-prev', ArrowRight: 'tools__flip-next' };
-                    if ( keyMap[e.key] ) $el.querySelector(`.view-image-${keyMap[e.key]}`).click();
-                },
-                loadImage = (src) => {
-                    const img = new Image(), $lead = $el.querySelector('.view-image-lead');
-                    $lead.className = "view-image-lead view-image-lead__out";
-                    setTimeout(() => {
-                        $lead.innerHTML = "";
-                        img.onload = function () {
-                            setTimeout(() => {
-                                $lead.innerHTML = `<img src="${img.src}" alt="ViewImage"/>`;
-                                $lead.className = "view-image-lead view-image-lead__in";
-                            }, 100);
-                        };
-                        img.src = src;
-                    }, 300);
-                };
-            document.body.appendChild($el);
-            loadImage(src);
-
-            window.addEventListener("keydown", keyFn);
-            $el.onclick = (e) => {
-                if ( e.target.closest('.view-image-close') ) {
-                    window.removeEventListener("keydown", keyFn);
-                    $el.onclick = null;
-                    $el.classList.add('view-image__out');
-                    setTimeout(() => $el.remove(), 300);
-                } else if ( e.target.closest('.view-image-tools__flip') ) {
-                    if ( e.target.closest('.view-image-tools__flip-prev') ) {
-                        index = index === 0 ? images.length - 1 : index - 1;
-                    } else {
-                        index = index === images.length - 1 ? 0 : index + 1;
-                    }
-                    loadImage(images[index]);
-                    $el.querySelector('.view-image-index').innerHTML = index + 1;
-                }
-            };
-        }
-    }
-})();
 
 // Pjax
 class WingPjax {
@@ -183,13 +84,7 @@ class WingPjax {
 
     // 事件委托
     delegate(element, eventType, selector, fn) {
-        // const find = (el) => {
-        //   if (element === el) return null;
-        //   if (el.matches(selector)) return el;
-        //   return find(el.parentNode);
-        // }
         element.addEventListener(eventType, e => {
-            // const el = find(e.target);
             const el = e.target.closest(selector);
             el && fn.call(el, e, el);
         });
@@ -275,18 +170,18 @@ class WingPjax {
     };
 }
 
-Vue.prototype.$toast = ({ message, type }, timer = 2000) => {
+Vue.prototype.$toast = function (params, timer) {
     const Toast = Vue.extend({
         template: `
-            <div :class="['vue-toast toast', 'toast-${type || 'default'}']">
+            <div :class="['vue-toast toast', 'toast-${(params || {}).type}']">
                 <button class="btn btn-clear float-right" @click="$el.remove()"></button>
-                <span>${message}</span>
+                <span>${(params || {}).message}</span>
             </div>
         `,
         destroyed() {
             setTimeout(() => {
                 this.$el.remove();
-            }, timer);
+            }, timer || 2000);
         }
     });
     const vm = new Toast({ el: document.createElement('div') });
@@ -297,9 +192,7 @@ Vue.prototype.$toast = ({ message, type }, timer = 2000) => {
 window.$vm = new Vue({
     el: '#app',
     data() {
-        return {
-            animation: "",
-        };
+        return { animation: "" };
     },
     mounted() {
         new WingPjax({
@@ -335,19 +228,17 @@ window.$vm = new Vue({
             const scrollTop = body.scrollTop;
             const scrollHeight = body.scrollHeight;
 
-            // 滚动加载评论
             if ( scrollTop !== 0 && scrollHeight < scrollTop + clientHeight + 100 ) {
-                const $article = window.ArticleData
-                if ( $article && $article.el && document.querySelector($article.el) ) {
-                    if ( $article.pagination && $article.pagination.rolling && $h.store.affiliate ) {
-                        $h.store.affiliate.loadComment();
-                    }
+                // 滚动加载评论
+                if ( $h.store.comments && $h.store.comments.pagination.rolling ) {
+                    $h.store.comments.loadNextComments();
                 }
+                // 滚动加载笔记
                 if ( $h.store.notes ) {
                     $h.store.notes.handleNextPage();
                 }
             }
-        }, 200);
+        }, 300);
         window.addEventListener('scroll', throttleScroll);
         throttleScroll();
     },

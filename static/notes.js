@@ -124,21 +124,21 @@
     const NoteCard = {
         name: 'note-card',
         template: `
-            <div class="notes-item card">
+            <div class="notes-item card uni-card">
                 <div class="tile card-body d-block">
                     <div class="tile-header flex-center justify-between">
                         <div class="text-gray text-tiny w-100 d-flex align-center">
-                            <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
+                            <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0" @click="handleArticle">
                                 <a :href="note.permalink">{{ note.title }}</a>
                             </h3>
                             <time v-else>{{ note_date }}</time>
                         </div>
 
                         <div v-if="logged && !isPost" class="dropdown">
-                            <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
+                            <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
                                 <i class="dashicons dashicons-ellipsis"></i>
-                            </a>
-                            <ul class="menu" style="left: unset;right: 0;">
+                            </button>
+                            <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
                                 <div v-if="loading" class="loading loading-full"></div>
                                 <li class="menu-item">
                                     <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
@@ -165,7 +165,7 @@
                             <button v-if="category" class="btn btn-link btn-sm text-gray d-flex align-center">
                                 <i class="czs-read mr-1"></i> {{ category }}
                             </button>
-                            <button class="btn btn-link btn-sm text-gray d-flex align-center">
+                            <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleArticle">
                                 <i class="czs-talk mr-1"></i> {{ note.comment_count }}
                             </button>
                         </div>
@@ -187,21 +187,10 @@
             return {
                 loading: false,
                 menu: [
-                    {
-                        id: 'quote',
-                        icon: 'dashicons dashicons-format-quote',
-                        name: '引用',
-                    },
-                    {
-                        id: 'edit',
-                        icon: 'dashicons dashicons-edit',
-                        name: '编辑',
-                    },
-                    {
-                        id: 'trash',
-                        icon: 'dashicons dashicons-trash',
-                        name: '删除',
-                    }
+                    { id: 'quote', icon: 'dashicons dashicons-format-quote', name: '引用' },
+                    { id: 'edit', icon: 'dashicons dashicons-edit', name: '编辑' },
+                    { id: 'delete', icon: 'dashicons dashicons-trash', name: '删除' },
+                    { id: 'like', icon: 'dashicons dashicons-heart', name: '喜欢' },
                 ],
             }
         },
@@ -239,7 +228,7 @@
                 return (this.note.category || []).map(({ name }) => name).join(', ');
             },
             note_date() {
-                if( !this.note.date ) return '';
+                if ( !this.note.date ) return '';
                 if ( this.lately ) {
                     return Lately && Lately.format(this.note.date);
                 }
@@ -257,13 +246,24 @@
                     this.$emit('topic', dataset.topic.replace('#', ''));
                 }
                 if ( dataset && dataset.quote ) {
-                    QuoteDialog(dataset.quote, this.lately);
+                    this.openArticleDialog(dataset.quote);
                 }
+            },
+            handleArticle(e) {
+                if ( e.ctrlKey || e.metaKey || e.shiftKey || e.altKey ) return;
+                e.stopPropagation();
+                e.preventDefault();
+                this.openArticleDialog(this.note.id);
+                return false;
+            },
+            openArticleDialog(post_id, type = 'post') {
+                ArticleDialog(post_id, type);
             },
             handleMenuClick(item) {
                 // 防抖
                 if ( this.loading ) return;
                 const { id, type } = this.note;
+                console.log(item)
                 switch (item.id) {
                     case 'quote':
                         this.$emit('event', { event: item.id });
@@ -271,12 +271,9 @@
                     case 'edit':
                         this.$emit('event', { event: item.id });
                         break;
-                    case 'trash':
+                    case 'delete':
                         this.loading = true;
-                        $h.rest(`wp/v2/${type}s/${id}`, {
-                            method: 'DELETE',
-                            query: { force: true },
-                        })
+                        $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: true } })
                         .then(({ code, message }) => {
                             if ( !!code ) {
                                 this.$toast({ type: 'error', message });
@@ -296,22 +293,65 @@
         }
     };
 
-    // 显示引用卡片
-    const QuoteDialog = (note_id, lately) => {
+    // 显示笔记、文章
+    const ArticleDialog = (post_id) => {
         const Dialog = Vue.extend({
             template: `
-                <div class="modal active quote-dialog">
-                    <a href="javascript:void(0);" class="modal-overlay" @click="$el.remove()"></a>
-                    <div class="modal-container p-0">
-                        <div v-if="loading" class="loading loading-full"></div>
-                        <a href="javascript:void(0);" class="btn btn-clear m-0" @click="$el.remove()"></a>
-                        ${NoteCard.template}
+                <div class="modal active article-dialog">
+                    <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
+                    <div v-if="loading" class="loading"></div>
+                    <div v-else class="modal-container">
+                        <div class="modal-header flex-center justify-between align-start">
+                            <div class="modal-title article-header m-0">
+                                <h1 v-if="note.title" itemprop="name headline" class="article-title h3 mb-2">{{ note.title }}</h1>
+                                <ul class="article-info d-flex text-gray text-tiny reset-ul m-0">
+                                    <li>
+                                        <i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
+                                    </li>
+                                    <li>
+                                        <i class="czs-heart"></i> <span id="Praise">{{ note_praise }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></a>
+                        </div>
+                        <div class="modal-body" @scroll="debounceScroll">
+                            <note-card v-if="note.type === 'note'" v-bind="{ lately, note }"/>
+                            <template v-else>
+                                <article class="article-content" v-html="note.content"></article>
+                            </template>
+                            <div class="divider" style="margin: 1rem 0;"></div>
+                            <comment-area ref="comments" />
+                        </div>
                     </div>
                 </div>
             `,
-            mixins: [NoteCard],
+            components: {
+                'note-card': NoteCard,
+                'comment-area': {
+                    mixins: [$modules.CommentArea],
+                    data() {
+                        return { post_id, ...$config.comment };
+                    },
+                },
+            },
             data() {
-                return { loading: false, lately, note: null }
+                return { loading: false, note: {}, ...$config };
+            },
+            computed: {
+                note_date() {
+                    if ( !this.note.date ) return '';
+                    if ( this.lately ) {
+                        return Lately && Lately.format(this.note.date);
+                    }
+                    return dayjs && dayjs(this.note.date).format('YYYY-MM-DD');
+                },
+                note_praise() {
+                    return String(this.note.fields && (this.note.fields.praise || 0));
+                },
+                debounceScroll() {
+                    return $h.throttle(this.handleScroll, 300);
+                },
             },
             created() {
                 this.getNote();
@@ -319,19 +359,38 @@
             methods: {
                 getNote() {
                     this.loading = true;
-                    $h.ajax({ query: { action: 'get_all_posts', type: 'single', ids: note_id, page: 1, rows: 1 } })
+                    $h.ajax({ query: { action: 'get_all_posts', type: 'single', ids: post_id, page: 1, rows: 1 } })
                     .then(({ data }) => {
                         if ( data && data.length ) {
                             this.note = data[0];
+                            if ( history.state ) history.state.url = this.note.permalink;
+                            history.replaceState(history.state, null, this.note.permalink);
                         } else {
-                            this.$el.remove();
-                            this.$toast({ type: 'warning', message: '无法找到该引用' });
+                            this.close();
+                            this.$toast({ type: 'warning', message: '资源已被删除' });
                         }
                     }).finally(() => {
                         this.loading = false;
+                        this.$nextTick(() => {
+                            _exReload && _exReload();
+                        });
                     });
                 },
-            }
+                handleScroll(e) {
+                    const { scrollTop, scrollHeight, clientHeight } = e.target;
+                    if ( scrollTop !== 0 && scrollHeight < scrollTop + clientHeight + 100 ) {
+                        if ( this.$refs.comments || this.$refs.comments.pagination.rolling ) {
+                            this.$refs.comments.loadNextComments();
+                        }
+                    }
+                },
+                // 销毁实例
+                destroy() {
+                    if ( history.state ) history.state.url = $config.permalink;
+                    history.replaceState(history.state, null, $config.permalink);
+                    this.$el.remove();
+                }
+            },
         });
         const vm = new Dialog({ el: document.createElement('div') });
         document.querySelector('#notes').appendChild(vm.$el);
@@ -450,7 +509,7 @@
                     case 'edit':
                         // 编辑
                         break;
-                    case 'trash':
+                    case 'delete':
                         this.noteList.splice(index, 1);
                         break;
                 }
