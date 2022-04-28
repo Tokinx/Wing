@@ -80,10 +80,7 @@ const $modules = new function () {
         },
         mounted() {
             this.$nextTick(() => {
-                new QRCode(this.$refs.qr, {
-                    text: JSON.stringify([location.href]),
-                    correctLevel: QRCode.CorrectLevel.L
-                });
+                new QRCode(this.$refs.qr, { text: location.href, correctLevel: QRCode.CorrectLevel.L });
             });
         },
         methods: {
