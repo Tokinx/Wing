@@ -1,7 +1,8 @@
 <?php
 include_once( 'core-cache.php' ); // 缓存
-include_once( 'core-settings.php' ); // 主题设置
+include_once( 'core-rest.php' ); // AJAX接口
 include_once( 'core-notes.php' ); // 笔记
+include_once( 'core-settings.php' ); // 主题设置
 include_once( 'theme-update-checker.php' ); // 主题更新
 
 // 获取主题更新
@@ -11,6 +12,8 @@ function biji_update_server() {
 	// 收集一些数据便于统计用户使用情况
 	return 'https://dev.biji.io/?' . http_build_query( [
 			'theme'                    => THEME_NAME,
+			'sign'                     => '根据用户邮箱和域名生成的签名',
+			'preview'                  => get_theme_mod( 'biji_setting_preview_update', false ),
 			'target_url'               => home_url(),
 			'target_admin_email'       => get_option( 'admin_email' ),
 			'target_wordpress_version' => $GLOBALS['wp_version'],
@@ -19,7 +22,8 @@ function biji_update_server() {
 }
 
 // 数据缓存
-$_cache = new FileCache( THEME_PATH . '/cache', 3600 * 1 );
+$_cache       = new FileCache( THEME_PATH . '/cache', 3600 * 24 );
+$_base64cache = new FileCache( THEME_PATH . '/base64cache', 3600 * 24 * 30 );
 
 // 注册导航
 if ( function_exists( 'register_nav_menus' ) ) {
@@ -45,7 +49,7 @@ if ( function_exists( 'register_sidebar' ) ) {
 // 拦截纯英文评论
 function scp_comment_post( $incoming_comment ) {
 	if ( ! get_theme_mod( 'biji_setting_enc', false ) && ! preg_match( '/[一-龥]/u', $incoming_comment['comment_content'] ) ) {
-		wp_send_json( [ 'message' => '评论必须包含中文！' ], 403 );
+		wp_send_json_error( '评论内容必须包含中文', 403 );
 	}
 
 	return $incoming_comment;
@@ -265,12 +269,12 @@ function formatter_comment( $comment, $friends = [] ) {
 		"comment_author"     => "author",
 		// "comment_author_email" => "email",
 		"comment_author_url" => "url",
-		// "comment_author_IP" => "ip",
+		"comment_author_IP"  => "ip",
 		"comment_date"       => "date",
 		"comment_date_gmt"   => "date_gmt",
 		"comment_content"    => "content",
-		// "comment_karma" => "karma",
-		// "comment_approved" => "approved",
+		"comment_karma"      => "karma",
+		"comment_approved"   => "approved",
 		"comment_agent"      => "agent",
 		"comment_type"       => "type",
 		"comment_parent"     => "parent",
@@ -352,19 +356,29 @@ function get_my_archives() {
 }
 
 // 获取读者墙
-function get_readers_wall() {
-	global $wpdb;
-	$childSql = "SELECT * FROM $wpdb->comments LEFT OUTER JOIN $wpdb->posts ON ($wpdb->posts.ID=$wpdb->comments.comment_post_ID) WHERE comment_date > date_sub( NOW(), INTERVAL 3 MONTH ) AND user_id='0' AND post_password='' AND comment_approved='1' AND comment_type='comment'";
-	$sql      = "SELECT COUNT(comment_ID) AS cnt, comment_author, comment_author_url, comment_author_email FROM ($childSql) AS tempcmt GROUP BY comment_author_email ORDER BY cnt DESC LIMIT 12";
+function get_readers_wall( $count = 12 ) {
+	global $wpdb, $_cache;
+	if ( ! $_cache->has( 'readers_wall' ) ) {
+		// 根据评论邮箱查询排名前N名评论者
+		$sql    = "SELECT COUNT(comment_ID) AS cnt, comment_author, comment_author_url, comment_author_email FROM $wpdb->comments LEFT OUTER JOIN $wpdb->posts ON ($wpdb->posts.ID=$wpdb->comments.comment_post_ID) WHERE comment_date > date_sub( NOW(), INTERVAL 3 MONTH ) AND user_id='0' AND post_password='' AND comment_approved='1' AND comment_type='comment' GROUP BY comment_author_email ORDER BY cnt DESC LIMIT $count";
+		$result = $wpdb->get_results( $sql );
+		$_cache->set( 'readers_wall', $result );
+	} else {
+		$result = $_cache->get( 'readers_wall' );
+	}
 
-	return $wpdb->get_results( $sql );
+	return $result;
 }
 
 // 图片转base64，捕获异常
 function get_image_base64( $url = '' ) {
+	global $_base64cache;
 	try {
 		if ( strpos( $url, 'http' ) !== 0 ) {
 			$url = 'https:' . $url;
+		}
+		if ( $_base64cache->has( md5( $url ) ) ) {
+			return $_base64cache->get( md5( $url ) );
 		}
 		$stream_opts  = [
 			"ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
@@ -373,9 +387,12 @@ function get_image_base64( $url = '' ) {
 		$base64string = chunk_split( base64_encode( file_get_contents( "$url", false, stream_context_create( $stream_opts ) ) ) );
 		// 正则提取Content-Type
 		preg_match( '/Content-Type: (.*?);/', implode( ';', $http_response_header ), $match );
-		$mime = $match[1] ?? 'image/png';
+		$mime   = $match[1] ?: 'image/png';
+		$base64 = "data:" . $mime . ";base64,$base64string";
+		// 缓存base64
+		$_base64cache->set( md5( $url ), $base64 );
 
-		return "data:" . $mime . ";base64,$base64string";
+		return $base64;
 	} catch ( Error $e ) {
 		return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 	}

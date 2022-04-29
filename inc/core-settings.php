@@ -113,6 +113,15 @@ function theme_customize_register( $wp_customize ) {
 						]
 					]
 				],
+				[
+					"id"      => "biji_setting_preview_update",
+					"setting" => [ "default" => false ],
+					"control" => [
+						'label'       => '接收预览版更新',
+						'description' => '率先体验新特性，可能存在一些未知问题，请提前备份好数据，以免造成不必要的损失',
+						'type'        => 'checkbox',
+					]
+				],
 			]
 		],
 		[

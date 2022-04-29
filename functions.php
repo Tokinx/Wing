@@ -15,17 +15,19 @@ if ( ! defined( 'THEME_VERSION' ) ) {
 
 include_once( 'inc/core.php' ); // 核心
 
-include_once( 'inc/base-rest.php' ); // AJAX接口
-include_once( 'inc/base-meta.php' ); // 自定义字段数据相关
 include_once( 'inc/base-customized.php' ); // 定制优化
 
 // 挂载脚本
 function biji_enqueue_scripts() {
+	// WP自带图标
 	wp_enqueue_style( 'dashicons' );
+	// 草莓ICON PRO
 	wp_enqueue_style( 'caomei', get_template_directory_uri() . '/static/caomei/style.css', [], THEME_VERSION );
 	wp_enqueue_style( 'style', get_template_directory_uri() . '/style.css', [], THEME_VERSION );
 
-	wp_deregister_script( 'jquery' ); // 禁用jQuery
+	// 禁用jQuery
+	wp_deregister_script( 'jquery' );
+	// 咱们的主题使用Vue
 	wp_enqueue_script( 'vue', '//cdn.staticfile.org/vue/2.6.14/vue.min.js', [], THEME_VERSION, true );
 	// 开启代码高亮
 	if ( get_theme_mod( 'biji_setting_prettify', true ) ) {
@@ -51,25 +53,12 @@ if ( function_exists( 'add_theme_support' ) ) {
 	add_theme_support( 'post-thumbnails' );
 }
 
-// 网页标题
+// 网页标题支持
 function biji_add_theme_support_title() {
 	add_theme_support( 'title-tag' );
 }
 
 add_action( 'after_setup_theme', 'biji_add_theme_support_title' );
-
-// 阻止站内文章互相Pingback
-// function theme_noself_ping(&$links)
-// {
-// 	$home = get_theme_mod('home');
-// 	foreach ($links as $l => $link) {
-// 		if (0 === strpos($link, $home)) {
-// 			unset($links[$l]);
-// 		}
-// 	}
-// }
-
-// add_action('pre_ping', 'theme_noself_ping');
 
 // 代码高亮
 function dangopress_esc_html( $content ) {
@@ -86,8 +75,7 @@ function dangopress_esc_html( $content ) {
 		$tag_open  = $matches[1];
 		$content   = $matches[2];
 		$tag_close = $matches[3];
-		//$content = htmlspecialchars($content, ENT_NOQUOTES, bloginfo('charset'));
-		$content = esc_html( $content );
+		$content   = esc_html( $content );
 
 		return $tag_open . $content . $tag_close;
 	}, $content );
@@ -279,6 +267,28 @@ function the_author_info( $post_id = null ) {
 		"avatar"       => get_avatar_url( $post->post_author ),
 	];
 	print json_encode( $data, JSON_UNESCAPED_SLASHES );
+}
+
+// 展示友情链接
+function the_friendly_links( $post_id = null ) {
+	$post_id = $post_id ?: get_the_ID();
+	$links   = json_decode( get_post_meta( $post_id, 'links', true ) ?: "[]" );
+	foreach ( $links as $link ) : ?>
+        <li class="column col-4 col-sm-6 p-2">
+            <a class="card uni-card flex-center text-center" href="<?= $link->url ?: 'javascript:void(0);' ?>"
+               target="_blank">
+                <span class="text-break mt-2"><?= $link->name ?: '--' ?></span>
+                <span class="text-gray text-tiny text-break mb-2"><?= $link->description ?: '' ?></span>
+            </a>
+        </li>
+	<?php endforeach;
+}
+
+// 获取点赞信息
+function get_praise( $post_id = null ) {
+	$post_id = $post_id ?: get_the_ID();
+
+	return ( get_post_meta( $post_id, 'praise', true ) ?: 0 ) + ( get_post_meta( $post_id, 'dotGood', true ) ?: 0 );
 }
 
 // 全部配置完毕
