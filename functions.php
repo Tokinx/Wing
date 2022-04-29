@@ -26,7 +26,7 @@ function biji_enqueue_scripts() {
 	wp_enqueue_style( 'style', get_template_directory_uri() . '/style.css', [], THEME_VERSION );
 
 	wp_deregister_script( 'jquery' ); // 禁用jQuery
-	wp_enqueue_script( 'vue', '//cdn.staticfile.org/vue/2.6.14/vue.min.js', [], THEME_VERSION, false );
+	wp_enqueue_script( 'vue', '//cdn.staticfile.org/vue/2.6.14/vue.min.js', [], THEME_VERSION, true );
 	// 开启代码高亮
 	if ( get_theme_mod( 'biji_setting_prettify', true ) ) {
 		wp_enqueue_script( 'prettify', '//cdn.staticfile.org/prettify/r298/prettify.js', [], THEME_VERSION, true );
@@ -129,6 +129,7 @@ function comment_mail_notify( $comment_id ) {
 		$parent   = get_comment( $comment->comment_parent );
 		$to       = trim( $parent->comment_author_email );
 		$subject  = '您在 [' . get_option( "blogname" ) . '] 的留言有了新回复';
+		$title    = trim( get_the_title( $comment->comment_post_ID ) ) ?: get_option( "blogname" );
 		$message  = '<table cellspacing="0" border="0" cellpadding="0" align="center" width="100%" bgcolor="transparent" style="border-collapse: separate; border-spacing: 0; letter-spacing: 0; max-width: 580px;">
 	<tbody>
 		<tr>
@@ -148,14 +149,14 @@ function comment_mail_notify( $comment_id ) {
 						<tr>
 							<td style="color: #000; line-height: 1.6;">
 								<h1 style="font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center">
-								' . get_the_title( $comment->comment_post_ID ) ?: get_bloginfo( "name" ) . '
+								' . $title . '
 								</h1>
 								<div style="height: 240px;background-color: #3274ff;"></div>
 								<div style="margin: -120px 4% 0;background-color: #fff;font-size: 18px;padding: 8%;box-shadow: 0 0 0 1px rgb(0, 85, 255, 0.1), 3px 3px 0 rgb(0, 85, 255, 0.1);font-size: 14px;">
 									<div style="text-align: right;margin-bottom: 8%;">
 										<div style="display: inline-block;width: 80%;">
 											<span style="color: #666;">' . trim( $parent->comment_author ) . '</span>
-											<div style="background-color: #F5F7FA;border-radius: 10px;border-top-right-radius: 0;padding: 5% 8%;text-align: left;">
+											<div style="background-color: #F5F7FA;border-radius: 10px;border-top-right-radius: 0;padding: 5% 8%;">
 												' . trim( $parent->comment_content ) . '
 											</div>
 										</div>
