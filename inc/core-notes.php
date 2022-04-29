@@ -29,7 +29,7 @@ function note_custom_init() {
 		'show_in_nav_menus'   => false, // 导航菜单中不显示
 		'show_in_rest'        => true, // 在REST API中显示
 		'rest_base'           => 'notes', // REST API中的路由
-		'publicly_queryable'  => false, // 允许查看
+		'publicly_queryable'  => true, // 允许查看
 		'rewrite'             => [ 'slug' => 'note' ],
 	] );
 

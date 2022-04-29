@@ -1,6 +1,5 @@
 // Helper
 const $h = {
-    bus: new Vue(),
     tasks: {},
     store: {},
     // 更新URL
@@ -88,10 +87,9 @@ const $h = {
         return this.fetch(`${$base.rest}${url}`, args);
     },
     // 平滑滚动
-    scrollTo({ el, to = 0, duration = 500, callback } = {}) {
+    scrollTo({ el, to = 0, rate = 6, callback } = {}) {
         const target = (el ? document.querySelector(el) : document.scrollingElement);
         let scrollTop = target.scrollTop;
-        const rate = 6;
 
         const animationToTop = function () {
             scrollTop = scrollTop + (to - scrollTop) / rate;
@@ -103,10 +101,15 @@ const $h = {
                 return;
             }
             target.scrollTop = scrollTop;
-            // 动画gogogo!
+            // 动画
             requestAnimationFrame(animationToTop);
         };
         animationToTop();
+    },
+    scrollHasBottom({ scrollHeight, clientHeight, scrollTop }, callback, advance = 100) {
+        if ( scrollTop && (scrollHeight - advance) < scrollTop + clientHeight ) {
+            callback && callback();
+        }
     },
 };
 

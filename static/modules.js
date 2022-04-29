@@ -86,16 +86,14 @@ const $modules = new function () {
         methods: {
             // 获取关联信息
             getAffiliateInfo() {
+                if ( !this.adjacent_articles ) return;
                 $h.ajax({ query: { action: 'get_affiliate_info', post_id: this.post_id } }).then(({ data }) => {
                     this.affiliateInfo = data;
                 });
             },
             handlePraise() {
-                $modules.actions.submit_praise(this.post_id).then(num => {
-                    const el = document.querySelector("#Praise");
-                    if ( parseInt(num) > parseInt(el.innerText) ) this.$toast({ type: 'success', message: '祝你财源广进' });
-                    el && (el.innerHTML = num);
-                    this.praise = !!Cookies.get(`praise_${this.post_id}`);
+                $modules.actions.submit_praise(this.post_id).then((cookie) => {
+                    this.praise = cookie;
                 });
             },
             handleLinkSettings() {
@@ -763,27 +761,36 @@ const $modules = new function () {
             <div class="notes-item card uni-card">
                 <div class="tile card-body d-block">
                     <div class="tile-header flex-center justify-between">
-                        <div class="text-gray text-tiny w-100 d-flex align-center">
+                        <div class="article-header text-gray text-tiny w-100 d-flex align-center">
                             <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0" @click="handleArticle">
                                 <a :href="note.permalink">{{ note.title }}</a>
                             </h3>
-                            <time v-else>{{ note_date }}</time>
-                        </div>
-
-                        <div v-if="logged && !isPost" class="dropdown">
-                            <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
-                                <i class="dashicons dashicons-ellipsis"></i>
-                            </button>
-                            <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
-                                <div v-if="loading" class="loading loading-full"></div>
-                                <li class="menu-item">
-                                    <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
-                                        class="align-center" style="display: flex;">
-                                        <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
-                                    </a>
+                            <ul v-else class="article-info d-flex text-gray text-tiny reset-ul m-0">
+                                <li>
+                                    <i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
+                                </li>
+                                <li>
+                                    <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span>
                                 </li>
                             </ul>
                         </div>
+
+                        <slot name="right-icon">
+                            <div v-if="logged && !isPost" class="dropdown">
+                                <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
+                                    <i class="dashicons dashicons-ellipsis"></i>
+                                </button>
+                                <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
+                                    <div v-if="loading" class="loading loading-full"></div>
+                                    <li class="menu-item">
+                                        <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
+                                            class="align-center" style="display: flex;">
+                                            <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </slot>
                     </div>
                     <div class="tile-content p-0">
                         <div :class="['flex-wrap', { 'd-flex': !isPost }]">
@@ -826,7 +833,7 @@ const $modules = new function () {
                     { id: 'quote', icon: 'dashicons dashicons-format-quote', name: '引用' },
                     { id: 'edit', icon: 'dashicons dashicons-edit', name: '编辑' },
                     { id: 'delete', icon: 'dashicons dashicons-trash', name: '删除' },
-                    { id: 'like', icon: 'dashicons dashicons-heart', name: '喜欢' },
+                    { id: 'praise', icon: 'dashicons dashicons-heart', name: '喜欢' },
                 ],
             }
         },
@@ -868,7 +875,10 @@ const $modules = new function () {
                 if ( this.lately ) {
                     return Lately && Lately.format(this.note.date);
                 }
-                return dayjs && dayjs(this.note.date).format('YYYY-MM-DD HH:mm:ss');
+                return dayjs && dayjs(this.note.date).format('YYYY-MM-DD');
+            },
+            note_praise() {
+                return String(this.note.fields && (this.note.fields.praise || 0));
             },
             // 防抖
             debounceMenuClick() {
@@ -892,14 +902,13 @@ const $modules = new function () {
                 this.openArticleDialog(this.note.id);
                 return false;
             },
-            openArticleDialog(post_id, type = 'post') {
-                $modules.ArticleDialog(post_id, type);
+            openArticleDialog(post_id) {
+                $modules.ArticleDialog(post_id, $h.store.config);
             },
             handleMenuClick(item) {
                 // 防抖
                 if ( this.loading ) return;
                 const { id, type } = this.note;
-                console.log(item)
                 switch (item.id) {
                     case 'quote':
                         this.$emit('event', { event: item.id });
@@ -921,6 +930,9 @@ const $modules = new function () {
                             this.loading = false;
                         })
                         break;
+                    case 'praise':
+                        $modules.actions.submit_praise(id);
+                        break;
                 }
             },
             handleViewImage(url) {
@@ -928,36 +940,35 @@ const $modules = new function () {
             }
         }
     };
+    // // 笔记侧边栏
+    // this.NoteAside = {
+    //     name: 'note-aside',
+    // };
 
 
     // 显示笔记、文章
-    this.ArticleDialog = (post_id) => {
+    this.ArticleDialog = (post_id, $config) => {
         const Dialog = Vue.extend({
             template: `
                 <div class="modal active article-dialog">
                     <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
                     <div v-if="loading" class="loading"></div>
                     <div v-else class="modal-container uni-shadow">
-                        <div class="flex-center justify-between align-start p-2">
-                            <div class="modal-title article-header m-0">
-                                <h1 v-if="note.title" itemprop="name headline" class="article-title h3 mb-2">{{ note.title }}</h1>
-                                <ul class="article-info d-flex text-gray text-tiny reset-ul m-0">
-                                    <li>
-                                        <i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
-                                    </li>
-                                    <li>
-                                        <i class="czs-heart"></i> <span id="Praise">{{ note_praise }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></a>
-                        </div>
-                        <div ref="body" :class="['modal-body p-0 px-2', note.type]" @scroll="debounceScroll">
-                            <template  v-if="note.type === 'note'">
-                                <div class="divider" style="margin-bottom: 1rem;"></div>
-                                <note-card v-bind="{ lately, note }"/>
-                            </template>
+                        <div ref="body" :class="['modal-body p-0 px-2', 'single-note', note.type]" @scroll="ThrottleScroll">
+                            <note-card v-if="note.type === 'note'" v-bind="{ lately, note }">
+                                <button slot="right-icon" href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></button>
+                            </note-card>
                             <template v-else>
+                                <div class="flex-center justify-between align-start p-2">
+                                    <div class="modal-title article-header m-0">
+                                        <h1 itemprop="name headline" class="article-title h3 mb-2">{{ note.title }}</h1>
+                                        <ul class="article-info d-flex text-gray text-tiny reset-ul m-0">
+                                            <li><i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time></li>
+                                            <li><i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span></li>
+                                        </ul>
+                                    </div>
+                                    <a href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></a>
+                                </div>
                                 <article class="article-content" v-html="note.content"></article>
                             </template>
                             <comment-area ref="comments" />
@@ -988,7 +999,7 @@ const $modules = new function () {
                 note_praise() {
                     return String(this.note.fields && (this.note.fields.praise || 0));
                 },
-                debounceScroll() {
+                ThrottleScroll() {
                     return $h.throttle(this.handleScroll, 300);
                 },
             },
@@ -1001,12 +1012,9 @@ const $modules = new function () {
                     $h.ajax({ query: { action: 'get_all_posts', type: 'single', ids: post_id, page: 1, rows: 1 } })
                     .then(({ data }) => {
                         if ( data && data.length ) {
-                            const { id, type, permalink } = this.note = data[0];
-                            const href = type === 'note' ? `${$config.permalink}?note=${id}` : permalink;
-                            if ( history.state ) {
-                                history.state.url = href;
-                            }
-                            history.replaceState(history.state, null, href);
+                            const { permalink } = this.note = data[0];
+                            if ( history.state ) history.state.url = permalink;
+                            history.replaceState(history.state, null, permalink);
                         } else {
                             this.close();
                             this.$toast({ type: 'warning', message: '资源已被删除' });
@@ -1020,13 +1028,7 @@ const $modules = new function () {
                     });
                 },
                 handleScroll(e) {
-                    const { scrollTop, scrollHeight, clientHeight } = e.target;
-                    if ( (scrollTop !== 0 && scrollHeight < scrollTop + clientHeight + 100)
-                        || (scrollHeight - 100) <= clientHeight ) {
-                        if ( this.$refs.comments || this.$refs.comments.pagination.rolling ) {
-                            this.$refs.comments.loadNextComments();
-                        }
-                    }
+                    $h.scrollHasBottom(e.target, this.$refs.comments.loadNextComments);
                 },
                 // 销毁实例
                 destroy() {
@@ -1148,7 +1150,13 @@ const $modules = new function () {
     // 喜欢
     this.actions = {
         submit_praise(post_id) {
-            return $h.ajax({ query: { action: 'submit_praise', post_id } });
+            return $h.ajax({ query: { action: 'submit_praise', post_id } }).then(num => {
+                Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
+                    if ( !i && (+num) > (+el.innerText) ) new Vue().$toast({ type: 'success', message: '祝你财源广进' });
+                    el && (el.innerHTML = num);
+                })
+                return !!Cookies.get(`praise_${post_id}`);
+            });
         },
     }
 };

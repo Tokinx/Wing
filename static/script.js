@@ -223,21 +223,20 @@ window.$vm = new Vue({
         this.overload();
 
         const throttleScroll = $h.throttle(() => {
-            const body = document.documentElement.scrollTop === 0 ? document.body : document.documentElement
-            const clientHeight = body.clientHeight;
-            const scrollTop = body.scrollTop;
-            const scrollHeight = body.scrollHeight;
-
-            if ( scrollTop !== 0 && scrollHeight < scrollTop + clientHeight + 100 ) {
+            const body = document.documentElement.scrollTop === 0 ? document.body : document.documentElement;
+            $h.scrollHasBottom(body, () => {
                 // 滚动加载评论
                 if ( $h.store.comments && $h.store.comments.pagination.rolling ) {
                     $h.store.comments.loadNextComments();
+                }
+                if ( $h.store.single_note && $h.store.single_note.comment.pagination.rolling ) {
+                    $h.store.single_note.$refs.comments.loadNextComments();
                 }
                 // 滚动加载笔记
                 if ( $h.store.notes ) {
                     $h.store.notes.handleNextPage();
                 }
-            }
+            });
         }, 300);
         window.addEventListener('scroll', throttleScroll);
         throttleScroll();
@@ -266,7 +265,7 @@ window.$vm = new Vue({
             } else Cookies.remove('skin-mode');
             !((item) => {
                 item.add(add);
-                item.remove(remove);
+                ['auto', remove].map(_ => item.remove(_));
             })(document.body.classList)
         },
         sleep(timer = 300) {

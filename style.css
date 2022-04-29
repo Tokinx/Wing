@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.1
+	Version: 0.5.9
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -3358,7 +3358,7 @@ body .layout .uni-bg, body .layout #main {
   transition: 300ms;
 }
 body .layout .uni-shadow, body .layout .uni-card {
-  box-shadow: 0 0 0 1px rgba(48, 55, 66, 0.03), 0 2px 10px rgba(48, 55, 66, 0.05);
+  box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(48, 55, 66, 0.06);
 }
 body .layout .uni-card {
   border: none;
@@ -3689,7 +3689,7 @@ body .layout #notes .notes-item .tile-footer {
   margin-top: 0.5rem;
 }
 body .layout #notes .notes-item-images {
-  margin: 0 -0.1rem;
+  margin: 0 -0.2rem;
 }
 body .layout #notes .notes-item-images__item {
   position: relative;
@@ -3722,48 +3722,48 @@ body .layout #notes .notes-aside {
   padding-left: 1rem;
   z-index: 9;
 }
-body .layout #notes .heatmap {
+body .layout .heatmap {
   margin-bottom: 1rem;
 }
-body .layout #notes .heatmap-mvp {
+body .layout .heatmap-mvp {
   background-color: rgba(188, 195, 206, 0.1);
   border-radius: 0.2rem;
   color: #66758c;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
 }
-body .layout #notes .heatmap-mvp__item {
+body .layout .heatmap-mvp__item {
   flex: 1;
   text-align: center;
 }
-body .layout #notes .heatmap-mvp__item:not(:last-child) {
+body .layout .heatmap-mvp__item:not(:last-child) {
   border-right: 1px solid rgba(188, 195, 206, 0.2);
 }
-body .layout #notes .heatmap-mvp__item h5 {
+body .layout .heatmap-mvp__item h5 {
   margin-bottom: 0;
   font-weight: bold;
 }
-body .layout #notes .heatmap-mvp__item span {
+body .layout .heatmap-mvp__item span {
   opacity: 0.5;
 }
-body .layout #notes .heatmap-map {
+body .layout .heatmap-map {
   flex-flow: wrap-reverse;
   flex-direction: row-reverse;
   margin: -1px;
 }
-body .layout #notes .heatmap-map__item {
+body .layout .heatmap-map__item {
   position: relative;
   width: 6.6666666667%;
 }
-body .layout #notes .heatmap-map__item::before {
+body .layout .heatmap-map__item::before {
   content: "";
   display: block;
   padding-top: 100%;
 }
-body .layout #notes .heatmap-map__item::after {
+body .layout .heatmap-map__item::after {
   font-size: 0.6rem;
 }
-body .layout #notes .heatmap-map__item-block {
+body .layout .heatmap-map__item-block {
   position: absolute;
   top: 1px;
   bottom: 1px;
@@ -3776,42 +3776,79 @@ body .layout #notes .heatmap-map__item-block {
   overflow: hidden;
   box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.15) inset;
 }
-body .layout #notes .heatmap-map__item-inner {
+body .layout .heatmap-map__item-inner {
   display: none;
   background-color: #4dce5e;
   animation: slide-down 300ms;
 }
-body .layout #notes .heatmap-map__item-inner.notes {
+body .layout .heatmap-map__item-inner.notes {
   background-color: #6597ff;
 }
-body .layout #notes .heatmap-map__item-inner.comments {
+body .layout .heatmap-map__item-inner.comments {
   background-color: rgba(188, 195, 206, 0.4);
 }
-body .layout #notes .heatmap-map__item-inner.active {
+body .layout .heatmap-map__item-inner.active {
   display: block;
   flex: 1;
 }
-body .layout #notes .heatmap-map .tooltip::after {
+body .layout .heatmap-map .tooltip::after {
   text-transform: uppercase;
 }
-body .layout #notes .topic-list {
+body .layout .topic-list {
   background: none;
   box-shadow: none;
   padding: 0 0 0 0.5rem;
   border-radius: unset;
   border-left: 1px solid rgba(188, 195, 206, 0.2);
 }
-body .layout #notes .article-dialog .loading {
+body .layout .single-note .notes-item {
+  margin: 0;
+  box-shadow: none;
+  background: unset !important;
+  border-radius: unset;
+}
+body .layout .single-note .notes-item .tile {
+  padding: 0 !important;
+}
+body .layout .single-note .notes-item .tile-header {
+  padding-bottom: 0.5rem;
+}
+body .layout .single-note .notes-item .tile-footer {
+  display: none;
+}
+body .layout .single-note .affiliate {
+  margin: 1rem 0;
+}
+body .layout .single-note .affiliate .tile {
+  padding: 0.8rem;
+  background: rgba(188, 195, 206, 0.05);
+  border: 2px dashed rgba(188, 195, 206, 0.2);
+  border-radius: 0.2rem;
+}
+body .layout .single-note .affiliate .tile-icon {
+  display: none;
+}
+body .layout .single-note .affiliate .tile-centered {
+  flex-flow: row;
+}
+body .layout .single-note .affiliate .tile-content {
+  text-align: left;
+}
+body .layout .article-dialog .loading {
   border-radius: 0.5rem;
 }
-body .layout #notes .article-dialog .btn-clear {
+body .layout .article-dialog .btn-clear {
   transform: scale(1.2);
   flex-shrink: 0;
 }
-body .layout #notes .article-dialog .modal-title {
+body .layout .article-dialog .modal-overlay {
+  backdrop-filter: blur(0.2rem);
+  -webkit-backdrop-filter: blur(0.2rem);
+}
+body .layout .article-dialog .modal-title {
   margin: 0;
 }
-body .layout #notes .article-dialog .modal-container {
+body .layout .article-dialog .modal-container {
   position: relative;
   border-radius: 0.5rem;
   padding: 2%;
@@ -3819,35 +3856,11 @@ body .layout #notes .article-dialog .modal-container {
   max-height: unset;
   max-width: 680px;
 }
-body .layout #notes .article-dialog .modal-container .notes-item {
-  margin: 0;
-  box-shadow: none;
-  background: unset !important;
-  border-radius: unset;
+body .layout .article-dialog .modal-container .tile-header {
+  padding-top: 0.5rem;
 }
-body .layout #notes .article-dialog .modal-container .notes-item .tile {
-  padding: 0;
-}
-body .layout #notes .article-dialog .modal-container .notes-item .tile-header, body .layout #notes .article-dialog .modal-container .notes-item .tile-footer {
-  display: none;
-}
-body .layout #notes .article-dialog .modal-body {
+body .layout .article-dialog .modal-body {
   overflow-x: hidden;
-}
-body .layout #notes .article-dialog .modal-body.note .affiliate .tile {
-  padding: 0.8rem;
-  background: rgba(188, 195, 206, 0.05);
-  border: 2px dashed rgba(188, 195, 206, 0.2);
-  border-radius: 0.2rem;
-}
-body .layout #notes .article-dialog .modal-body.note .affiliate .tile-icon {
-  display: none;
-}
-body .layout #notes .article-dialog .modal-body.note .affiliate .tile-centered {
-  flex-flow: row;
-}
-body .layout #notes .article-dialog .modal-body.note .affiliate .tile-content {
-  text-align: left;
 }
 body .layout .article-list {
   display: flex;
