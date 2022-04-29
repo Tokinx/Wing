@@ -14,7 +14,7 @@ function check_nonce() {
 	}
 	// 判断用户是否已登陆
 	if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) && ! is_user_logged_in() ) {
-		wp_send_json( [ 'message' => '非法访问，请求被拒绝' ], 401 );
+		wp_send_json_error( '非法访问，请求被拒绝', 401 );
 	}
 
 	return true;
@@ -44,6 +44,7 @@ function ajax_get_all_posts_callback() {
 		'order'          => 'DESC',
 		'author'         => get_current_user_id(),
 		'tax_query'      => [],
+		'has_password'   => false,
 	];
 
 	// 私密笔记
@@ -67,6 +68,16 @@ function ajax_get_all_posts_callback() {
 		$args['order']     = '';
 	}
 	if ( $type === 'all' ) {
+		// 过滤分类文章
+		if ( get_theme_mod( 'biji_setting_exclude' ) ) {
+			$exclude_array       = explode( ",", get_theme_mod( 'biji_setting_exclude' ) );
+			$args['tax_query'][] = [
+				'taxonomy' => 'category',
+				'field'    => 'term_id',
+				'terms'    => $exclude_array,
+				'operator' => 'NOT IN',
+			];
+		}
 		$args['post_type'] = [ 'post', 'note' ];
 	}
 	if ( $type === 'single' && $ids ) {
@@ -108,8 +119,7 @@ function ajax_get_all_posts_callback() {
 				$post->images = array_map( function ( $id ) {
 					$url = wp_get_attachment_url( $id );
 
-					return $url;
-					// return replace_domain( $url );
+					return replace_domain( $url );
 				}, $ids );
 			}
 		}
@@ -375,7 +385,7 @@ function ajax_get_post_meta_callback() {
 	if ( is_admin() && array_key_exists( 'post_id', $_GET ) && array_key_exists( 'key', $_GET ) ) {
 		$post_id = $_GET["post_id"];
 		$key     = $_GET["key"];
-		wp_send_json_success( get_post_meta( $post_id, $key, true ) ?? [] );
+		wp_send_json_success( get_post_meta( $post_id, $key, true ) ?: [] );
 	}
 	wp_send_json_error( "参数错误", 400 );
 }
@@ -390,7 +400,7 @@ function ajax_get_heatmap_callback() {
 	global $_cache;
 
 	if ( $_cache->has( 'heatmap' ) ) {
-		wp_send_json_success($_cache->get( 'heatmap' ));
+		wp_send_json_success( $_cache->get( 'heatmap' ) );
 		wp_die();
 	};
 
