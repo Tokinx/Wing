@@ -1,16 +1,42 @@
 # Wing
 
-基于Vue开发，简洁流畅的响应式主题。
+简洁流畅、数据驱动，响应式的WordPress主题。
 
-**主题开发进度和计划：**
+### 免责声明
 
-https://nofqpeqwhm.feishu.cn/base/bascnRR8wSP69n5fIdwpHeJNf3b?table=tblaryYKDHG9l8tA&view=vew9sOYtfR
+    任何问题可以提issue，但不保证采纳或修复。
+    
+    不对任何BUG负责，不提供无偿服务。
+    
+    付费咨询与技术支持请联系：[@tokinx](dev@biji.io)
 
-**任何问题请随时邮箱联系：**
+### 开发计划
 
-dev@biji.io
+https://github.com/Tokinx/Wing/projects/2
 
-主题使用的第三方库与说明，特此鸣谢
+### 使用文档
+
+待完善
+
+### 版本说明
+
+主题分2个版本线，分别为预览版（preview）和发行版（release）
+
+#### 预览版
+
+    版本号中间位为基数号码，例如：0.5.x、1.3.x
+    末尾小版本号为功能迭代或修复
+
+#### 发行版
+
+    版本号中间位为偶数号码，例如：0.6.x、1.0.x
+    末尾小版本号为功能修复
+
+master仓库为基线，可以拉取最新的master分支，但不推荐
+
+### 鸣谢
+
+主题使用的第三方库与说明
 
 | 库           | 授权  | 说明                           |
 |-------------|-----|------------------------------|
@@ -23,6 +49,3 @@ dev@biji.io
 | ViewImage   | MIT | 图片灯箱插件，用于点击图片放大查看            |
 | caomei icon | PRO | 草莓图标库，已购买PRO版授权，仅限设计笔记系列主题使用 |
 | prettify    | MIT | 用于主题代码高亮                     |
-
-其它组件收集后会更新
-
