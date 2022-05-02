@@ -4,11 +4,11 @@
 
 ### 免责声明
 
-    任何问题可以提issue，但不保证采纳或修复。
+BUG可以提 [Issues](https://github.com/Tokinx/Wing/issues)，想法或建议请 [Discussions](https://github.com/Tokinx/Wing/discussions) 发帖，但不保证采纳或修复。
     
-    不对任何BUG负责，不提供无偿服务。
+不对任何BUG负责，不提供无偿服务。
     
-    付费咨询与技术支持请联系：[@tokinx](dev@biji.io)
+付费咨询与技术支持请联系：dev@biji.io
 
 ### 开发计划
 
