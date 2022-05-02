@@ -3841,10 +3841,6 @@ body .layout .article-dialog .btn-clear {
   transform: scale(1.2);
   flex-shrink: 0;
 }
-body .layout .article-dialog .modal-overlay {
-  backdrop-filter: blur(0.2rem);
-  -webkit-backdrop-filter: blur(0.2rem);
-}
 body .layout .article-dialog .modal-title {
   margin: 0;
 }
