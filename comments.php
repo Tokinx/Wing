@@ -22,5 +22,15 @@
         visitor: <?php the_visitor_info(); ?>, // 访客信息
         author: <?php the_author_info(); ?>, // 作者信息
     };
+
+    $h.tasks.comments = () => {
+        const $config = window.ArticleData || {};
+        $h.store.comments = new Vue({
+            el: $config.el,
+            mixins: [$modules.CommentArea],
+            data() {
+                return { ...$config };
+            },
+        });
+    }
 </script>
-<script src="<?= get_template_directory_uri() . '/static/comment.js?' . THEME_VERSION ?>"></script>
