@@ -1,9 +1,4 @@
 <?php
-
-/**
- * REST API base class.
- **/
-
 // 校验nonce，防止滥用接口
 function check_nonce() {
 	$nonce = "";
@@ -20,8 +15,9 @@ function check_nonce() {
 	return true;
 }
 
-function check_get_value( $key, $arr, $default = '' ) {
-	return array_key_exists( $key, $arr ) && isset( $arr[ $key ] ) ? $_GET[ $key ] : $default;
+// 检查并获取真实value
+function _get_value( $key, $default = '' ) {
+	return $_GET[ $key ] ?? $default;
 }
 
 // 获取文章信息
@@ -29,10 +25,10 @@ function ajax_get_all_posts_callback() {
 	check_nonce();
 	global $_cache;
 	// 参数
-	$type = check_get_value( 'type', $_GET, 'single' );
-	$ids  = check_get_value( 'ids', $_GET );
-	$rows = check_get_value( 'rows', $_GET, 10 );
-	$page = check_get_value( 'page', $_GET, 1 );
+	$type = _get_value( 'type', 'single' );
+	$ids  = _get_value( 'ids' );
+	$rows = _get_value( 'rows', 10 );
+	$page = _get_value( 'page', 1 );
 
 	// 查询条件
 	$args = [
@@ -84,11 +80,11 @@ function ajax_get_all_posts_callback() {
 		$args['post_type'] = [ 'post', 'note' ];
 		$args['post__in']  = explode( ',', $ids );
 	}
-	if ( check_get_value( 'topics', $_GET ) ) {
+	if ( _get_value( 'topics' ) ) {
 		$args['tax_query'][] = [
 			'taxonomy' => 'topic',
 			'field'    => 'name',
-			'terms'    => explode( ',', check_get_value( 'topics', $_GET ) ),
+			'terms'    => explode( ',', _get_value( 'topics' ) ),
 		];
 	}
 

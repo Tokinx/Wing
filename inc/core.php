@@ -5,25 +5,10 @@ include_once( 'core-notes.php' ); // 笔记
 include_once( 'core-settings.php' ); // 主题设置
 include_once( 'theme-update-checker.php' ); // 主题更新
 
-// 获取主题更新
-new ThemeUpdateChecker( THEME_NAME, biji_update_server() );
-
-function biji_update_server() {
-	// 收集一些数据便于统计用户使用情况
-	return 'https://dev.biji.io/?' . http_build_query( [
-			'theme'                    => THEME_NAME,
-			'sign'                     => '根据用户邮箱和域名生成的签名',
-			'preview'                  => get_theme_mod( 'biji_setting_preview_update', false ),
-			'target_url'               => home_url(),
-			'target_admin_email'       => get_option( 'admin_email' ),
-			'target_wordpress_version' => $GLOBALS['wp_version'],
-			'target_theme_version'     => THEME_VERSION,
-		] );
-}
-
 // 数据缓存
-$_cache       = new FileCache( THEME_PATH . '/cache', 3600 * 24 );
-$_base64cache = new FileCache( THEME_PATH . '/base64cache', 3600 * 24 * 30 );
+$_cache   = new FileCache( THEME_PATH . '/cache', 3600 * 24 );
+$_cache7  = new FileCache( THEME_PATH . '/cache/7d', 3600 * 24 * 7 );
+$_cache30 = new FileCache( THEME_PATH . '/cache/30d', 3600 * 24 * 30 );
 
 // 注册导航
 if ( function_exists( 'register_nav_menus' ) ) {
@@ -372,13 +357,13 @@ function get_readers_wall( $count = 12 ) {
 
 // 图片转base64，捕获异常
 function get_image_base64( $url = '' ) {
-	global $_base64cache;
+	global $_cache30;
 	try {
 		if ( strpos( $url, 'http' ) !== 0 ) {
 			$url = 'https:' . $url;
 		}
-		if ( $_base64cache->has( md5( $url ) ) ) {
-			return $_base64cache->get( md5( $url ) );
+		if ( $_cache30->has( md5( $url ) ) ) {
+			return $_cache30->get( md5( $url ) );
 		}
 		$stream_opts  = [
 			"ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
@@ -390,12 +375,24 @@ function get_image_base64( $url = '' ) {
 		$mime   = $match[1] ?: 'image/png';
 		$base64 = "data:" . $mime . ";base64,$base64string";
 		// 缓存base64
-		$_base64cache->set( md5( $url ), $base64 );
+		$_cache30->set( md5( $url ), $base64 );
 
 		return $base64;
 	} catch ( Error $e ) {
 		return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 	}
 }
+
+// 获取主题更新
+new ThemeUpdateChecker( THEME_NAME, "http://dev.biji.local/update?" . http_build_query( [
+		'theme'     => THEME_NAME,
+		'version'   => THEME_VERSION,
+		'preview'   => get_theme_mod( 'biji_setting_preview_update' ),
+		'url'       => home_url(),
+		'email'     => get_option( 'admin_email' ),
+		'wordpress' => $GLOBALS['wp_version'],
+	] )
+);
+
 
 // End of page.
