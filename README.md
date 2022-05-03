@@ -2,7 +2,7 @@
 
 简洁流畅、数据驱动，响应式的WordPress主题。
 
-![Wing](https://biji.io/wp-content/uploads/图像2022-5-3-20.36-scaled.jpg)
+![Wing](https://biji-cdn.wuzii.com/wp-content/uploads/图像2022-5-3-20.36-scaled.jpg)
 
 ## 重要！
 
@@ -41,9 +41,9 @@ master仓库为基线，可以拉取最新的master分支，但不推荐
 
 你的支持是这个项目维护下去的坚实动力。
 
-| 微信                                                        | 支付宝                                                        |
-|-----------------------------------------------------------|------------------------------------------------------------|
-| ![WeChat](https://biji.io/wp-content/uploads/c_wxpay.png) | ![AliPay](https://biji.io/wp-content/uploads/c_alipay.png) |
+| 微信                                                                   | 支付宝                                                                   |
+|----------------------------------------------------------------------|-----------------------------------------------------------------------|
+| ![WeChat](https://biji-cdn.wuzii.com/wp-content/uploads/c_wxpay.png) | ![AliPay](https://biji-cdn.wuzii.com/wp-content/uploads/c_alipay.png) |
 
 ### 鸣谢
 
