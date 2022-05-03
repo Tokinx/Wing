@@ -2,12 +2,16 @@
 
 简洁流畅、数据驱动，响应式的WordPress主题。
 
+## 重要！
+
+主题无jQuery，PJAX无法方便地关闭，与很多插件可能有各种各样地兼容问题，如遇到兼容性问题请尝试自行解决。
+
 ### 免责声明
 
 BUG可以提 [Issues](https://github.com/Tokinx/Wing/issues)，想法或建议请 [Discussions](https://github.com/Tokinx/Wing/discussions) 发帖，但不保证采纳或修复。
-    
+
 不对任何BUG负责，不提供无偿服务。
-    
+
 付费咨询与技术支持请联系：dev@biji.io
 
 ### 开发计划
@@ -24,7 +28,7 @@ https://github.com/Tokinx/Wing/projects/2
 
 #### 预览版
 
-    版本号中间位为基数号码，例如：0.5.x、1.3.x
+    版本号中间位为奇数号码，例如：0.5.x、1.3.x
     末尾小版本号为功能迭代或修复
 
 #### 发行版
@@ -33,6 +37,12 @@ https://github.com/Tokinx/Wing/projects/2
     末尾小版本号为功能修复
 
 master仓库为基线，可以拉取最新的master分支，但不推荐
+
+### 赞助
+
+| 微信                                                      | 支付宝                                                      |
+|---------------------------------------------------------|----------------------------------------------------------|
+| ![Wing](https://biji.io/wp-content/uploads/c_wxpay.png) | ![Wing](https://biji.io/wp-content/uploads/c_alipay.png) |
 
 ### 鸣谢
 

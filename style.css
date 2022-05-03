@@ -3653,38 +3653,38 @@ body .layout #notes .notes-item {
 body .layout #notes .notes-item:not(:last-child) {
   margin-bottom: 1rem;
 }
-body .layout #notes .notes-item .tile {
+body .layout #notes .notes-item > .card .tile {
   padding: 0.6rem 1rem;
 }
-body .layout #notes .notes-item .tile p {
+body .layout #notes .notes-item > .card .tile p {
   margin-bottom: 0.5rem;
 }
-body .layout #notes .notes-item .tile-header {
+body .layout #notes .notes-item > .card .tile-header {
   width: 100%;
   margin-bottom: 0.5rem;
 }
-body .layout #notes .notes-item .tile-header h3 a:not(:hover) {
+body .layout #notes .notes-item > .card .tile-header h3 a:not(:hover) {
   color: #303742;
 }
-body .layout #notes .notes-item .tile-content .article-content {
+body .layout #notes .notes-item > .card .tile-content .article-content {
   width: 0;
   flex: 1;
 }
-body .layout #notes .notes-item .tile-content .article-content.w-100 {
+body .layout #notes .notes-item > .card .tile-content .article-content.w-100 {
   width: 100%;
 }
-body .layout #notes .notes-item .tile-content *:last-child {
+body .layout #notes .notes-item > .card .tile-content *:last-child {
   margin-bottom: 0;
   vertical-align: bottom;
 }
-body .layout #notes .notes-item .tile-content .thumbnail {
+body .layout #notes .notes-item > .card .tile-content .thumbnail {
   width: 7rem;
   height: 5rem;
   object-fit: cover;
   margin: 0 0 0.5rem 0.5rem;
   float: right;
 }
-body .layout #notes .notes-item .tile-footer {
+body .layout #notes .notes-item > .card .tile-footer {
   width: 100%;
   margin-top: 0.5rem;
 }
@@ -3713,6 +3713,29 @@ body .layout #notes .notes-item .dropdown .menu {
 }
 body .layout #notes .notes-item .dropdown .menu i {
   transition: none;
+}
+body .layout #notes .notes-item .append-comments {
+  overflow: auto;
+  padding: 0 1rem;
+  max-height: 20rem;
+}
+body .layout #notes .notes-item .append-comments #comments {
+  margin: 0;
+}
+body .layout #notes .notes-item .append-comments .comment {
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+body .layout #notes .notes-item .append-comments .comment-list > .comment {
+  margin: 0.8rem 0;
+}
+body .layout #notes .notes-item .append-comments .comment-list > .comment:not(:first-child) {
+  border-top: 1px solid #f7f8f9;
+  padding-top: 0.8rem;
+}
+body .layout #notes .notes-item .append-comments .tile {
+  padding: 0;
 }
 body .layout #notes .notes-aside {
   position: relative;
@@ -3813,9 +3836,6 @@ body .layout .single-note .notes-item .tile {
 body .layout .single-note .notes-item .tile-header {
   padding-bottom: 0.5rem;
 }
-body .layout .single-note .notes-item .tile-footer {
-  display: none;
-}
 body .layout .single-note .affiliate {
   margin: 1rem 0;
 }
@@ -3841,22 +3861,11 @@ body .layout .article-dialog .btn-clear {
   transform: scale(1.2);
   flex-shrink: 0;
 }
-body .layout .article-dialog .modal-title {
-  margin: 0;
-}
-body .layout .article-dialog .modal-container {
+body .layout .article-dialog .notes-item {
   position: relative;
-  border-radius: 0.5rem;
-  padding: 2%;
-  height: 80%;
-  max-height: unset;
-  max-width: 680px;
-}
-body .layout .article-dialog .modal-container .tile-header {
-  padding-top: 0.5rem;
-}
-body .layout .article-dialog .modal-body {
-  overflow-x: hidden;
+  background: #fff;
+  width: 100%;
+  max-width: 600px;
 }
 body .layout .article-list {
   display: flex;
@@ -3980,8 +3989,6 @@ body .layout .article-content blockquote *:not(:last-child), body .layout .artic
 }
 body .layout .article-content img {
   max-width: 100%;
-  width: 100%;
-  height: auto;
 }
 body .layout .article-content ul:not([class]) li {
   list-style-type: circle;
@@ -4383,6 +4390,18 @@ body #app.animation-end #main .content::after {
   display: block;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #66758c;
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 5px;
+}
+
 body a, body a:hover, body a:visited {
   color: #3274ff;
   text-decoration: none;
@@ -4624,11 +4643,9 @@ body .dashicons {
 .dark #app.layout #main .content::after, .dark #app.layout #main {
   background-color: #2a3039;
 }
-.dark #app.layout #main .notes-mask:not(:hover) .card-title,
 .dark #app.layout #main .article-mask:not(:hover) .card-title {
   color: #f7f8f9 !important;
 }
-.dark #app.layout #main .notes-item,
 .dark #app.layout #main .article-item {
   background-color: rgba(102, 117, 140, 0.1);
   box-shadow: unset;
@@ -4636,8 +4653,8 @@ body .dashicons {
 .dark #app.layout #main .pagination li a {
   color: #f7f8f9;
 }
-.dark #app.layout #notes .notes-item .tile-header h3 a:not(:hover) {
-  color: #fff;
+.dark #app.layout #notes .notes-item .tile-header h3 {
+  color: #fff !important;
 }
 .dark #app.layout #notes .notes-tabbar {
   background-color: #2a3039;
@@ -4702,20 +4719,18 @@ body.auto #app.layout #aside .footer-nav li:not([class*=current-]) {
   body.auto #app.layout #main .content::after, body.auto #app.layout #main {
     background-color: #2a3039;
   }
-  body.auto #app.layout #main .notes-mask:not(:hover) .card-title,
-body.auto #app.layout #main .article-mask:not(:hover) .card-title {
+  body.auto #app.layout #main .article-mask:not(:hover) .card-title {
     color: #f7f8f9 !important;
   }
-  body.auto #app.layout #main .notes-item,
-body.auto #app.layout #main .article-item {
+  body.auto #app.layout #main .article-item {
     background-color: rgba(102, 117, 140, 0.1);
     box-shadow: unset;
   }
   body.auto #app.layout #main .pagination li a {
     color: #f7f8f9;
   }
-  body.auto #app.layout #notes .notes-item .tile-header h3 a:not(:hover) {
-    color: #fff;
+  body.auto #app.layout #notes .notes-item .tile-header h3 {
+    color: #fff !important;
   }
   body.auto #app.layout #notes .notes-tabbar {
     background-color: #2a3039;

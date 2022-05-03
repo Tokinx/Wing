@@ -21,7 +21,6 @@ get_header(); ?>
                 paging: { page: 1, rows: 10, total: 0 },
                 // 评论配置
                 comment: {
-                    author_information: <?= json_encode( get_theme_mod( 'biji_setting_author_information', true ) ); ?>,
                     editor: {
                         placeholder: '<?= get_theme_mod( 'biji_setting_placeholder', 'Comment' ); ?>',
                         features: ['emoji', 'bold', 'italic'],

@@ -758,65 +758,67 @@ const $modules = new function () {
     this.NoteCard = {
         name: 'note-card',
         template: `
-            <div class="notes-item card uni-card">
-                <div class="tile card-body d-block">
-                    <div class="tile-header flex-center justify-between">
-                        <div class="article-header text-gray text-tiny w-100 d-flex align-center">
-                            <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0" @click="handleArticle">
-                                <a :href="note.permalink">{{ note.title }}</a>
-                            </h3>
-                            <ul v-else class="article-info d-flex text-gray text-tiny reset-ul m-0">
-                                <li>
-                                    <i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
-                                </li>
-                                <li>
-                                    <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <slot name="right-icon">
-                            <div v-if="logged && !isPost" class="dropdown">
-                                <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
-                                    <i class="dashicons dashicons-ellipsis"></i>
-                                </button>
-                                <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
-                                    <div v-if="loading" class="loading loading-full"></div>
-                                    <li class="menu-item">
-                                        <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
-                                            class="align-center" style="display: flex;">
-                                            <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
-                                        </a>
+            <div :class="'notes-item notes-item-' + note.id">
+                <div class="card uni-card">
+                    <div class="tile card-body d-block">
+                        <div class="tile-header flex-center justify-between">
+                            <div class="article-header text-gray text-tiny w-100 d-flex align-center">
+                                <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
+                                    <a :href="note.permalink">{{ note.title }}</a>
+                                </h3>
+                                <ul v-else class="article-info d-flex text-gray text-tiny reset-ul m-0">
+                                    <li>
+                                        <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
+                                    </li>
+                                    <li>
+                                        <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span>
                                     </li>
                                 </ul>
                             </div>
-                        </slot>
-                    </div>
-                    <div class="tile-content p-0">
-                        <div :class="['flex-wrap', { 'd-flex': !isPost }]">
-                            <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
-                            <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
+    
+                            <slot name="right-icon">
+                                <div v-if="logged && !isPost" class="dropdown">
+                                    <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
+                                        <i class="dashicons dashicons-ellipsis"></i>
+                                    </button>
+                                    <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
+                                        <div v-if="loading" class="loading loading-full"></div>
+                                        <li class="menu-item">
+                                            <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
+                                                class="align-center" style="display: flex;">
+                                                <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </slot>
                         </div>
-                        <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
-                            <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
-                                <img class="s-rounded" :src="url" alt @click="handleViewImage(url)"/>
+                        <div class="tile-content p-0">
+                            <div :class="['flex-wrap', { 'd-flex': !isPost }]">
+                                <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
+                                <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
+                            </div>
+                            <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
+                                <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
+                                    <img class="s-rounded" :src="url" alt @click="handleViewImage(url)"/>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="tile-footer text-gray text-tiny flex-center justify-between">
-                        <div class="flex-center">
-                            <button v-if="category" class="btn btn-link btn-sm text-gray d-flex align-center">
-                                <i class="czs-read mr-1"></i> {{ category }}
-                            </button>
-                            <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleArticle">
-                                <i class="czs-talk mr-1"></i> {{ note.comment_count }}
-                            </button>
+                        <div class="tile-footer text-gray text-tiny flex-center justify-between">
+                            <div class="flex-center">
+                                <time v-if="isPost" class="mr-2">{{ note_date }}</time>
+                                <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleComment">
+                                    <i class="czs-talk mr-1"></i> {{ note.comment_count }}
+                                </button>
+                            </div>
+    
+                            <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
+                                阅读原文 <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
+                            </a>
+                            <span v-else class="flex-center">
+                                <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
+                            </span>
                         </div>
-
-                        <time v-if="isPost">{{ note_date }}</time>
-                        <span v-else class="flex-center">
-                            <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
-                        </span>
                     </div>
                 </div>
             </div>
@@ -824,6 +826,7 @@ const $modules = new function () {
         props: {
             logged: { type: Boolean, default: false },
             lately: { type: Boolean, default: true },
+            isComment: { type: Boolean, default: true },
             note: { type: Object, default: () => ({}) }
         },
         data() {
@@ -835,6 +838,7 @@ const $modules = new function () {
                     { id: 'delete', icon: 'dashicons dashicons-trash', name: '删除' },
                     { id: 'praise', icon: 'dashicons dashicons-heart', name: '喜欢' },
                 ],
+                comment: null,
             }
         },
         computed: {
@@ -902,6 +906,15 @@ const $modules = new function () {
                 this.openArticleDialog(this.note.id);
                 return false;
             },
+            handleComment() {
+                if ( !this.isComment ) return;
+                if ( this.comment ) {
+                    this.comment.destroy();
+                    this.comment = null;
+                } else {
+                    this.comment = $modules.CommentAppend(this.note.id, $h.store.config);
+                }
+            },
             openArticleDialog(post_id) {
                 $modules.ArticleDialog(post_id, $h.store.config);
             },
@@ -940,11 +953,45 @@ const $modules = new function () {
             }
         }
     };
-    // // 笔记侧边栏
+    // // 右侧侧边栏
     // this.NoteAside = {
     //     name: 'note-aside',
     // };
 
+    // 卡片下方追加显示评论
+    this.CommentAppend = (post_id, $config) => {
+        const Append = Vue.extend({
+            template: `
+                <div class="append-comments" @scroll="ThrottleScroll">
+                    <comment-area ref="comments" />
+                </div>
+            `,
+            components: {
+                'comment-area': {
+                    mixins: [$modules.CommentArea],
+                    data() {
+                        return { post_id, ...$config.comment };
+                    },
+                },
+            },
+            computed: {
+                ThrottleScroll() {
+                    return $h.throttle(this.handleScroll, 300);
+                },
+            },
+            methods: {
+                handleScroll(e) {
+                    $h.scrollHasBottom(e.target, this.$refs.comments.loadNextComments);
+                },
+                destroy() {
+                    this.$el.remove();
+                }
+            },
+        });
+        const vm = new Append({ el: document.createElement('div') });
+        document.querySelector(`.notes-item-${post_id} .card`).appendChild(vm.$el);
+        return vm;
+    }
 
     // 显示笔记、文章
     this.ArticleDialog = (post_id, $config) => {
@@ -953,55 +1000,16 @@ const $modules = new function () {
                 <div class="modal active article-dialog">
                     <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
                     <div v-if="loading" class="loading"></div>
-                    <div v-else class="modal-container uni-shadow">
-                        <div ref="body" :class="['modal-body p-0 px-2', 'single-note', note.type]" @scroll="ThrottleScroll">
-                            <note-card v-if="note.type === 'note'" v-bind="{ lately, note }">
-                                <button slot="right-icon" href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></button>
-                            </note-card>
-                            <template v-else>
-                                <div class="flex-center justify-between align-start p-2">
-                                    <div class="modal-title article-header m-0">
-                                        <h1 itemprop="name headline" class="article-title h3 mb-2">{{ note.title }}</h1>
-                                        <ul class="article-info d-flex text-gray text-tiny reset-ul m-0">
-                                            <li><i class="czs-time"></i> <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time></li>
-                                            <li><i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span></li>
-                                        </ul>
-                                    </div>
-                                    <a href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></a>
-                                </div>
-                                <article class="article-content" v-html="note.content"></article>
-                            </template>
-                            <comment-area ref="comments" />
-                        </div>
-                    </div>
+                    <note-card v-else v-bind="{ lately, note, isComment: false }">
+                        <button slot="right-icon" href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></button>
+                    </note-card>
                 </div>
             `,
             components: {
                 'note-card': $modules.NoteCard,
-                'comment-area': {
-                    mixins: [$modules.CommentArea],
-                    data() {
-                        return { post_id, ...$config.comment };
-                    },
-                },
             },
             data() {
                 return { loading: false, note: {}, ...$config };
-            },
-            computed: {
-                note_date() {
-                    if ( !this.note.date ) return '';
-                    if ( this.lately ) {
-                        return Lately && Lately.format(this.note.date);
-                    }
-                    return dayjs && dayjs(this.note.date).format('YYYY-MM-DD');
-                },
-                note_praise() {
-                    return String(this.note.fields && (this.note.fields.praise || 0));
-                },
-                ThrottleScroll() {
-                    return $h.throttle(this.handleScroll, 300);
-                },
             },
             created() {
                 this.getNote();
@@ -1016,19 +1024,15 @@ const $modules = new function () {
                             if ( history.state ) history.state.url = permalink;
                             history.replaceState(history.state, null, permalink);
                         } else {
-                            this.close();
+                            this.destroy();
                             this.$toast({ type: 'warning', message: '资源已被删除' });
                         }
                     }).finally(() => {
                         this.loading = false;
                         this.$nextTick(() => {
-                            this.handleScroll({ target: this.$refs.body });
                             _exReload && _exReload();
                         });
                     });
-                },
-                handleScroll(e) {
-                    $h.scrollHasBottom(e.target, this.$refs.comments.loadNextComments);
                 },
                 // 销毁实例
                 destroy() {
