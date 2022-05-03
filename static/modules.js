@@ -165,7 +165,7 @@ const $modules = new function () {
                         <p><br></p>
                     </div>
                     
-                    <input ref="upload" class="d-none" type="file" accept="image/*" multiple @change="handleUpload" />
+                    <input v-if="features.indexOf('image') > -1" ref="upload" class="d-none" type="file" accept="image/*" multiple @change="handleUpload" />
                     <div v-if="images.length" class="editor-preview m-2">
                         <div class="editor-preview-box flex-center">
                             <div v-for="(image, index) in images" :key="image.id" class="editor-preview__item d-flex">
@@ -179,7 +179,7 @@ const $modules = new function () {
                         <div class="editor-tool d-flex">
                             <slot name="tool">
                                 <slot name="tool-l"></slot>
-                                <tools v-for="name in features" :key="name" :name="name" :class="{ loading: name === 'image' && uploading }" @click.native="handleTools(name)" @emoji="insertText" />
+                                <tools v-for="name in features" :key="name" :name="name" :class="{ loading: name === 'image' && uploading }" @click.native="e => handleTools(name, e)" @emoji="insertText" />
                                 <slot name="tool-r"></slot>
                             </slot>
                         </div>
@@ -230,7 +230,7 @@ const $modules = new function () {
                 this.content = '';
                 this.images = [];
             },
-            handleTools(name) {
+            handleTools(name, e) {
                 switch (name) {
                     case 'topic':
                         this.insertText('#');
@@ -247,14 +247,13 @@ const $modules = new function () {
                     case 'italic':
                         this.execCommand('italic');
                         break;
-                    // case 'emoji':
-                    //   this.$refs.emoji.show();
-                    //   break;
                     case 'image':
                         // this.$toast({ message: 'coming soon' });
                         this.$refs.upload.click();
                         break;
                 }
+                e.stopPropagation();
+                e.preventDefault();
             },
             handleUpload(e) {
                 const { files } = (e.target || {});
@@ -373,15 +372,15 @@ const $modules = new function () {
         template: `
             <form method="post" action id="comment_form" :class="{ 'small-size': reply.id }" @submit="e => e.preventDefault()">
                 <div class="form-group w-100">
+                    <div v-show="!userId" slot="content-top" class="user-info flex-center w-100">
+                        <input v-for="(item, index) in inputs" :key="item.key" class="form-input" type="text" v-model="form[item.bind.name]" v-bind="item.bind" :disabled="sending" @input="() => item.event && item.event()" />
+                    </div>
                     <div class="d-flex">
                         <figure class="user-avatar s-rounded">
                             <img class="s-rounded" :src="avatar" :alt="form.author" />
                         </figure>
                         <div class="d-flex flex-wrap w-100">
-                            <div v-show="!userId" class="user-info flex-center w-100">
-                                <input v-for="(item, index) in inputs" :key="item.key" class="form-input" type="text" v-model="form[item.bind.name]" v-bind="item.bind" :disabled="sending" @input="() => item.event && item.event()" />
-                            </div>
-                            <editor class="w-100" ref="editor" @submit="submit" v-bind="info.editor"></editor>
+                            <editor class="w-100" ref="editor" @submit="submit" v-bind="info.editor" />
                         </div>
                     </div>
                 </div>

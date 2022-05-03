@@ -881,7 +881,7 @@ legend {
   padding: 0.4rem 0;
 }
 
-.form-input {
+.form-input, body .layout #comments #comment_form .editor-content {
   appearance: none;
   background: #fff;
   background-image: none;
@@ -899,33 +899,33 @@ legend {
   transition: background 0.2s, border 0.2s, box-shadow 0.2s, color 0.2s;
   width: 100%;
 }
-.form-input:focus {
+.form-input:focus, body .layout #comments #comment_form .editor-content:focus {
   box-shadow: 0 0 0 0.1rem rgba(50, 116, 255, 0.2);
   border-color: #3274ff;
 }
-.form-input::placeholder {
+.form-input::placeholder, body .layout #comments #comment_form .editor-content::placeholder {
   color: #bcc3ce;
 }
-.form-input.input-sm {
+.form-input.input-sm, body .layout #comments #comment_form .input-sm.editor-content {
   font-size: 0.7rem;
   height: 1.4rem;
   padding: 0.05rem 0.3rem;
 }
-.form-input.input-lg {
+.form-input.input-lg, body .layout #comments #comment_form .input-lg.editor-content {
   font-size: 0.9rem;
   height: 2rem;
   padding: 0.35rem 0.6rem;
 }
-.form-input.input-inline {
+.form-input.input-inline, body .layout #comments #comment_form .input-inline.editor-content {
   display: inline-block;
   vertical-align: middle;
   width: auto;
 }
-.form-input[type=file] {
+.form-input[type=file], body .layout #comments #comment_form [type=file].editor-content {
   height: auto;
 }
 
-textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm {
+textarea.form-input, body .layout #comments #comment_form textarea.editor-content, textarea.form-input.input-lg, textarea.form-input.input-sm {
   height: auto;
 }
 
@@ -1002,14 +1002,14 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
 .has-icon-left .form-icon {
   left: 0.05rem;
 }
-.has-icon-left .form-input {
+.has-icon-left .form-input, .has-icon-left body .layout #comments #comment_form .editor-content, body .layout #comments #comment_form .has-icon-left .editor-content {
   padding-left: 1.3rem;
 }
 
 .has-icon-right .form-icon {
   right: 0.05rem;
 }
-.has-icon-right .form-input {
+.has-icon-right .form-input, .has-icon-right body .layout #comments #comment_form .editor-content, body .layout #comments #comment_form .has-icon-right .editor-content {
   padding-right: 1.3rem;
 }
 
@@ -1179,7 +1179,7 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
   font-size: 0.9rem;
   padding: 0.35rem 0.6rem;
 }
-.input-group .form-input,
+.input-group .form-input, .input-group body .layout #comments #comment_form .editor-content, body .layout #comments #comment_form .input-group .editor-content,
 .input-group .form-select {
   flex: 1 1 auto;
   width: 1%;
@@ -1187,21 +1187,21 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
 .input-group .input-group-btn {
   z-index: 1;
 }
-.input-group .form-input:first-child:not(:last-child),
+.input-group .form-input:first-child:not(:last-child), .input-group body .layout #comments #comment_form .editor-content:first-child:not(:last-child), body .layout #comments #comment_form .input-group .editor-content:first-child:not(:last-child),
 .input-group .form-select:first-child:not(:last-child),
 .input-group .input-group-addon:first-child:not(:last-child),
 .input-group .input-group-btn:first-child:not(:last-child) {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }
-.input-group .form-input:not(:first-child):not(:last-child),
+.input-group .form-input:not(:first-child):not(:last-child), .input-group body .layout #comments #comment_form .editor-content:not(:first-child):not(:last-child), body .layout #comments #comment_form .input-group .editor-content:not(:first-child):not(:last-child),
 .input-group .form-select:not(:first-child):not(:last-child),
 .input-group .input-group-addon:not(:first-child):not(:last-child),
 .input-group .input-group-btn:not(:first-child):not(:last-child) {
   border-radius: 0;
   margin-left: -0.05rem;
 }
-.input-group .form-input:last-child:not(:first-child),
+.input-group .form-input:last-child:not(:first-child), .input-group body .layout #comments #comment_form .editor-content:last-child:not(:first-child), body .layout #comments #comment_form .input-group .editor-content:last-child:not(:first-child),
 .input-group .form-select:last-child:not(:first-child),
 .input-group .input-group-addon:last-child:not(:first-child),
 .input-group .input-group-btn:last-child:not(:first-child) {
@@ -1209,7 +1209,7 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
   border-top-left-radius: 0;
   margin-left: -0.05rem;
 }
-.input-group .form-input:focus,
+.input-group .form-input:focus, .input-group body .layout #comments #comment_form .editor-content:focus, body .layout #comments #comment_form .input-group .editor-content:focus,
 .input-group .form-select:focus,
 .input-group .input-group-addon:focus,
 .input-group .input-group-btn:focus {
@@ -1222,24 +1222,24 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
   display: inline-flex;
 }
 
-.has-success .form-input, .form-input.is-success,
+.has-success .form-input, .has-success body .layout #comments #comment_form .editor-content, body .layout #comments #comment_form .has-success .editor-content, .form-input.is-success, body .layout #comments #comment_form .is-success.editor-content,
 .has-success .form-select,
 .form-select.is-success {
   background: #f9fdfa;
   border-color: #32b643;
 }
-.has-success .form-input:focus, .form-input.is-success:focus,
+.has-success .form-input:focus, .has-success body .layout #comments #comment_form .editor-content:focus, body .layout #comments #comment_form .has-success .editor-content:focus, .form-input.is-success:focus, body .layout #comments #comment_form .is-success.editor-content:focus,
 .has-success .form-select:focus,
 .form-select.is-success:focus {
   box-shadow: 0 0 0 0.1rem rgba(50, 182, 67, 0.2);
 }
-.has-error .form-input, .form-input.is-error,
+.has-error .form-input, .has-error body .layout #comments #comment_form .editor-content, body .layout #comments #comment_form .has-error .editor-content, .form-input.is-error, body .layout #comments #comment_form .is-error.editor-content,
 .has-error .form-select,
 .form-select.is-error {
   background: #fffaf7;
   border-color: #e85600;
 }
-.has-error .form-input:focus, .form-input.is-error:focus,
+.has-error .form-input:focus, .has-error body .layout #comments #comment_form .editor-content:focus, body .layout #comments #comment_form .has-error .editor-content:focus, .form-input.is-error:focus, body .layout #comments #comment_form .is-error.editor-content:focus,
 .has-error .form-select:focus,
 .form-select.is-error:focus {
   box-shadow: 0 0 0 0.1rem rgba(232, 86, 0, 0.2);
@@ -1274,18 +1274,18 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
   border-color: #e85600;
 }
 
-.form-input:not(:placeholder-shown):invalid {
+.form-input:not(:placeholder-shown):invalid, body .layout #comments #comment_form .editor-content:not(:placeholder-shown):invalid {
   border-color: #e85600;
 }
-.form-input:not(:placeholder-shown):invalid:focus {
+.form-input:not(:placeholder-shown):invalid:focus, body .layout #comments #comment_form .editor-content:not(:placeholder-shown):invalid:focus {
   box-shadow: 0 0 0 0.1rem rgba(232, 86, 0, 0.2);
   background: #fffaf7;
 }
-.form-input:not(:placeholder-shown):invalid + .form-input-hint {
+.form-input:not(:placeholder-shown):invalid + .form-input-hint, body .layout #comments #comment_form .editor-content:not(:placeholder-shown):invalid + .form-input-hint {
   color: #e85600;
 }
 
-.form-input:disabled, .form-input.disabled,
+.form-input:disabled, body .layout #comments #comment_form .editor-content:disabled, .form-input.disabled, body .layout #comments #comment_form .disabled.editor-content,
 .form-select:disabled,
 .form-select.disabled {
   background-color: #eef0f3;
@@ -1293,7 +1293,7 @@ textarea.form-input, textarea.form-input.input-lg, textarea.form-input.input-sm 
   opacity: 0.5;
 }
 
-.form-input[readonly] {
+.form-input[readonly], body .layout #comments #comment_form [readonly].editor-content {
   background-color: #f7f8f9;
 }
 
@@ -4122,20 +4122,31 @@ body .layout #comments #comment_form .user-avatar img {
 body .layout #comments #comment_form .user-info {
   margin-bottom: 0.5rem;
 }
-body .layout #comments #comment_form .form-input {
+body .layout #comments #comment_form .form-input, body .layout #comments #comment_form .editor-content {
   background: none;
   font-size: 0.7rem;
   border-width: 2px;
-  box-shadow: unset;
 }
-body .layout #comments #comment_form .form-input:not(:last-child) {
+body .layout #comments #comment_form .form-input:not(:last-child), body .layout #comments #comment_form .editor-content:not(:last-child) {
   margin-right: 0.5rem;
 }
-body .layout #comments #comment_form .form-input:not(:focus) {
+body .layout #comments #comment_form .form-input:not(:focus), body .layout #comments #comment_form .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
 body .layout #comments #comment_form .editor {
-  border-radius: 0.2rem;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+}
+body .layout #comments #comment_form .editor-content {
+  height: auto;
+  min-height: 3rem;
+  margin-bottom: 0.5rem;
+  color: currentColor;
+}
+body .layout #comments #comment_form .editor-content::before {
+  color: #bcc3ce;
+  opacity: 1;
 }
 body .layout #comments #comment_form.small-size .user-avatar {
   margin-left: -2.4rem;
@@ -4614,11 +4625,11 @@ body .dashicons {
 .dark #app.layout .modal-container {
   background-color: #303742;
 }
-.dark #app.layout .modal-container .form-input {
+.dark #app.layout .modal-container .form-input, .dark body #app.layout .modal-container #comments #comment_form .editor-content, body .dark #app.layout .modal-container #comments #comment_form .editor-content, .dark body #app.layout #comments #comment_form .modal-container .editor-content, body .dark #app.layout #comments #comment_form .modal-container .editor-content {
   color: #bcc3ce;
   background-color: rgba(188, 195, 206, 0.1);
 }
-.dark #app.layout .modal-container .form-input:not(:focus) {
+.dark #app.layout .modal-container .form-input:not(:focus), .dark body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), body .dark #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), .dark body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus), body .dark #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
 .dark #app.layout #header .logo .fullname a {
@@ -4663,10 +4674,10 @@ body .dashicons {
   background-color: #303742;
   box-shadow: 0 0 2rem 1px rgba(188, 195, 206, 0.2), 0 0 0 999rem rgba(48, 55, 66, 0.2);
 }
-.dark #app.layout #comments #comment_form .form-input {
+.dark #app.layout #comments #comment_form .form-input, .dark body #app.layout #comments #comment_form .editor-content, body .dark #app.layout #comments #comment_form .editor-content {
   color: #bcc3ce;
 }
-.dark #app.layout #comments #comment_form .form-input:not(:focus) {
+.dark #app.layout #comments #comment_form .form-input:not(:focus), .dark body #app.layout #comments #comment_form .editor-content:not(:focus), body .dark #app.layout #comments #comment_form .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
 
@@ -4690,11 +4701,11 @@ body .dashicons {
   body.auto #app.layout .modal-container {
     background-color: #303742;
   }
-  body.auto #app.layout .modal-container .form-input {
+  body.auto #app.layout .modal-container .form-input, body.auto #app.layout .modal-container #comments #comment_form .editor-content, body.auto #app.layout #comments #comment_form .modal-container .editor-content {
     color: #bcc3ce;
     background-color: rgba(188, 195, 206, 0.1);
   }
-  body.auto #app.layout .modal-container .form-input:not(:focus) {
+  body.auto #app.layout .modal-container .form-input:not(:focus), body.auto #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), body.auto #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
   body.auto #app.layout #header .logo .fullname a {
@@ -4739,10 +4750,10 @@ body.auto #app.layout #aside .footer-nav li:not([class*=current-]) {
     background-color: #303742;
     box-shadow: 0 0 2rem 1px rgba(188, 195, 206, 0.2), 0 0 0 999rem rgba(48, 55, 66, 0.2);
   }
-  body.auto #app.layout #comments #comment_form .form-input {
+  body.auto #app.layout #comments #comment_form .form-input, body.auto #app.layout #comments #comment_form .editor-content {
     color: #bcc3ce;
   }
-  body.auto #app.layout #comments #comment_form .form-input:not(:focus) {
+  body.auto #app.layout #comments #comment_form .form-input:not(:focus), body.auto #app.layout #comments #comment_form .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
 }
