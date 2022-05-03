@@ -196,7 +196,7 @@ function get_post_thumbnail_url( $post_id = null ) {
 	if ( $thumbnail_id ) {
 		$thumbnail = wp_get_attachment_image_src( $thumbnail_id, 'full' );
 
-		return $thumbnail[0];
+		return $thumbnail[0] ?? false;
 	}
 
 	return false;
