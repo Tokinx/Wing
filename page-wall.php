@@ -14,10 +14,10 @@ if ( have_posts() ) {
 			<?php foreach ( get_readers_wall() as $comment ) { ?>
                 <li class="column col-3 col-sm-4 col-xs-6 p-2">
                     <div class="card uni-card flex-center text-center p-2">
-                        <a class="text-gray text-tiny m-2"
+                        <a class="text-gray text-tiny m-2 tooltip"
                            href="<?= ( $comment->comment_author_url ?: 'javascript:void(0);' ) ?>"
                            target="<?= ( $comment->comment_author_url ? '_blank' : '_self' ) ?>"
-                           title="<?= $comment->comment_author ?>（<?= $comment->cnt ?>）">
+                           data-tooltip="<?= $comment->comment_author ?> [ <?= $comment->cnt ?> ]">
 							<?= get_avatar( $comment->comment_author_email, 160, '', '', [
 								"class" => [ 'avatar-xl' ]
 							] ); ?>
