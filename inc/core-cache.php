@@ -41,7 +41,9 @@ if ( ! class_exists( 'FileCache' ) ) :
 		 */
 		public function set( $key, $value ) {
 			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
-			file_put_contents( $this->cache_file, json_encode( $value ) );
+			if ( file_exists( $this->cache_dir ) ) {
+				file_put_contents( $this->cache_file, json_encode( $value ) );
+			}
 		}
 
 		/**
@@ -63,7 +65,6 @@ if ( ! class_exists( 'FileCache' ) ) :
 		 */
 		public function has( $key ) {
 			$this->cache_file = $this->cache_dir . '/' . $key . '.json';
-
 			if ( file_exists( $this->cache_file ) ) {
 				return time() - filemtime( $this->cache_file ) < $this->cache_time;
 			}
