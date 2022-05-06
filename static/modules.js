@@ -776,10 +776,10 @@ const $modules = new function () {
     
                             <slot name="right-icon">
                                 <div v-if="logged && !isPost" class="dropdown">
-                                    <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle">
+                                    <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
                                         <i class="dashicons dashicons-ellipsis"></i>
                                     </button>
-                                    <ul :class="['menu uni-shadow']" style="left: unset;right: 0;">
+                                    <ul class="menu menu-left uni-shadow">
                                         <div v-if="loading" class="loading loading-full"></div>
                                         <li class="menu-item">
                                             <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
