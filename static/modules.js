@@ -756,7 +756,7 @@ const $modules = new function () {
     this.NoteCard = {
         name: 'note-card',
         template: `
-            <div :class="'notes-item notes-item-' + note.id">
+            <div :class="'notes-item feat-' + featId">
                 <div class="card uni-card">
                     <div class="tile card-body d-block">
                         <div class="tile-header flex-center justify-between">
@@ -824,7 +824,6 @@ const $modules = new function () {
         props: {
             logged: { type: Boolean, default: false },
             lately: { type: Boolean, default: true },
-            isComment: { type: Boolean, default: true },
             note: { type: Object, default: () => ({}) }
         },
         data() {
@@ -842,6 +841,10 @@ const $modules = new function () {
         computed: {
             isPost() {
                 return this.note.type === 'post';
+            },
+            featId() {
+                const rand = Math.random().toString(36).substring(2);
+                return `${this.note.id}-${rand}`;
             },
             superContent() {
                 let content = this.note.content;
@@ -898,12 +901,11 @@ const $modules = new function () {
                 }
             },
             handleComment() {
-                if ( !this.isComment ) return;
                 if ( this.comment ) {
                     this.comment.destroy();
                     this.comment = null;
                 } else {
-                    this.comment = $modules.CommentAppend(this.note.id, $h.store.config);
+                    this.comment = $modules.CommentAppend(this.featId, $h.store.config);
                 }
             },
             openArticleDialog(post_id) {
@@ -950,7 +952,8 @@ const $modules = new function () {
     // };
 
     // 卡片下方追加显示评论
-    this.CommentAppend = (post_id, $config) => {
+    this.CommentAppend = (featId, $config) => {
+        const post_id = featId.match(/(\d+)-/)[1];
         const Append = Vue.extend({
             template: `
                 <div class="append-comments" @scroll="ThrottleScroll">
@@ -980,7 +983,7 @@ const $modules = new function () {
             },
         });
         const vm = new Append({ el: document.createElement('div') });
-        document.querySelector(`.notes-item-${post_id} .card`).appendChild(vm.$el);
+        document.querySelector(`.feat-${featId} .card`).appendChild(vm.$el);
         return vm;
     }
 
@@ -991,7 +994,7 @@ const $modules = new function () {
                 <div class="modal active article-dialog">
                     <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
                     <div v-if="loading" class="loading"></div>
-                    <note-card v-else v-bind="{ lately, note, isComment: false }">
+                    <note-card v-else v-bind="{ lately, note }">
                         <button slot="right-icon" href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></button>
                     </note-card>
                 </div>
