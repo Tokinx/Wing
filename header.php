@@ -19,18 +19,20 @@
         <section class="header__right d-flex">
             <form method="get" action="<?php bloginfo( 'url' ); ?>" class="search mr-2">
                 <input class="search-key s-circle" name="s" placeholder="输入关键词..." type="text" required="required"/>
-                <i class="czs-search-l flex-center"></i>
+                <i class="text-small czs-search-l flex-center"></i>
             </form>
-			<?php if ( get_theme_mod( 'biji_setting_mode' ) !== 'dark' ) { ?>
-                <a class="right-btn s-circle light-mode-btn flex-center" href="javascript:void(0);"
-                   @click="toggleSkinMode()">
-                    <i class="czs-sun-l"></i>
+            <div class="dropdown">
+                <a class="right-btn dropdown-toggle flex-center s-circle" href="javascript:void(0);" tabindex="0">
+                    <i class="czs-clothes-l text-small"></i>
                 </a>
-                <a class="right-btn s-circle dark-mode-btn flex-center" href="javascript:void(0);"
-                   @click="toggleSkinMode('dark')">
-                    <i class="czs-moon-l"></i>
-                </a>
-			<?php } ?>
+                <ul class="menu menu-left mode-switch uni-card bg-blur" @click="toggleSkinMode">
+                    <li v-for="item of modeList" class="menu-item">
+                        <a class="flex-center" :data-mode="item.mode" href="javascript:void(0);">
+                            <i :class="[item.icon, 'mr-1']"></i>{{ item.name }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <a class="right-btn menu-btn off-canvas-toggle flex-center ml-2" href="#aside">
                 <i class="czs-menu-l"></i>
             </a>

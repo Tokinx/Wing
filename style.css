@@ -3338,7 +3338,6 @@ body {
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
   background: #f7f8f9;
   transition: 300ms;
-  opacity: unset !important;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -3390,11 +3389,11 @@ body .layout #header .header__right {
   right: 4%;
   color: #66758c;
 }
-body .layout #header .header__right .light-mode-btn {
-  display: none;
+body .layout #header .header__right .mode-switch {
+  min-width: 100px;
 }
-body .layout #header .header__right .dark-mode-btn {
-  display: inline-flex;
+body .layout #header .header__right .mode-switch a {
+  display: flex;
 }
 body .layout #header .header__right .s-circle {
   width: 2rem;
@@ -3440,7 +3439,6 @@ body .layout #header .header__right .search-key:focus ~ [class*=czs-] {
   z-index: 202;
 }
 body .layout #header .header__right .right-btn {
-  font-size: 1rem;
   text-decoration: none;
   color: currentColor;
 }
@@ -4451,6 +4449,10 @@ body ol.reset-ul li {
   margin: 0;
   list-style: none;
 }
+body .bg-blur {
+  backdrop-filter: blur(0.5rem);
+  -webkit-backdrop-filter: blur(0.5rem);
+}
 body .w-0 {
   width: 0;
 }
@@ -4503,6 +4505,10 @@ body .chip {
 body .chip .btn-clear {
   transform: unset;
   font-size: 0.6rem;
+}
+body .dropdown .menu-left {
+  left: unset;
+  right: 0;
 }
 body .s-circle {
   border-radius: 99rem;

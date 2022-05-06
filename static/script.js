@@ -192,7 +192,15 @@ Vue.prototype.$toast = function (params, timer) {
 window.$vm = new Vue({
     el: '#app',
     data() {
-        return { animation: "" };
+        return {
+            animation: "",
+            modeList: [
+                { name: '自动', icon: 'czs-bot', mode: 'auto' },
+                { name: '明亮', icon: 'czs-sun', mode: 'light' },
+                { name: '暗黑', icon: 'czs-moon', mode: 'dark' },
+                // { name: '护眼', icon: 'czs-eye', mode: 'relax' },
+            ],
+        };
     },
     mounted() {
         new WingPjax({
@@ -256,17 +264,15 @@ window.$vm = new Vue({
                 });
             }
         },
-        toggleSkinMode(mode) {
-            let add = 'default', remove = "dark";
-            if ( mode ) {
-                add = 'dark';
-                remove = "default";
-                Cookies.set('skin-mode', 'dark');
-            } else Cookies.remove('skin-mode');
-            !((item) => {
-                item.add(add);
-                ['auto', remove].map(_ => item.remove(_));
-            })(document.body.classList)
+        toggleSkinMode(e) {
+            const target = e.target;
+            if ( !target.closest('a') ) return;
+            const mode = target.dataset.mode;
+            Cookies.set('skin-mode', mode);
+            ((body) => {
+                body.remove('auto', 'light', 'dark');
+                body.add(mode);
+            })(document.body.classList);
         },
         sleep(timer = 300) {
             return new Promise(resolve => {
