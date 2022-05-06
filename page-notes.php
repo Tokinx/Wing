@@ -55,7 +55,7 @@ get_header(); ?>
                                 </a>
                             </editor>
 
-                            <div class="notes-tabbar sticky">
+                            <div class="notes-tabbar sticky bg-blur">
                                 <ul class="tab">
                                     <li v-for="item in superTabs" :key="item.id" @click="handleTabs(item)" :class="['tab-item', { active: search.type === item.id }]">
                                         <a href="javascript: void(0);">{{ item.name }}</a>
