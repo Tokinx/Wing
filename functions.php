@@ -275,10 +275,10 @@ function the_friendly_links( $post_id = null ) {
 	$links   = json_decode( get_post_meta( $post_id, 'links', true ) ?: "[]" );
 	foreach ( $links as $link ) : ?>
         <li class="column col-4 col-sm-6 p-2">
-            <a class="card uni-card flex-center text-center" href="<?= $link->url ?: 'javascript:void(0);' ?>"
+            <a class="card uni-card flex-center text-center" href="<?= $link->url ?? 'javascript:void(0);' ?>"
                target="_blank">
-                <span class="text-break mt-2"><?= $link->name ?: '--' ?></span>
-                <span class="text-gray text-tiny text-break mb-2"><?= $link->description ?: '' ?></span>
+                <span class="text-break mt-2"><?= $link->name ?? '--' ?></span>
+                <span class="text-gray text-tiny text-break mb-2"><?= $link->description ?? '' ?></span>
             </a>
         </li>
 	<?php endforeach;
