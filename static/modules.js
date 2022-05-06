@@ -248,7 +248,6 @@ const $modules = new function () {
                         this.execCommand('italic');
                         break;
                     case 'image':
-                        // this.$toast({ message: 'coming soon' });
                         this.$refs.upload.click();
                         break;
                 }
@@ -897,13 +896,6 @@ const $modules = new function () {
                 if ( dataset && dataset.quote ) {
                     this.openArticleDialog(dataset.quote);
                 }
-            },
-            handleArticle(e) {
-                if ( e.ctrlKey || e.metaKey || e.shiftKey || e.altKey ) return;
-                e.stopPropagation();
-                e.preventDefault();
-                this.openArticleDialog(this.note.id);
-                return false;
             },
             handleComment() {
                 if ( !this.isComment ) return;
