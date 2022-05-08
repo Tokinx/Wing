@@ -21,6 +21,9 @@ include_once( 'inc/base-customized.php' ); // 定制优化
 function biji_enqueue_scripts() {
 	// WP自带图标
 	wp_enqueue_style( 'dashicons' );
+	wp_enqueue_style( 'wp-block-library' ); // WordPress 核心
+	wp_enqueue_style( 'wp-block-library-theme' ); // WordPress 核心
+
 	// 草莓ICON PRO
 	wp_enqueue_style( 'caomei', get_template_directory_uri() . '/static/caomei/style.css', [], THEME_VERSION );
 	wp_enqueue_style( 'style', get_template_directory_uri() . '/style.css', [], THEME_VERSION );

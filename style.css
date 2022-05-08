@@ -663,6 +663,37 @@ html:lang(ko),
   margin-left: 0.125em;
 }
 
+.table, body .layout .wp-block-table table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  text-align: left;
+}
+.table.table-striped tbody tr:nth-of-type(odd), body .layout .wp-block-table table.table-striped tbody tr:nth-of-type(odd), body .layout .wp-block-table.is-style-stripes table tbody tr:nth-of-type(odd) {
+  background: #f7f8f9;
+}
+.table tbody tr.active, body .layout .wp-block-table table tbody tr.active, .table.table-striped tbody tr.active {
+  background: #eef0f3;
+}
+.table.table-hover tbody tr:hover, body .layout .wp-block-table table.table-hover tbody tr:hover {
+  background: #eef0f3;
+}
+.table.table-scroll, body .layout .wp-block-table table.table-scroll {
+  display: block;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  white-space: nowrap;
+}
+.table td, body .layout .wp-block-table table td,
+.table th,
+body .layout .wp-block-table table th {
+  border-bottom: 0.05rem solid #dadee4;
+  padding: 0.6rem 0.4rem;
+}
+.table th, body .layout .wp-block-table table th {
+  border-bottom-width: 0.1rem;
+}
+
 .btn {
   appearance: none;
   background: #fff;
@@ -3346,6 +3377,7 @@ body {
 }
 body .layout {
   /* Union Style */
+  /* 古腾堡样式适配 */
 }
 body .layout .container {
   max-width: 60rem;
@@ -3967,23 +3999,14 @@ body .layout .article-content :is(h1, h2, h3, h4, h5, h6) {
 body .layout .article-content :is(h1, h2, h3, h4, h5, h6) ~ * {
   margin-top: 0 !important;
 }
-body .layout .article-content p {
+body .layout .article-content > p {
   text-align: justify;
 }
-body .layout .article-content strong, body .layout .article-content b {
+body .layout .article-content > p strong, body .layout .article-content > p b {
   box-shadow: 0 -0.2rem 0 rgba(255, 0, 0, 0.3) inset;
 }
-body .layout .article-content i:not([class]), body .layout .article-content em {
+body .layout .article-content > p i:not([class]), body .layout .article-content > p em {
   box-shadow: 0 -1rem 0 rgba(255, 255, 0, 0.3) inset;
-}
-body .layout .article-content blockquote, body .layout .article-content q {
-  padding: 1rem;
-  margin-right: 0;
-  background: rgba(188, 195, 206, 0.1);
-  border-color: rgba(188, 195, 206, 0.5);
-}
-body .layout .article-content blockquote *:not(:last-child), body .layout .article-content q *:not(:last-child) {
-  margin-bottom: 0.5rem;
 }
 body .layout .article-content img {
   max-width: 100%;
@@ -3991,15 +4014,12 @@ body .layout .article-content img {
 body .layout .article-content ul:not([class]) li {
   list-style-type: circle;
 }
+body .layout .article-content figcaption {
+  color: #bcc3ce;
+}
 body .layout .article-content .post_password_form {
   max-width: 360px;
   margin: 10% auto;
-}
-body .layout .article-content .wp-block-media-text {
-  margin-bottom: 1rem;
-}
-body .layout .article-content .wp-block-media-text__media video {
-  height: auto;
 }
 body .layout .article-content .blocks-gallery-item figcaption {
   transition: 300ms;
@@ -4022,6 +4042,46 @@ body .layout .article-links .card {
 body .layout .article-links .card:hover {
   transform: translateY(-0.2rem);
   box-shadow: 0 0 0 2px currentColor, 0 2px 10px 1px rgba(50, 116, 255, 0.1);
+}
+body .layout .wp-block-media-text {
+  margin-bottom: 1rem;
+}
+body .layout .wp-block-media-text__media video {
+  height: auto;
+}
+body .layout .wp-block-quote {
+  border-color: rgba(188, 195, 206, 0.2);
+  border-width: 2px;
+}
+body .layout .wp-block-pullquote {
+  border-color: rgba(188, 195, 206, 0.2);
+}
+body .layout .wp-block-pullquote blockquote {
+  padding: 0 1rem;
+  margin: unset;
+  border: unset;
+}
+body .layout .wp-block-table {
+  border-bottom: none;
+}
+body .layout .wp-block-table table thead {
+  border: none;
+}
+body .layout .wp-block-table table th, body .layout .wp-block-table table td {
+  border-top-width: 0;
+  border-left-width: 0;
+  border-right-width: 0;
+  border-bottom-color: rgba(188, 195, 206, 0.3);
+}
+body .layout .wp-block-table.is-style-stripes table tbody tr:nth-child(odd) {
+  background: rgba(188, 195, 206, 0.1);
+}
+body .layout .wp-block-table.is-style-stripes table tbody tr:hover, body .layout .wp-block-table.is-style-regular table tbody tr:hover {
+  background: rgba(188, 195, 206, 0.2);
+}
+body .layout .wp-block-table figcaption {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
 }
 body .layout .article-list + .pagination {
   margin: 1rem -0.2rem 2%;
