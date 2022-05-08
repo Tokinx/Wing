@@ -402,7 +402,7 @@ const $modules = new function () {
                     {
                         bind: { name: 'email', placeholder: 'Email', required: true },
                         // TODO: 从接口回去头像和URL
-                        event: $h.debounce(() => this.avatar = $h.avatar(this.form.email, { s: '168' }), 600),
+                        event: $h.debounce(async () => this.avatar = await $h.avatar(this.form.email), 600),
                     },
                     { bind: { name: 'url', placeholder: 'Url' } },
                 ],
@@ -417,9 +417,11 @@ const $modules = new function () {
             info: {
                 deep: true,
                 immediate: true,
-                handler({ post_id, visitor }) {
+                async handler({ post_id, visitor }) {
                     this.userId = visitor && visitor.user_id;
-                    this.avatar = $h.avatar(visitor && visitor.email, { s: '168' });
+                    if ( visitor.email !== this.form.email ) {
+                        this.avatar = await $h.avatar(visitor && visitor.email);
+                    }
                     this.form = { ...this.form, ...visitor, comment_post_ID: post_id };
                 },
             },

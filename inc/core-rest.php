@@ -528,4 +528,13 @@ function update_heatmap_cache() {
 add_action( 'save_post', 'update_heatmap_cache' );
 add_action( 'comment_post', 'update_heatmap_cache' );
 
+// 获取Gravatar头像
+function ajax_get_avatar_callback() {
+	check_nonce();
+	wp_send_json_success( get_avatar_url( _get_value( 'email' ) ) );
+}
+
+add_action( 'wp_ajax_get_avatar', 'ajax_get_avatar_callback' );
+add_action( 'wp_ajax_nopriv_get_avatar', 'ajax_get_avatar_callback' );
+
 // End of page.

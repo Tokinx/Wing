@@ -11,9 +11,11 @@ const $h = {
         return Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&');
     },
     // 获取头像
-    avatar(email, conf = {}) {
-        const defaultArgs = { s: 96, d: 'mm', r: 'g', ...conf };
-        return `${$base.avatar}/${md5(email)}?${this.toQueryString(defaultArgs)}`;
+    async avatar(email) {
+        // TODO: 关于async/await的兼容性待收集反馈
+        if (!email) return `${$base.avatar}/default?d=mm&f=y&r=g`;
+        const res = await this.ajax({ query: { action: 'get_avatar', email } });
+        return res.data;
     },
     // 防抖
     debounce(fun, delay = 500) {
