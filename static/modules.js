@@ -225,11 +225,13 @@ const $modules = new function () {
             setLoading(loading) {
                 this.loading = loading;
             },
-            clear() {
+            clearText() {
                 this.editor.innerHTML = `<p><br></p>`;
                 this.content = '';
-                // 百思不得其解，为什么我会写出下面这句代码，出于什么考虑？
-                // this.images = [];
+            },
+            clear() {
+                this.clearText();
+                this.images = [];
             },
             handleTools(name, e) {
                 switch (name) {
@@ -294,7 +296,7 @@ const $modules = new function () {
                 const value = editor.innerHTML.trim().replace(/style\s*?=\s*?(['"])[\s\S]*?\1/g, '');
                 // 移除多余的br标签
                 if ( !editor.textContent ) {
-                    this.clear();
+                    this.clearText();
                 } else {
                     this.content = value;
                 }
