@@ -21,11 +21,9 @@
     function _exReload() {
 		<?php if (get_theme_mod( 'biji_setting_lately', true )) { ?>
         window.Lately && Lately.init();
-		<?php } ?>
-		<?php if (get_theme_mod( 'biji_setting_view_image', true )) { ?>
+		<?php }  if (get_theme_mod( 'biji_setting_view_image', true )) { ?>
         window.ViewImage && ViewImage.init('article img:not(.avatar)');
-		<?php } ?>
-		<?php if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
+		<?php } if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
         window.prettyPrint && prettyPrint();
 		<?php } ?>
     }
