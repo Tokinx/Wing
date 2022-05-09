@@ -10,12 +10,14 @@ const $h = {
     toQueryString(obj) {
         return Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&');
     },
-    // 获取头像
-    async avatar(email) {
-        // TODO: 关于async/await的兼容性待收集反馈
-        if (!email) return `${$base.avatar}/default?d=mm&f=y&r=g`;
-        const res = await this.ajax({ query: { action: 'get_avatar', email } });
-        return res.data;
+    // 获取访客信息
+    visitor(email, cb) {
+        email = (email || '').trim();
+        if ( !email || !/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email) ) {
+            cb && cb({ avatar: `${$base.avatar}/default?d=mm&f=y&r=g` })
+            return;
+        }
+        this.ajax({ query: { action: 'get_visitor_info', email } }).then(({ data }) => cb && cb(data));
     },
     // 防抖
     debounce(fun, delay = 500) {

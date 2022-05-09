@@ -398,12 +398,17 @@ const $modules = new function () {
             return {
                 sending: false,
                 inputs: [
-                    { bind: { name: 'author', placeholder: 'Name', required: true } },
                     {
                         bind: { name: 'email', placeholder: 'Email', required: true },
-                        // TODO: 从接口回去头像和URL
-                        event: $h.debounce(async () => this.avatar = await $h.avatar(this.form.email), 600),
+                        event: $h.debounce(() => {
+                            $h.visitor(this.form.email, ({ author, avatar, url }) => {
+                                this.avatar = avatar;
+                                this.form.author = author || '';
+                                this.form.url = url || '';
+                            });
+                        }, 600),
                     },
+                    { bind: { name: 'author', placeholder: 'Name', required: true } },
                     { bind: { name: 'url', placeholder: 'Url' } },
                 ],
                 avatar: '',
@@ -417,10 +422,12 @@ const $modules = new function () {
             info: {
                 deep: true,
                 immediate: true,
-                async handler({ post_id, visitor }) {
-                    this.userId = visitor && visitor.user_id;
+                handler({ post_id, visitor }) {
+                    this.userId = visitor.user_id;
                     if ( visitor.email !== this.form.email ) {
-                        this.avatar = await $h.avatar(visitor && visitor.email);
+                        $h.visitor(visitor.email, ({ avatar }) => {
+                            this.avatar = avatar;
+                        });
                     }
                     this.form = { ...this.form, ...visitor, comment_post_ID: post_id };
                 },

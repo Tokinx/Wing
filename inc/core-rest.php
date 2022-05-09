@@ -397,7 +397,6 @@ function ajax_get_heatmap_callback() {
 
 	if ( $_cache->has( 'heatmap' ) ) {
 		wp_send_json_success( $_cache->get( 'heatmap' ) );
-		wp_die();
 	};
 
 	$calendar = [];
@@ -528,13 +527,37 @@ function update_heatmap_cache() {
 add_action( 'save_post', 'update_heatmap_cache' );
 add_action( 'comment_post', 'update_heatmap_cache' );
 
-// 获取Gravatar头像
-function ajax_get_avatar_callback() {
+// 获取访客信息
+function ajax_get_visitor_info_callback() {
 	check_nonce();
-	wp_send_json_success( get_avatar_url( _get_value( 'email' ) ) );
+	$email = _get_value( 'email' );
+	$key   = md5( $email );
+
+	if ( false === ( $result = get_transient( $key ) ) ) {
+		$result = [
+			'author' => '',
+			'email'  => $email,
+			'avatar' => get_avatar_url( $email ),
+			'url'    => '',
+		];
+		// 通过email获取访客最近一次评论
+		$comment = get_comments( [
+			'number'       => 1,
+			'author_email' => $email,
+			'orderby'      => 'comment_date',
+		] );
+		if ( $comment && count( $comment ) ) {
+			$result['author'] = $comment[0]->comment_author;
+			$result['url']    = $comment[0]->comment_author_url;
+		}
+
+		set_transient( $key, $result, MONTH_IN_SECONDS );
+	}
+
+	wp_send_json_success( $result );
 }
 
-add_action( 'wp_ajax_get_avatar', 'ajax_get_avatar_callback' );
-add_action( 'wp_ajax_nopriv_get_avatar', 'ajax_get_avatar_callback' );
+add_action( 'wp_ajax_get_visitor_info', 'ajax_get_visitor_info_callback' );
+add_action( 'wp_ajax_nopriv_get_visitor_info', 'ajax_get_visitor_info_callback' );
 
 // End of page.
