@@ -228,7 +228,8 @@ const $modules = new function () {
             clear() {
                 this.editor.innerHTML = `<p><br></p>`;
                 this.content = '';
-                this.images = [];
+                // 百思不得其解，为什么我会写出下面这句代码，出于什么考虑？
+                // this.images = [];
             },
             handleTools(name, e) {
                 switch (name) {
@@ -255,6 +256,7 @@ const $modules = new function () {
                 e.preventDefault();
             },
             handleUpload(e) {
+                console.log(e);
                 const { files } = (e.target || {});
                 const len = { flag: 0, count: files.length };
                 this.uploading = true;
