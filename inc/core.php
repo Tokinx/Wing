@@ -373,7 +373,7 @@ function get_image_base64( $url = '' ) {
 
 		return $base64;
 	} catch ( Error $e ) {
-		return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+		return "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=";
 	}
 }
 

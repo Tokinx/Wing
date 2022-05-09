@@ -415,7 +415,7 @@ const $modules = new function () {
                     { bind: { name: 'author', placeholder: 'Name', required: true } },
                     { bind: { name: 'url', placeholder: 'Url' } },
                 ],
-                avatar: '',
+                avatar: 'data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=',
                 userId: '',
                 form: {
                     comment_post_ID: null, comment_parent: null, author: '', email: '', url: '', comment: '',
