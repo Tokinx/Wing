@@ -106,7 +106,12 @@ function bark_push_msg( $comment_id ) {
 		$avatar = 'https:' . $avatar;
 	}
 
-	return file_get_contents( "https://api.day.app/$token/$title/$message?icon=$avatar&group=$blog_name&url=$replay" );
+	$stream_opts = [
+		"ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
+		"http" => [ "timeout" => 5 ], // 超时时间 5 秒
+	];
+
+	return file_get_contents( "https://api.day.app/$token/$title/$message?icon=$avatar&group=$blog_name&url=$replay", false, stream_context_create( $stream_opts ) );
 }
 
 add_action( 'comment_post', 'bark_push_msg' );

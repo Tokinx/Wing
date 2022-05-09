@@ -23,7 +23,6 @@ function _get_value( $key, $default = '' ) {
 // 获取文章信息
 function ajax_get_all_posts_callback() {
 	check_nonce();
-	global $_cache;
 	// 参数
 	$type = _get_value( 'type', 'single' );
 	$ids  = _get_value( 'ids' );
@@ -56,8 +55,8 @@ function ajax_get_all_posts_callback() {
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( '非法访问，请求被拒绝', 401 );
 		}
-		if ( date( 'Y-m-d', $_cache->get_file_time( 'review' ) ) === date( 'Y-m-d' ) ) {
-			wp_send_json_success( $_cache->get( 'review' ) );
+		if ( get_transient( 'review' ) ) {
+			wp_send_json_success( get_transient( 'review' ) );
 		}
 		$args['post_type'] = 'note';
 		$args['orderby']   = 'rand';
@@ -114,7 +113,6 @@ function ajax_get_all_posts_callback() {
 				$ids          = explode( ',', $value[0] );
 				$post->images = array_map( function ( $id ) {
 					$url = wp_get_attachment_url( $id );
-
 					return replace_domain( $url );
 				}, $ids );
 			}
@@ -140,9 +138,9 @@ function ajax_get_all_posts_callback() {
 		'total'   => count( $count ),
 	];
 
+	// 缓存每日回顾
 	if ( $type === 'review' ) {
-		// 缓存每日回顾
-		$_cache->set( 'review', $posts ); // 缓存数据
+		set_transient( 'review', $result, 24 * HOUR_IN_SECONDS );
 	}
 
 	wp_send_json( $result );
@@ -393,99 +391,88 @@ add_action( 'wp_ajax_nopriv_get_post_meta', 'ajax_get_post_meta_callback' );
 function ajax_get_heatmap_callback() {
 	check_nonce();
 
-	global $_cache;
+	if ( false === ( $result = get_transient( 'heatmap' ) ) ) {
+		$calendar = [];
 
-	if ( $_cache->has( 'heatmap' ) ) {
-		wp_send_json_success( $_cache->get( 'heatmap' ) );
+		$after_day = array_key_exists( 'after_day', $_GET ) ? $_GET['after_day'] : 60;
+
+		for ( $i = 0; $i < $after_day; $i ++ ) {
+			$day              = date( 'Y-m-d', strtotime( "-$i day" ) );
+			$calendar[ $day ] = new stdClass();
+		}
+
+		// 获取当前用户最近60天的数据，按时间排序
+		$args = [
+			'post_type'      => [ 'post', 'note' ],
+			'posts_per_page' => '-1',
+			'post_status'    => 'publish',
+			'orderby'        => 'date',
+			'order'          => 'ASC',
+			'author__in'     => get_current_user_id(),
+			'date_query'     => [
+				'after' => "-$after_day day",
+			],
+		];
+
+		$comments = get_comments( $args ); // 评论
+
+		$posts = get_posts( $args ); // 文章
+
+		foreach ( $comments as $comment ) {
+			$date = date( 'Y-m-d', strtotime( $comment->comment_date ) );
+			if ( array_key_exists( $date, $calendar ) ) {
+				if ( ! isset( $calendar[ $date ]->comments ) ) {
+					$calendar[ $date ]->comments = 0;
+				}
+				$calendar[ $date ]->comments ++;
+			}
+		}
+
+		foreach ( $posts as $post ) {
+			$date = date( 'Y-m-d', strtotime( $post->post_date ) );
+			if ( array_key_exists( $date, $calendar ) ) {
+				// 判断文章类型
+				if ( $post->post_type === 'note' ) {
+					if ( ! isset( $calendar[ $date ]->notes ) ) {
+						$calendar[ $date ]->notes = 0;
+					}
+					$calendar[ $date ]->notes ++;
+				} else {
+					if ( ! isset( $calendar[ $date ]->posts ) ) {
+						$calendar[ $date ]->posts = 0;
+					}
+					$calendar[ $date ]->posts ++;
+				}
+			}
+		}
+
+		// 获取文章总数
+		$_posts = wp_count_posts( 'post' );
+		// 获取笔记总数
+		$_notes = wp_count_posts( 'note' );
+		// 最老一篇笔记
+		$last = get_posts( [
+			'post_type'      => 'note',
+			'posts_per_rows' => 1,
+			'orderby'        => 'date',
+			'order'          => 'ASC',
+		] );
+		$days = 0;
+		if ( $last && count( $last ) ) {
+			$last_date = $last[0]->post_date;
+			// 判断两个日期相差的天数
+			$days = ceil( ( strtotime( date( 'Y-m-d' ) ) - strtotime( $last_date ) ) / 86400 );
+		}
+
+		$result = [
+			'notes'    => $_notes->publish,
+			'posts'    => $_posts->publish,
+			'days'     => (string) max( $days, 1 ),
+			'calendar' => $calendar,
+		];
+
+		set_transient( 'heatmap', $result, DAY_IN_SECONDS );
 	};
-
-	$calendar = [];
-
-	$after_day = array_key_exists( 'after_day', $_GET ) ? $_GET['after_day'] : 60;
-
-	for ( $i = 0; $i < $after_day; $i ++ ) {
-		$day              = date( 'Y-m-d', strtotime( "-$i day" ) );
-		$calendar[ $day ] = new stdClass();
-	}
-
-	// 获取当前用户最近60天的数据，按时间排序
-	$args = [
-		'post_type'      => [ 'post', 'note' ],
-		'posts_per_page' => '-1',
-		'post_status'    => 'publish',
-		'orderby'        => 'date',
-		'order'          => 'ASC',
-		'author__in'     => get_current_user_id(),
-		'date_query'     => [
-			'after' => "-$after_day day",
-		],
-	];
-
-	$comments = get_comments( $args ); // 评论
-
-	$posts = get_posts( $args ); // 文章
-
-	foreach ( $comments as $comment ) {
-		$date = date( 'Y-m-d', strtotime( $comment->comment_date ) );
-		if ( array_key_exists( $date, $calendar ) ) {
-			if ( ! isset( $calendar[ $date ]->comments ) ) {
-				$calendar[ $date ]->comments = 0;
-			}
-			$calendar[ $date ]->comments ++;
-		}
-	}
-
-	foreach ( $posts as $post ) {
-		$date = date( 'Y-m-d', strtotime( $post->post_date ) );
-		if ( array_key_exists( $date, $calendar ) ) {
-			// 移除html标签和空格
-			// $text = preg_replace('/\s/', '', strip_tags($post->post_content));
-
-			// 判断文章类型
-			if ( $post->post_type === 'note' ) {
-				if ( ! isset( $calendar[ $date ]->notes ) ) {
-					$calendar[ $date ]->notes = 0;
-				}
-				$calendar[ $date ]->notes ++;
-				// $calendar[$date]['notes_length'] += strlen($text);
-			} else {
-				if ( ! isset( $calendar[ $date ]->posts ) ) {
-					$calendar[ $date ]->posts = 0;
-				}
-				$calendar[ $date ]->posts ++;
-				// $calendar[$date]['posts_length'] += strlen($text);
-			}
-			// $calendar[$date] =
-		}
-	}
-
-	// 获取文章总数
-	$_posts = wp_count_posts( 'post' );
-	// 获取笔记总数
-	$_notes = wp_count_posts( 'note' );
-	// 最老一篇笔记
-	$last = get_posts( [
-		'post_type'      => 'note',
-		'posts_per_rows' => 1,
-		'orderby'        => 'date',
-		'order'          => 'ASC',
-	] );
-	$days = 0;
-	if ( $last && count( $last ) ) {
-		$last_date = $last[0]->post_date;
-		// 判断两个日期相差的天数
-		$days = ceil( ( strtotime( date( 'Y-m-d' ) ) - strtotime( $last_date ) ) / 86400 );
-	}
-
-	$result = [
-		'notes'    => $_notes->publish,
-		'posts'    => $_posts->publish,
-		'days'     => (string) max( $days, 1 ),
-		'calendar' => $calendar,
-	];
-
-	$_cache->set( 'heatmap', $result ); // 缓存数据
-
 	wp_send_json_success( $result );
 }
 
@@ -520,8 +507,7 @@ function update_heatmap_cache() {
 	if ( ! is_user_logged_in() ) {
 		return;
 	}
-	global $_cache;
-	$_cache->delete( 'heatmap' );
+	delete_transient( 'heatmap' );
 }
 
 add_action( 'save_post', 'update_heatmap_cache' );

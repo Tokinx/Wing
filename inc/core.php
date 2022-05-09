@@ -1,14 +1,8 @@
 <?php
-include_once( 'core-cache.php' ); // 缓存
 include_once( 'core-rest.php' ); // AJAX接口
 include_once( 'core-notes.php' ); // 笔记
 include_once( 'core-settings.php' ); // 主题设置
 include_once( 'theme-update-checker.php' ); // 主题更新
-
-// 数据缓存
-$_cache   = new FileCache( THEME_PATH . '/cache', 3600 * 24 );
-$_cache7  = new FileCache( THEME_PATH . '/cache/7d', 3600 * 24 * 7 );
-$_cache30 = new FileCache( THEME_PATH . '/cache/30d', 3600 * 24 * 30 );
 
 // 注册导航
 if ( function_exists( 'register_nav_menus' ) ) {
@@ -317,24 +311,26 @@ function formatter_article( $post, $formatter = null ) {
 
 // 获取文章归档
 function get_my_archives() {
-	$previous_year = $year = 0;
-	$archives      = [];
-	$posts         = get_posts( 'numberposts=-1&orderby=post_date&order=DESC' );
-	foreach ( $posts as $post ) {
-		$year = date( 'Y', strtotime( $post->post_date ) );
-		if ( $year != $previous_year ) {
-			$archives[ $year ] = [
-				"year"     => $year,
-				"articles" => []
+	if ( false === ( $archives = get_transient( 'my_archives' ) ) ) {
+		$previous_year = $year = 0;
+		$archives = [];
+		$posts    = get_posts( 'numberposts=-1&orderby=post_date&order=DESC' );
+		foreach ( $posts as $post ) {
+			$year = date( 'Y', strtotime( $post->post_date ) );
+			if ( $year != $previous_year ) {
+				$archives[ $year ] = [
+					"year"     => $year,
+					"articles" => []
+				];
+			}
+			$previous_year                   = $year;
+			$archives[ $year ]["articles"][] = [
+				"month-day" => date( 'm-d', strtotime( $post->post_date ) ),
+				"permalink" => get_permalink( $post->ID ),
+				"title"     => $post->post_title,
+				"comments"  => $post->comment_count
 			];
 		}
-		$previous_year                   = $year;
-		$archives[ $year ]["articles"][] = [
-			"month-day" => date( 'm-d', strtotime( $post->post_date ) ),
-			"permalink" => get_permalink( $post->ID ),
-			"title"     => $post->post_title,
-			"comments"  => $post->comment_count
-		];
 	}
 
 	return $archives;
@@ -342,14 +338,12 @@ function get_my_archives() {
 
 // 获取读者墙
 function get_readers_wall( $count = 12 ) {
-	global $wpdb, $_cache;
-	if ( ! $_cache->has( 'readers_wall' ) ) {
+	global $wpdb;
+	if ( false === ( $result = get_transient( 'readers_wall' ) ) ) {
 		// 根据评论邮箱查询排名前N名评论者
 		$sql    = "SELECT COUNT(comment_ID) AS cnt, comment_author, comment_author_url, comment_author_email FROM $wpdb->comments LEFT OUTER JOIN $wpdb->posts ON ($wpdb->posts.ID=$wpdb->comments.comment_post_ID) WHERE comment_date > date_sub( NOW(), INTERVAL 3 MONTH ) AND user_id='0' AND post_password='' AND comment_approved='1' AND comment_type='comment' GROUP BY comment_author_email ORDER BY cnt DESC LIMIT $count";
 		$result = $wpdb->get_results( $sql );
-		$_cache->set( 'readers_wall', $result );
-	} else {
-		$result = $_cache->get( 'readers_wall' );
+		set_transient( 'readers_wall', $result, DAY_IN_SECONDS );
 	}
 
 	return $result;
@@ -357,25 +351,25 @@ function get_readers_wall( $count = 12 ) {
 
 // 图片转base64，捕获异常
 function get_image_base64( $url = '' ) {
-	global $_cache30;
 	try {
 		if ( strpos( $url, 'http' ) !== 0 ) {
 			$url = 'https:' . $url;
 		}
-		if ( $_cache30->has( md5( $url ) ) ) {
-			return $_cache30->get( md5( $url ) );
+		$key = md5( $url );
+
+		if ( false === ( $base64 = get_transient( $key ) ) ) {
+			$stream_opts  = [
+				"ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
+				"http" => [ "timeout" => 5 ], // 超时时间 5 秒
+			];
+			$base64string = chunk_split( base64_encode( file_get_contents( "$url", false, stream_context_create( $stream_opts ) ) ) );
+			// 正则提取Content-Type
+			preg_match( '/Content-Type: (.*?);/', implode( ';', $http_response_header ), $match );
+			$mime   = $match[1] ?: 'image/png';
+			$base64 = "data:" . $mime . ";base64,$base64string";
+			// 缓存base64
+			set_transient( $key, $base64, MONTH_IN_SECONDS );
 		}
-		$stream_opts  = [
-			"ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
-			"http" => [ "timeout" => 5 ], // 超时时间 5 秒
-		];
-		$base64string = chunk_split( base64_encode( file_get_contents( "$url", false, stream_context_create( $stream_opts ) ) ) );
-		// 正则提取Content-Type
-		preg_match( '/Content-Type: (.*?);/', implode( ';', $http_response_header ), $match );
-		$mime   = $match[1] ?: 'image/png';
-		$base64 = "data:" . $mime . ";base64,$base64string";
-		// 缓存base64
-		$_cache30->set( md5( $url ), $base64 );
 
 		return $base64;
 	} catch ( Error $e ) {
