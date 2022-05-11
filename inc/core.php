@@ -313,8 +313,8 @@ function formatter_article( $post, $formatter = null ) {
 function get_my_archives() {
 	if ( false === ( $archives = get_transient( 'my_archives' ) ) ) {
 		$previous_year = $year = 0;
-		$archives = [];
-		$posts    = get_posts( 'numberposts=-1&orderby=post_date&order=DESC' );
+		$archives      = [];
+		$posts         = get_posts( 'numberposts=-1&orderby=post_date&order=DESC' );
 		foreach ( $posts as $post ) {
 			$year = date( 'Y', strtotime( $post->post_date ) );
 			if ( $year != $previous_year ) {
@@ -387,6 +387,5 @@ new ThemeUpdateChecker( THEME_NAME, "http://dev.biji.local/update?" . http_build
 		'wordpress' => $GLOBALS['wp_version'],
 	] )
 );
-
 
 // End of page.
