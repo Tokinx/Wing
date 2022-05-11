@@ -553,7 +553,7 @@ const $modules = new function () {
         name: 'comments',
         template: `
             <div class="comment-area">
-                <affiliate v-if="author_information || adjacent_articles" v-bind="{ post_id, author, author_information, adjacent_articles }" />
+                <affiliate v-if="author_information || adjacent_articles" ref="affiliate" v-bind="{ post_id, author, author_information, adjacent_articles }" />
                 <section id="comments">
                     <comment-form :info="{ post_id, editor, hyperlinks, visitor }" @append="appendComment" />
                     <div v-if="commentList.length" class="divider" style="margin: 1rem 0;"></div>
@@ -781,7 +781,7 @@ const $modules = new function () {
                                     <li>
                                         <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
                                     </li>
-                                    <li>
+                                    <li :class="['c-hand', { 'text-error': praise }]" @click="handleMenuClick({ id: 'praise' })">
                                         <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span>
                                     </li>
                                 </ul>
@@ -789,9 +789,9 @@ const $modules = new function () {
     
                             <slot name="right-icon">
                                 <div v-if="logged && !isPost" class="dropdown">
-                                    <button class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
+                                    <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
                                         <i class="dashicons dashicons-ellipsis"></i>
-                                    </button>
+                                    </a>
                                     <ul class="menu menu-left uni-shadow">
                                         <div v-if="loading" class="loading loading-full"></div>
                                         <li class="menu-item">
@@ -810,7 +810,7 @@ const $modules = new function () {
                                 <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
                             </div>
                             <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
-                                <div class="notes-item-images__item mx-1" v-for="(url, index) in note.images" :key="url">
+                                <div class="notes-item-images__item mx-1 c-zoom-in" v-for="(url, index) in note.images" :key="url">
                                     <img class="s-rounded" :src="url" alt @click="handleViewImage(url)"/>
                                 </div>
                             </div>
@@ -849,6 +849,7 @@ const $modules = new function () {
                     { id: 'praise', icon: 'dashicons dashicons-heart', name: '喜欢' },
                 ],
                 comment: null,
+                praise: !!Cookies.get(`praise_${this.note.id}`)
             }
         },
         computed: {
@@ -950,7 +951,9 @@ const $modules = new function () {
                         })
                         break;
                     case 'praise':
-                        $modules.actions.submit_praise(id);
+                        $modules.actions.submit_praise(id).then(() => {
+                            this.praise = !!Cookies.get(`praise_${id}`);
+                        });
                         break;
                 }
             },
@@ -1165,7 +1168,7 @@ const $modules = new function () {
                 Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
                     if ( !i && (+num) > (+el.innerText) ) new Vue().$toast({ type: 'success', message: '祝你财源广进' });
                     el && (el.innerHTML = num);
-                })
+                });
                 return !!Cookies.get(`praise_${post_id}`);
             });
         },

@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.16
+	Version: 0.5.17
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -4352,7 +4352,7 @@ body #app #main .content::after {
   width: 0;
   height: 100%;
   transition: 300ms;
-  z-index: 9;
+  z-index: 999;
 }
 body #app::after {
   position: fixed;

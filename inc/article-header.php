@@ -12,10 +12,17 @@
             <time datetime="<?php the_time( 'c' ); ?>" itemprop="datePublished"
                   pubdate><?php the_time( 'Y-m-d' ); ?></time>
         </li>
-        <li>
+        <li class="c-hand" onclick="onPraise()">
             <i class="czs-heart"></i>
             <span class="praise-<?php the_ID(); ?>"><?= get_praise() ?></span>
         </li>
     </ul>
     <div class="divider"></div>
 </header>
+<script>
+    function onPraise() {
+        if ( $h.store.comments && $h.store.comments.$refs.affiliate ) {
+            $h.store.comments.$refs.affiliate.handlePraise();
+        }
+    }
+</script>
