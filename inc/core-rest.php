@@ -59,7 +59,7 @@ function ajax_get_all_posts_callback() {
 			wp_send_json_error( '非法访问，请求被拒绝', 401 );
 		}
 		if ( get_transient( 'review' ) ) {
-			wp_send_json_success( get_transient( 'review' ) );
+			wp_send_json( get_transient( 'review' ) );
 		}
 		$args['post_type'] = 'note';
 		$args['orderby']   = 'rand';
