@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.17
+	Version: 0.5.18
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -4194,6 +4194,9 @@ body .layout #comments #comment_form .editor {
   border-radius: 0;
   padding: 0;
   border: none;
+}
+body .layout #comments #comment_form .editor .loading {
+  border-radius: 0;
 }
 body .layout #comments #comment_form .editor-content {
   height: auto;

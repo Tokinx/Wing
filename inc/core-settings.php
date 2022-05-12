@@ -114,6 +114,15 @@ function theme_customize_register( $wp_customize ) {
 					]
 				],
 				[
+					"id"      => "biji_setting_rest_abuse",
+					"setting" => [ "default" => false ],
+					"control" => [
+						'label'       => '接口防滥用',
+						'description' => '能够一定程度上减少接口滥用问题，但如果开启静态缓存后请关闭此选项',
+						'type'        => 'checkbox',
+					]
+				],
+				[
 					"id"      => "biji_setting_preview_update",
 					"setting" => [ "default" => false ],
 					"control" => [

@@ -7,8 +7,11 @@ function check_nonce() {
 	} elseif ( isset( $_SERVER['HTTP_X_WP_NONCE'] ) ) {
 		$nonce = $_SERVER['HTTP_X_WP_NONCE'];
 	}
+
 	// 判断用户是否已登陆
-	if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) && ! is_user_logged_in() ) {
+	if ( get_theme_mod( 'biji_setting_rest_abuse', false ) // 防滥用开关
+	     && ! wp_verify_nonce( $nonce, 'wp_rest' ) // 校验nonce
+	     && ! is_user_logged_in() ) {
 		wp_send_json_error( '非法访问，请求被拒绝', 401 );
 	}
 
@@ -113,6 +116,7 @@ function ajax_get_all_posts_callback() {
 				$ids          = explode( ',', $value[0] );
 				$post->images = array_map( function ( $id ) {
 					$url = wp_get_attachment_url( $id );
+
 					return replace_domain( $url );
 				}, $ids );
 			}
