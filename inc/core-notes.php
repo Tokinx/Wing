@@ -100,3 +100,16 @@ function set_custom_fields( \WP_Post $post, $request, $creating ) {
 }
 
 add_action( "rest_insert_note", "set_custom_fields", 10, 3 );
+
+// 笔记注入到订阅源中
+function feed_filter_notes( $query ) {
+	if ( get_theme_mod( 'biji_setting_note_feed', false ) && $query->is_feed ) {
+		$query->set( 'post_type', [ 'note', 'post' ] );
+		$query->set( 'post_status', 'publish' );
+		$query->set( 'has_password', false );
+	}
+
+	return $query;
+}
+
+add_filter( 'pre_get_posts', 'feed_filter_notes' );
