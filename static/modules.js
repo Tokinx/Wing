@@ -863,7 +863,7 @@ const $modules = new function () {
             superContent() {
                 let content = this.note.content;
                 if ( !content ) return '';
-                if ( this.isPost ) return content;
+                if ( this.isPost ) return `<p>${content}</p>`;
                 // 高亮话题 #话题1 话题2
                 (content.match(/#([^#|^<]+)/g) || []).forEach(topic => {
                     content = content.replace(topic, `<span class="chip c-hand text-primary" data-topic="${topic}">${topic}</span>`);

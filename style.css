@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.18
+	Version: 0.5.19
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -3698,6 +3698,9 @@ body .layout #notes .notes-item > .card .tile-content .article-content {
 }
 body .layout #notes .notes-item > .card .tile-content .article-content.w-100 {
   width: 100%;
+}
+body .layout #notes .notes-item > .card .tile-content .article-content > p {
+  word-break: break-all;
 }
 body .layout #notes .notes-item > .card .tile-content *:last-child {
   margin-bottom: 0;
