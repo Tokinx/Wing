@@ -5,12 +5,17 @@ function theme_customize_register( $wp_customize ) {
 	foreach ( get_categories() as $category ) {
 		$category_checkbox .= '<label style="margin-right: 5px;"><input class="biji_setting_exclude" type="checkbox" value="' . $category->term_id . '" onchange="bijiHandleExcludeChange()">' . $category->name . '</label>';
 	}
+	$style    = '<style>
+		.customize-control .customize-inside-control-row { padding: 0;}
+		[id*="biji_setting_mode"] .customize-inside-control-row { display: inline-block; margin-right: 20px; }
+	</style>';
 	$sections = [
 		[
 			"id"       => "biji_setting",
 			"args"     => [
-				'title'    => '主题设置',
-				'priority' => 100,
+				'title'       => '主题设置',
+				'description' => $style,
+				'priority'    => 100,
 			],
 			"settings" => [
 				[
@@ -86,7 +91,7 @@ function theme_customize_register( $wp_customize ) {
 					"setting" => [ "default" => true ],
 					"control" => [
 						'label'       => '开启作者信息栏',
-						'description' => '文章结尾显示作者信息栏，支持点赞和二维码',
+						'description' => '文章底部作者信息，支持点赞和二维码',
 						'type'        => 'checkbox',
 					]
 				],
@@ -100,13 +105,23 @@ function theme_customize_register( $wp_customize ) {
 					]
 				],
 				[
+					"id"      => "biji_setting_note_feed",
+					"setting" => [ "default" => false ],
+					"control" => [
+						'label'       => '笔记注入订阅源',
+						'description' => '开启后发布的笔记会被订阅者获取到',
+						'type'        => 'checkbox',
+					]
+				],
+				[
 					"id"      => "biji_setting_mode",
 					"setting" => [ "default" => "auto" ],
 					"control" => [
-						'label'   => '主题色彩模式',
-						'type'    => 'radio',
-						'choices' => [
-							'auto'    => "自适应",
+						'label'       => '主题色彩模式',
+						'description' => '已设置显示模式的访客不受此设置影响',
+						'type'        => 'radio',
+						'choices'     => [
+							'auto'    => "自动",
 							'default' => "标准",
 							'dark'    => "暗黑",
 //							'relax'   => "护眼",
@@ -117,8 +132,8 @@ function theme_customize_register( $wp_customize ) {
 					"id"      => "biji_setting_rest_abuse",
 					"setting" => [ "default" => false ],
 					"control" => [
-						'label'       => '接口防滥用',
-						'description' => '能够一定程度上减少接口滥用问题，但如果开启静态缓存后请关闭此选项',
+						'label'       => '接口守护',
+						'description' => '能够一定程度上减少接口滥用问题，但如果开启了静态缓存请关闭此选项',
 						'type'        => 'checkbox',
 					]
 				],
@@ -136,8 +151,9 @@ function theme_customize_register( $wp_customize ) {
 		[
 			"id"       => "biji_comment",
 			"args"     => [
-				'title'    => '评论设置',
-				'priority' => 101,
+				'title'       => '评论设置',
+				'description' => $style,
+				'priority'    => 101,
 			],
 			"settings" => [
 				[
