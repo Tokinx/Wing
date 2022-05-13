@@ -6,6 +6,7 @@ class WingPjax {
     configure = {
         selector: ":not(.no-pjax) a, a:not([download])",
         origin: location.origin,
+        timeout: 15, // 超时时间，单位：秒
         before() {
             return Promise.resolve();
         },
@@ -28,59 +29,47 @@ class WingPjax {
         this.init();
     }
 
+    // 比较页面是否相同
+    compare = (newUrl, oldUrl) => {
+        const urls = [newUrl, oldUrl].map(url => url.replace(/#.*/, ''));
+        return urls[0] === urls[1];
+    };
+
     // 初始化
     init() {
         const { configure } = this;
-        this.delegate(document, 'click', configure.selector, (e, node) => {
+        let $href = '';
+        this.delegate(document, 'click', configure.selector, (e, a) => {
             if ( e.ctrlKey || e.metaKey || e.shiftKey || e.altKey ) return;
-            const newWindow = node.target === '_blank' || node.rel.indexOf('external') > -1;
-            const crossDomain = node.href.indexOf(configure.origin) !== 0;
-            if ( newWindow || crossDomain ) {
+            const newWindow = a.target === '_blank' || a.rel.indexOf('external') > -1;
+            const crossDomain = a.href.indexOf(configure.origin) !== 0;
+            const download = a.hasAttribute('download');
+            if ( newWindow || crossDomain || download ) {
                 if ( newWindow ) {
-                    // 新窗口打开
-                    window.open(node.href);
+                    window.open(a.href); // 新窗口打开
                 } else if ( crossDomain ) {
-                    // 跨域重定向
-                    location.href = node.href;
+                    location.href = a.href; // 跨域重定向
+                } else if ( download ) {
+                    return;
                 }
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
             // 移除hash参数，判断是否切换了页面
-            if ( this.clearHash(node.href) === this.clearHash(location.href) ) return;
-            if ( !node.hash ) e.preventDefault();
-            this.replace(node.href);
+            $href = a.href;
+            if ( this.compare(location.href, a.href) ) return;
+            if ( !a.hash ) e.preventDefault();
+            this.replace(a.href);
         });
-        let oldUrl = '';
+
         window.addEventListener('popstate', (e) => {
-            if ( !e.state ) return;
-            const node = new URL(e.state.url);
-            if ( node.href.replace(/#.*$/, '') === oldUrl.replace(/#.*$/, '') ) return;
-            if ( !node.hash ) e.preventDefault();
-            oldUrl = '';
-            this.replace(node.href, true);
-        });
-        window.addEventListener('hashchange', (e) => {
-            oldUrl = e.newURL;
+            if ( $href && this.compare(location.href, $href) ) return;
+            if ( !location.hash ) e.preventDefault();
+            $href = '';
+            this.replace(location.href, true);
         });
     };
-
-    // 清除Clear
-    getHash(url) {
-        const { hash } = new URL(url);
-        return hash;
-    };
-
-    // 清除Clear
-    clearHash(url) {
-        return url.replace(this.getHash(url), '');
-    };
-
-    // 获取滚动条位置
-    getScrollTop() {
-        return document.documentElement.scrollTop || document.body.scrollTop;
-    }
 
     // 事件委托
     delegate(element, eventType, selector, fn) {
@@ -91,36 +80,36 @@ class WingPjax {
         return element;
     };
 
-    replace(url, back) {
-        const that = this;
-        that.configure.before().then(() => {
-            this.request(url, {
-                success(html) {
-                    const data = that.formatter(html, url);
-                    if ( !back ) {
-                        history.pushState({
-                            url: that.clearHash(url),
-                            title: data.title
-                        }, data.title, url);
-                    }
-                    that.configure.complete(data, that.display).then(() => {
-                        this.after(data);
+    replace(newUrl, back) {
+        const conf = this.configure;
+        conf.before().then(() => {
+            this.request(newUrl, {
+                success: element => {
+                    const page = new DOMParser().parseFromString(element, 'text/html');
+                    // 渲染新页面
+                    conf.complete().then(els => {
+                        document.title = page.title; // 更新标题
+                        if ( !back ) history.pushState(null, null, newUrl); // 更新地址栏
+                        return this.display(page, els);
+                    }).then(() => {
+                        return conf.after();
                     });
                 },
-                after({ title, head }) {
-                    document.title = title;
-                    that.configure.after(head);
-                },
-                error: that.configure.error,
+                error: conf.error,
             });
         });
     };
 
     // 数据请求
     request(url, staff) {
-        fetch(url).then(rv => rv.text()).then((html) => {
+        const timer = this.configure.timeout * 1000;
+        Promise.race([new Promise(resolve => {
+            setTimeout(() => resolve(new Response("timeout")), timer);
+        }), fetch(url)])
+        .then(rv => rv.text()).then((element) => {
             try {
-                staff.success(html);
+                if ( element === 'timeout' ) throw 'timeout';
+                staff.success(element);
             } catch (e) {
                 new Promise(resolver => {
                     staff.error();
@@ -133,21 +122,21 @@ class WingPjax {
     };
 
     // 显示
-    display({ body }, affect) {
-        return Promise.all(affect.map(name => new Promise(resolve => {
+    display({ body }, els) {
+        return Promise.all(els.map(name => new Promise(resolve => {
             if ( !name ) return;
             const [oldNode, newNode] = [document.querySelector(name), body.querySelector(name)];
             if ( oldNode && newNode ) oldNode.parentNode.replaceChild(newNode, oldNode);
             Promise.all([...newNode.querySelectorAll('script')].map(script => {
                     return new Promise(resolve => {
                         if ( script.hasAttribute('data-no-instant') ) return;
-                        const temp = document.createElement('script');
+                        const newScript = document.createElement('script');
                         try {
                             if ( script.src ) {
-                                temp.src = script.src;
-                                temp.onload = resolve;
+                                newScript.src = script.src;
+                                newScript.onload = resolve;
                             } else if ( script.innerHTML ) {
-                                temp.innerHTML = script.innerHTML;
+                                newScript.innerHTML = script.innerHTML;
                                 resolve();
                             }
                         } catch (e) {
@@ -156,17 +145,11 @@ class WingPjax {
                         const parentNode = script.parentNode;
                         const nextSibling = script.nextSibling;
                         parentNode.removeChild(script);
-                        parentNode.insertBefore(temp, nextSibling);
+                        parentNode.insertBefore(newScript, nextSibling);
                     })
                 })
             ).then(resolve);
         })));
-    };
-
-    // 获取并输出格式化数据
-    formatter(html, url) {
-        const { title, body, head } = new DOMParser().parseFromString(html, 'text/html');
-        return { url, title, body, head };
     };
 }
 
@@ -216,9 +199,10 @@ window.$vm = new Vue({
                 });
                 return $vm.sleep(0);
             },
-            complete(data, display) {
+            complete() {
                 $vm.animation = 'animation-toward';
-                return $vm.sleep().then(() => display(data, ['#core']));
+                // 更新节点
+                return $vm.sleep().then(() => ['#core']);
             },
             after() {
                 $vm.sleep(100).then(() => {
