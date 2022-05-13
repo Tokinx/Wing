@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.19
+	Version: 0.5.20
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -3649,7 +3649,7 @@ body .layout #notes .notes-tabbar {
 }
 body .layout #notes .notes-tabbar .tab {
   margin: 0 0 1rem;
-  border-color: rgba(188, 195, 206, 0.2);
+  border-color: rgba(188, 195, 206, 0.1);
 }
 body .layout #notes .notes-tabbar .tab-item {
   margin: 0 1rem -1px 0;
@@ -3761,9 +3761,10 @@ body .layout #notes .notes-item .append-comments .comment {
 }
 body .layout #notes .notes-item .append-comments .comment-list > .comment {
   margin: 0.8rem 0;
+  background: none;
 }
 body .layout #notes .notes-item .append-comments .comment-list > .comment:not(:first-child) {
-  border-top: 1px solid #f7f8f9;
+  border-top: 1px solid rgba(188, 195, 206, 0.1);
   padding-top: 0.8rem;
 }
 body .layout #notes .notes-item .append-comments .tile {
