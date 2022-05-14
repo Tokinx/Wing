@@ -56,6 +56,24 @@ if ( function_exists( 'add_theme_support' ) ) {
 	add_theme_support( 'post-thumbnails' );
 }
 
+// 附加元信息
+function head_append_meta() { ?>
+    <meta property="og:title" content="<?php the_title(); ?>"/>
+    <meta property="og:site_name" content="<?php bloginfo( 'name' ); ?>"/>
+	<?php if ( is_single() || is_page() ) : ?>
+        <meta property="og:type" content="article"/>
+        <meta property="og:description" content="<?= strip_shortcodes( get_the_excerpt() ); ?>"/>
+        <meta property="og:url" content="<?php the_permalink(); ?>"/>
+		<?php if ( $thumbnail = get_thumbnail() ) : ?>
+            <meta property="og:image" content="<?= $thumbnail; ?>"/>
+		<?php endif; ?>
+	<?php else : ?>
+        <meta property="og:type" content="website"/>
+	<?php endif; ?>
+<?php }
+
+add_action( 'wp_head', 'head_append_meta', 1 );
+
 // 网页标题支持
 function biji_add_theme_support_title() {
 	add_theme_support( 'title-tag' );
