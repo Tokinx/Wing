@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.21
+	Version: 0.5.22
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.2
@@ -2551,6 +2551,16 @@ input:disabled + .form-icon, input.disabled + .form-icon {
     transform: translateY(0);
   }
 }
+@keyframes scale-show {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-1.6rem);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
 .text-primary {
   color: #3366ff !important;
 }
@@ -3710,7 +3720,7 @@ body .layout #notes .notes-item > .card .tile-content .thumbnail {
   width: 7rem;
   height: 5rem;
   object-fit: cover;
-  margin: 0 0 0.5rem 0.5rem;
+  margin: 0 0 0 0.5rem;
   float: right;
 }
 body .layout #notes .notes-item > .card .tile-footer {
@@ -4571,6 +4581,17 @@ body .chip {
 body .chip .btn-clear {
   transform: unset;
   font-size: 0.6rem;
+}
+body .dropdown-hover .menu {
+  top: 88%;
+}
+body .dropdown-hover .dropdown-toggle:hover + .menu,
+body .dropdown-hover .menu:hover {
+  display: block;
+}
+body .dropdown .menu {
+  animation: scale-show 150ms;
+  margin: 0;
 }
 body .dropdown .menu-left {
   left: unset;
