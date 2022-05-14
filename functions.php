@@ -62,7 +62,7 @@ function head_append_meta() { ?>
     <meta property="og:site_name" content="<?php bloginfo( 'name' ); ?>"/>
 	<?php if ( is_single() || is_page() ) : ?>
         <meta property="og:type" content="article"/>
-        <meta property="og:description" content="<?= strip_shortcodes( get_the_excerpt() ); ?>"/>
+        <meta property="og:description" content="<?= strip_tags( get_the_excerpt() ); ?>"/>
         <meta property="og:url" content="<?php the_permalink(); ?>"/>
 		<?php if ( $thumbnail = get_thumbnail() ) : ?>
             <meta property="og:image" content="<?= $thumbnail; ?>"/>
