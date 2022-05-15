@@ -1,8 +1,8 @@
 <?php
 // 移除非必要的头部文件
-remove_action( 'wp_head', 'feed_links_extra', 3 );                    // 额外的feed,例如category, tag页
-remove_action( 'wp_head', 'wp_generator' );                                    // 隐藏wordpress版本
-remove_filter( 'the_content', 'wptexturize' );                            // 取消标点符号转义
+remove_action( 'wp_head', 'feed_links_extra', 3 ); // 额外的feed,例如category, tag页
+remove_action( 'wp_head', 'wp_generator' ); // 隐藏wordpress版本
+remove_filter( 'the_content', 'wptexturize' ); // 取消标点符号转义
 remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );
 remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
 remove_action( 'wp_head', 'wp_oembed_add_host_js' );
@@ -20,18 +20,5 @@ function disable_emojis() {
 }
 
 add_action( 'init', 'disable_emojis' );
-
-// 阻止站内文章互相 PingBack
-// function theme_noself_ping(&$links)
-// {
-// 	$home = get_theme_mod('home');
-// 	foreach ($links as $l => $link) {
-// 		if (0 === strpos($link, $home)) {
-// 			unset($links[$l]);
-// 		}
-// 	}
-// }
-
-// add_action('pre_ping', 'theme_noself_ping');
 
 // End of page.
