@@ -5,10 +5,10 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.23
+	Version: 0.5.24
 	Tested up to: 5.9.3
 	Requires at least: 5.8
-	Requires PHP: 7.2
+	Requires PHP: 7.0
 */
 /* Manually forked from Normalize.css */
 /* normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
@@ -1382,6 +1382,38 @@ input:disabled + .form-icon, input.disabled + .form-icon {
 .label.label-error {
   background: #e85600;
   color: #fff;
+}
+
+code {
+  border-radius: 0.2rem;
+  line-height: 1.25;
+  padding: 0.1rem 0.2rem;
+  background: #fcf2f2;
+  color: #d73e48;
+  font-size: 85%;
+}
+
+.code {
+  border-radius: 0.2rem;
+  color: #3b4351;
+  position: relative;
+}
+.code::before {
+  color: #bcc3ce;
+  content: attr(data-lang);
+  font-size: 0.7rem;
+  position: absolute;
+  right: 0.4rem;
+  top: 0.1rem;
+}
+.code code {
+  background: #f7f8f9;
+  color: inherit;
+  display: block;
+  line-height: 1.5;
+  overflow-x: auto;
+  padding: 1rem;
+  width: 100%;
 }
 
 .container {
@@ -3488,7 +3520,7 @@ body .layout #aside {
   z-index: 0;
 }
 body .layout #aside .uni-bg, body .layout #aside #main {
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   padding: 0.5rem;
 }
 body .layout #aside .uni-bg:not(:last-child), body .layout #aside #main:not(:last-child) {
@@ -3578,7 +3610,7 @@ body .layout #aside .footer-nav li a {
   display: block;
   flex: 1;
   padding: 0.5rem;
-  border-radius: 0.4rem;
+  border-radius: 0.3rem;
   color: currentColor;
   text-decoration: none;
   transition: 100ms;
@@ -3607,7 +3639,7 @@ body .layout #main {
   width: 0;
   height: auto;
   padding: 2rem;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
 }
 body .layout #notes .chip {
   margin: 0 0.1rem;
@@ -3917,7 +3949,7 @@ body .layout .article-item {
   border: none;
   padding: 0.5rem;
   margin: 2%;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   transition: 300ms;
 }
 body .layout .article-item .card-subtitle ul {
@@ -3939,7 +3971,7 @@ body .layout .article-item .card-body {
   bottom: 0.5rem;
   left: 0;
   right: 0;
-  border-radius: 0.4rem;
+  border-radius: 0.3rem;
   overflow: hidden;
   mask-image: linear-gradient(to top, transparent 0.2rem, black 1rem);
   -webkit-mask-image: linear-gradient(to top, transparent 0.2rem, black 1rem);
@@ -3961,7 +3993,7 @@ body .layout .article-thumbnail {
   background-position: center;
   background-size: cover;
   background-color: rgba(188, 195, 206, 0.1);
-  border-radius: 0.4rem;
+  border-radius: 0.3rem;
   text-align: justify;
 }
 body .layout .article-thumbnail::after {
@@ -3995,12 +4027,8 @@ body .layout .article-header .article-info li i {
   margin-right: 2px;
 }
 body .layout .article-content :is(h1, h2, h3, h4, h5, h6) {
-  margin-top: 1rem;
   display: inline-block;
-  box-shadow: 0 -0.6rem 0 rgba(188, 195, 206, 0.3) inset;
-}
-body .layout .article-content :is(h1, h2, h3, h4, h5, h6) ~ * {
-  margin-top: 0 !important;
+  box-shadow: 0 -0.5rem 0 rgba(188, 195, 206, 0.3) inset;
 }
 body .layout .article-content > p {
   text-align: justify;
@@ -4045,6 +4073,10 @@ body .layout .article-links .card {
 body .layout .article-links .card:hover {
   transform: translateY(-0.2rem);
   box-shadow: 0 0 0 2px currentColor, 0 2px 10px 1px rgba(51, 102, 255, 0.1);
+}
+body .layout .wp-block-code code {
+  color: currentColor;
+  border: none;
 }
 body .layout .wp-block-media-text {
   margin-bottom: 1rem;
@@ -4099,7 +4131,7 @@ body .layout .article-list + .pagination li a {
   line-height: 1.6;
   text-align: center;
   display: block;
-  border-radius: 0.4rem;
+  border-radius: 0.3rem;
 }
 body .layout .affiliate > .card {
   margin: 1rem 0;
@@ -4399,11 +4431,11 @@ body #app.animation-end #main .content::after {
   flex: 1;
   position: relative;
   padding: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   border: 2px solid rgba(188, 195, 206, 0.2);
 }
 .editor .loading {
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
 }
 .editor .loading ~ * {
   opacity: 0.5;
@@ -4484,21 +4516,12 @@ body a, body a:hover, body a:visited {
 body a:hover {
   text-decoration: underline;
 }
-body pre {
-  position: relative;
-  overflow: auto;
-  padding: 0;
-  line-height: 1.8;
-  max-height: 16rem;
-  -webkit-overflow-scrolling: touch;
-}
 body pre code {
-  display: block;
-  margin: 0;
-  padding: 0.5rem 1rem;
+  line-height: 1.6;
+  background: rgba(188, 195, 206, 0.1);
+  box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.2) inset;
 }
 body code {
-  font-size: 0.7rem;
   margin: 0 0.2rem;
   padding: 3px 0.2rem;
   background-color: rgba(188, 195, 206, 0.1);
@@ -4572,12 +4595,23 @@ body .chip .btn-clear {
   transform: unset;
   font-size: 0.6rem;
 }
-body .dropdown .menu {
-  animation: unset;
-}
 body .dropdown .menu-left {
   left: unset;
   right: 0;
+}
+body .dropdown-hover .menu {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transform-origin: 50% -10rem;
+  transform: rotateX(-15deg);
+  transition: 300ms;
+  animation: unset;
+}
+body .dropdown-hover:hover .menu {
+  opacity: 1;
+  visibility: visible;
+  transform: rotateX(0);
 }
 body .s-circle {
   border-radius: 99rem;

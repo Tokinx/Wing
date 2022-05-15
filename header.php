@@ -20,7 +20,7 @@
                 <input class="search-key s-circle" name="s" placeholder="输入关键词..." type="text" required="required"/>
                 <i class="text-small czs-search-l flex-center"></i>
             </form>
-            <div class="dropdown">
+            <div class="dropdown dropdown-hover">
                 <a class="right-btn dropdown-toggle flex-center s-circle" href="javascript:void(0);" tabindex="0">
                     <i class="czs-clothes-l text-small"></i>
                 </a>
