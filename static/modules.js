@@ -788,7 +788,7 @@ const $modules = new function () {
                             </div>
     
                             <slot name="right-icon">
-                                <div v-if="logged && !isPost" class="dropdown dropdown-hover">
+                                <div v-if="logged && !isPost" class="dropdown" hover-show>
                                     <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
                                         <i class="dashicons dashicons-ellipsis"></i>
                                     </a>

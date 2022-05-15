@@ -3432,6 +3432,7 @@ body .layout #header {
   height: 6rem;
   padding: 0 4%;
   color: #fff;
+  z-index: 2;
 }
 body .layout #header .logo {
   text-align: center;
@@ -3510,8 +3511,10 @@ body .layout #header .header__right .menu-btn {
   font-size: 1.5rem;
 }
 body .layout #core {
-  padding: 0;
+  position: relative;
   display: flex;
+  padding: 0;
+  z-index: 1;
 }
 body .layout #aside {
   max-width: 12rem;
@@ -3946,7 +3949,6 @@ body .layout .article-mask {
 body .layout .article-item {
   position: relative;
   width: 46%;
-  border: none;
   padding: 0.5rem;
   margin: 2%;
   border-radius: 0.6rem;
@@ -4409,6 +4411,15 @@ body #app.animation-toward::after, body #app.animation-start::after {
 body #app.animation-toward #main .content, body #app.animation-start #main .content {
   opacity: 0.8;
 }
+body #app.animation-toward #main .content {
+  animation: trans-out 300ms forwards;
+}
+@keyframes trans-out {
+  100% {
+    transform: translateX(1rem);
+    opacity: 0;
+  }
+}
 body #app.animation-toward #main .content::after {
   width: 105%;
 }
@@ -4417,6 +4428,7 @@ body #app.animation-end #main .content {
 }
 @keyframes trans-in {
   0% {
+    opacity: 0;
     transform: translateX(-1rem);
   }
 }
@@ -4509,6 +4521,9 @@ body #app.animation-end #main .content::after {
   border-radius: 5px;
 }
 
+body {
+  overflow-y: scroll;
+}
 body a, body a:hover, body a:visited {
   color: #3366ff;
   text-decoration: none;
@@ -4599,7 +4614,10 @@ body .dropdown .menu-left {
   left: unset;
   right: 0;
 }
-body .dropdown-hover .menu {
+body .dropdown[perspective] {
+  perspective: 50rem;
+}
+body .dropdown[hover-show] .menu {
   display: block;
   opacity: 0;
   visibility: hidden;
@@ -4607,8 +4625,9 @@ body .dropdown-hover .menu {
   transform: rotateX(-15deg);
   transition: 300ms;
   animation: unset;
+  top: 110%;
 }
-body .dropdown-hover:hover .menu {
+body .dropdown[hover-show]:hover .menu {
   opacity: 1;
   visibility: visible;
   transform: rotateX(0);
