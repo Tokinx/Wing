@@ -59,29 +59,43 @@ if ( function_exists( 'add_theme_support' ) ) {
 // 附加元信息
 function head_append_meta() {
     $metas = [
-        'og:title'     => get_the_title(),
-        'og:site_name' => get_bloginfo( 'name' ),
-        'og:type'      => 'website',
+        'name'     => [
+            'mobile-web-app-capable'     => 'yes',
+            'apple-mobile-web-app-title' => get_bloginfo( 'name' ),
+            'application-name'           => get_bloginfo( 'name' ),
+        ],
+        'property' => [
+            'og:title'     => get_the_title(),
+            'og:site_name' => get_bloginfo( 'name' ),
+            'og:type'      => 'website',
+        ]
     ];
     if ( is_single() || is_page() ) {
-        $metas['og:url']         = get_permalink();
-        $metas['og:description'] = get_the_excerpt();
-        if ( $thumbnail = get_thumbnail() ) {
-            $metas['og:image'] = $thumbnail;
+        $metas['property']['og:type'] = 'article';
+        $metas['property']['og:url']  = get_permalink();
+        if ( get_the_excerpt() ) {
+            $metas['name']['description'] = $metas['property']['og:description'] = get_the_excerpt();
         }
-        $metas['og:type']        = 'article';
-        $metas['article:author'] = get_the_author_meta( 'display_name' );
+        if ( $thumbnail = get_thumbnail() ) {
+            $metas['property']['og:image'] = $thumbnail;
+        }
         if ( $tags = get_the_tags() ) {
-            $keyword              = array_map( function ( $item ) {
+            $keyword                   = array_map( function ( $item ) {
                 return $item->name;
             }, $tags );
-            $metas['article:tag'] = implode( ',', $keyword );
-            echo '<meta name="keywords" content="' . $metas['article:tag'] . '" />' . "\n";
+            $metas['name']['keywords'] = $metas['property']['article:tag'] = implode( ',', $keyword );
         }
-        echo '<meta name="description" content="' . $metas['og:description'] . '" />' . "\n";
     }
-    foreach ( $metas as $key => $value ) {
-        echo '<meta property="' . $key . '" content="' . $value . '" />' . "\n";
+    // 合并数组
+    $metas['property'] += [
+        'twitter:card' => 'summary_large_image',
+        // 如果设置了推特账号，则添加creator属性
+        // 'twitter:creator' => get_theme_mod( 'biji_setting_twitter' )
+    ];
+    foreach ( $metas as $type => $data ) {
+        foreach ( $data as $key => $value ) {
+            echo '<meta ' . $type . '="' . $key . '" content="' . $value . '" />' . "\n";
+        }
     }
 }
 
