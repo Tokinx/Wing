@@ -37,4 +37,5 @@ jobs:
 
       # 通知更新
       - name: Run a one-line script
-        run: curl https://
+        run: curl https://dev.biji.io
+        
