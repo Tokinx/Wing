@@ -47,7 +47,7 @@
 						wp_nav_menu( [
 							'container'      => false,
 							'theme_location' => $name,
-							'items_wrap'     => '<ul class="header-nav reset-ul uni-bg ' . $name . '">%3$s</ul>',
+							'items_wrap'     => '<ul class="header-nav reset-ul uni-bg uni-shadow ' . $name . '">%3$s</ul>',
 							'depth'          => 0,
 						] );
 					}
@@ -58,5 +58,5 @@
         </aside>
         <a class="off-canvas-overlay" href="#close"></a>
         <!-- Main -->
-        <main id="main" class="off-canvas-content">
+        <main id="main" class="uni-bg uni-shadow off-canvas-content">
             <div class="content">

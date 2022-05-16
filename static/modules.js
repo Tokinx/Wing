@@ -470,7 +470,8 @@ const $modules = new function () {
     this.CommentItem = {
         name: 'comment-item',
         template: `
-            <li :class="['comment', { 'card uni-card': !(+comment.parent) }]" :id="'comment-' + comment.id">
+        <li class="comment" :id="'comment-' + comment.id">
+            <div v-if="comment.parent == 0" class="divider" style="margin: 1rem 0;"></div>
             <div class="tile text-tiny">
                 <div class="tile-icon">
                     <figure class="avatar avatar-lg bg-gray">
@@ -512,7 +513,7 @@ const $modules = new function () {
                 <template v-for="item in comment.children" :key="item.id">
                     <comment-item :info="info" :comment="item" />
                 </template>
-              </ol>
+            </ol>
         </li>
         `,
         components: { 'comment-form': that.CommentForm },
@@ -556,7 +557,6 @@ const $modules = new function () {
                 <affiliate v-if="author_information || adjacent_articles" ref="affiliate" v-bind="{ post_id, author, author_information, adjacent_articles }" />
                 <section id="comments">
                     <comment-form :info="{ post_id, editor, hyperlinks, visitor }" @append="appendComment" />
-                    <div v-if="commentList.length" class="divider" style="margin: 1rem 0;"></div>
                     <ol class="comment-list reset-ul" @click="delegateCommentClick">
                         <template v-for="item in commentList" :key="item.id">
                             <comment-item :info="{ post_id, editor, hyperlinks, visitor }" :comment="item" />

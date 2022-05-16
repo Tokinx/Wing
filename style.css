@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.24
+	Version: 0.5.25
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3415,7 +3415,7 @@ body .layout .container {
   width: 92%;
   margin: 0 auto;
 }
-body .layout .uni-bg, body .layout #main {
+body .layout .uni-bg {
   background-color: #fff;
   transition: 300ms;
 }
@@ -3432,7 +3432,6 @@ body .layout #header {
   height: 6rem;
   padding: 0 4%;
   color: #fff;
-  z-index: 2;
 }
 body .layout #header .logo {
   text-align: center;
@@ -3452,6 +3451,7 @@ body .layout #header .header__right {
   margin-top: -1rem;
   right: 4%;
   color: #66758c;
+  z-index: 99;
 }
 body .layout #header .header__right .mode-switch {
   min-width: 100px;
@@ -3514,7 +3514,6 @@ body .layout #core {
   position: relative;
   display: flex;
   padding: 0;
-  z-index: 1;
 }
 body .layout #aside {
   max-width: 12rem;
@@ -3522,11 +3521,11 @@ body .layout #aside {
   margin-right: 1rem;
   z-index: 0;
 }
-body .layout #aside .uni-bg, body .layout #aside #main {
+body .layout #aside .uni-bg {
   border-radius: 0.6rem;
   padding: 0.5rem;
 }
-body .layout #aside .uni-bg:not(:last-child), body .layout #aside #main:not(:last-child) {
+body .layout #aside .uni-bg:not(:last-child) {
   margin-bottom: 1rem;
 }
 body .layout #aside .widget_block .wp-block-social-links {
@@ -3782,25 +3781,12 @@ body .layout #notes .notes-item .dropdown .menu i {
   transition: none;
 }
 body .layout #notes .notes-item .append-comments {
-  overflow: auto;
+  overflow-y: auto;
   padding: 0 1rem;
   max-height: 20rem;
 }
 body .layout #notes .notes-item .append-comments #comments {
   margin: 0;
-}
-body .layout #notes .notes-item .append-comments .comment {
-  padding: 0;
-  box-shadow: none;
-  border-radius: 0;
-}
-body .layout #notes .notes-item .append-comments .comment-list > .comment {
-  margin: 0.8rem 0;
-  background: none;
-}
-body .layout #notes .notes-item .append-comments .comment-list > .comment:not(:first-child) {
-  border-top: 1px solid rgba(188, 195, 206, 0.1);
-  padding-top: 0.8rem;
 }
 body .layout #notes .notes-item .append-comments .tile {
   padding: 0;
@@ -4265,12 +4251,6 @@ body .layout #comments .comment-list li.comment p {
 body .layout #comments .comment-list li.comment-sign {
   box-shadow: 0 0 0 10px #000;
 }
-body .layout #comments .comment-list > li.comment {
-  padding: 1rem;
-}
-body .layout #comments .comment-list > li.comment:first-child {
-  margin-top: 0;
-}
 body .layout #comments .comment-list > li.comment .tile-action .btn {
   color: #bcc3ce;
 }
@@ -4335,7 +4315,7 @@ body .layout #footer a.theme-name::after {
     background-color: #fff;
     z-index: 202;
   }
-  body .layout #aside .uni-bg, body .layout #aside #main {
+  body .layout #aside .uni-bg {
     background-color: rgba(188, 195, 206, 0.1);
   }
   body .layout #main {
@@ -4744,7 +4724,7 @@ body .dashicons {
 .dark .loading-full {
   background-color: rgba(42, 48, 57, 0.5);
 }
-.dark #app.layout .uni-bg, .dark body #app.layout #main, body .dark #app.layout #main {
+.dark #app.layout .uni-bg {
   background-color: #2a3039;
 }
 .dark #app.layout .modal-overlay {
@@ -4820,7 +4800,7 @@ body .dashicons {
   body.auto .loading-full {
     background-color: rgba(42, 48, 57, 0.5);
   }
-  body.auto #app.layout .uni-bg, body.auto #app.layout #main {
+  body.auto #app.layout .uni-bg {
     background-color: #2a3039;
   }
   body.auto #app.layout .modal-overlay {

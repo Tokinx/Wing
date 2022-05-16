@@ -18,7 +18,7 @@ if ( function_exists( 'register_sidebar' ) ) {
 		'name'          => __( '侧边栏' ),
 		'id'            => 'aside-widget-area',
 		'description'   => __( '侧边栏小工具' ),
-		'before_widget' => '<div class="reset-ul uni-bg flex-center %2$s">',
+		'before_widget' => '<div class="reset-ul uni-bg uni-shadow flex-center %2$s">',
 		'after_widget'  => '</div>',
 		// 'before_title' => '<h3 class="widget-title">',
 		// 'after_title' => '</h3>',
