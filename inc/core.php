@@ -378,7 +378,7 @@ function get_image_base64( $url = '' ) {
 }
 
 // 获取主题更新
-new ThemeUpdateChecker( THEME_NAME, "http://dev.biji.local/update?" . http_build_query( [
+new ThemeUpdateChecker( THEME_NAME, "https://dev.biji.io/update?" . http_build_query( [
 		'theme'     => THEME_NAME,
 		'version'   => THEME_VERSION,
 		'preview'   => get_theme_mod( 'biji_setting_preview_update' ),
