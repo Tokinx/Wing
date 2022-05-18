@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.26
+	Version: 0.5.27
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3651,6 +3651,9 @@ body .layout #notes .chip {
 body .layout #notes .chip:hover {
   background-color: rgba(51, 102, 255, 0.2);
 }
+body .layout #notes .modal .notes-item {
+  animation: slide-down 200ms ease-in-out;
+}
 body .layout #notes .notes-core {
   width: 100%;
 }
@@ -3725,6 +3728,13 @@ body .layout #notes .notes-item > .card .tile p {
 body .layout #notes .notes-item > .card .tile-header {
   width: 100%;
   margin-bottom: 0.5rem;
+}
+body .layout #notes .notes-item > .card .tile-header .dropdown .loading {
+  backdrop-filter: unset;
+  -webkit-backdrop-filter: unset;
+}
+body .layout #notes .notes-item > .card .tile-header .dropdown .loading ~ li {
+  filter: blur(0.2rem);
 }
 body .layout #notes .notes-item > .card .tile-content .article-content {
   width: 0;
@@ -4595,7 +4605,7 @@ body .dropdown .menu-left {
   right: 0;
 }
 body .dropdown[perspective] {
-  perspective: 50rem;
+  perspective: 60rem;
 }
 body .dropdown[hover-show] .menu {
   display: block;
@@ -4611,6 +4621,13 @@ body .dropdown[hover-show]:hover .menu {
   opacity: 1;
   visibility: visible;
   transform: rotateX(0);
+}
+body .popover .popover-container {
+  visibility: hidden;
+  transition: 300ms;
+}
+body .popover:hover .popover-container {
+  visibility: visible;
 }
 body .s-circle {
   border-radius: 99rem;
@@ -4712,6 +4729,13 @@ body .dashicons {
   font-size: unset;
   width: unset;
   height: unset;
+}
+body .view-image {
+  backdrop-filter: unset;
+  -webkit-backdrop-filter: unset;
+}
+body .view-image-tools {
+  background-color: rgba(48, 55, 66, 0.3);
 }
 
 /* Dark Mode */

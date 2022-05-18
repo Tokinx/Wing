@@ -21,7 +21,7 @@ if ( have_posts() ) {
                            target="<?= ( $url ? '_blank' : '_self' ); ?>">
                             <figure class="avatar avatar-xl badge" data-badge="<?= $comment->cnt ?>"
                                     data-initial="<?= $alt; ?>">
-                                <img src="<?= $avatar; ?>" alt="<?= $alt; ?>"/>
+                                <img src="<?= $avatar; ?>" alt="<?= $alt; ?>" no-view/>
                             </figure>
                             <span class="d-block text-ellipsis mt-1"><?= $comment->comment_author ?></span>
                         </a>

@@ -162,9 +162,7 @@ Vue.prototype.$toast = function (params, timer) {
             </div>
         `,
         destroyed() {
-            setTimeout(() => {
-                this.$el.remove();
-            }, timer || 2000);
+            setTimeout(() => this.$el.remove(), timer || 2000);
         }
     });
     const vm = new Toast({ el: document.createElement('div') });
