@@ -1,25 +1,15 @@
-name: CI
+name: Notify
 
 on:
   push:
-    branches: [ preview ]
-  pull_request:
-    branches: [ preview ]
-
-  workflow_dispatch:
+    branches: [ preview, release ]
 
 jobs:
-  build:
+  build-pages:
     runs-on: ubuntu-latest
-
     steps:
-      # 拉取代码
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-
-      # 通知更新
-      - name: Run a one-line script
-        run: curl https://dev.biji.io/actions?sign=${{ secrets.SIGN }}&url=https://github.com/Tokinx/Wing/archive/${{ github.ref }}.zip
-        
+      - name: Notify theme updates
+        run: |
+          curl --fail --request GET --header "Authorization: Bearer $SIGN" --url "https://dev.biji.io/actions?url=https://github.com/Tokinx/Wing/archive/${{ github.ref }}.zip"
+        env:
+          SIGN: ${{ secrets.SIGN }}
