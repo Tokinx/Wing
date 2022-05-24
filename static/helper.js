@@ -49,12 +49,8 @@ const $h = {
         const urlWithQuery = queryString ? `${url}?${queryString}` : url;
         const _headers = { 'Content-Type': 'application/json', 'X-WP-Nonce': $base.nonce, ...headers };
         if ( headers['Content-Type'] === null ) delete _headers['Content-Type'];
-        return fetch(urlWithQuery, {
-            method,
-            headers: _headers,
-            body,
-            ...others
-        }).then(rv => {
+        return fetch(urlWithQuery, { method, headers: _headers, body, ...others })
+        .then(rv => {
             if ( rv.status >= 200 && rv.status < 300 ) {
                 if ( args.source ) {
                     return rv;

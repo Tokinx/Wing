@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.3
+	Version: 0.7.4
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -4261,9 +4261,6 @@ body .layout #comments .comment-list li.comment:last-child {
 body .layout #comments .comment-list li.comment p {
   margin: 0;
 }
-body .layout #comments .comment-list li.comment-sign {
-  box-shadow: 0 0 0 10px #000;
-}
 body .layout #comments .comment-list > li.comment .tile-action .btn {
   color: #bcc3ce;
 }
@@ -4283,7 +4280,7 @@ body .layout #comments .comment-list > li.comment .tile-subtitle:not(:hover) {
   color: #909cae;
 }
 body .layout #comments .comment-list > li.comment > .children {
-  margin: 0 0 0 1.2rem;
+  margin: 0 0 0 0.8rem;
 }
 body .layout #comments .comment-list > li.comment > .children .children {
   margin: 0;

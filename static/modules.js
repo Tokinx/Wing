@@ -477,7 +477,7 @@ const $modules = new function () {
             <div v-if="comment.parent == 0" class="divider" style="margin: 1rem 0;"></div>
             <div class="tile text-tiny">
                 <div class="tile-icon">
-                    <figure class="avatar avatar-lg bg-gray">
+                    <figure :class="['avatar bg-gray', {'avatar-lg': comment.parent == 0}]">
                         <img :src="comment.avatar" alt="" />
                         <div v-if="comment.sign === 'friends'" class="avatar-icon s-circle">
                             <button class="btn btn-sm btn-warning comment-sign s-circle flex-center tooltip" :data-tooltip="sign.tooltips" style="height: 100%;width: 100%;font-size: 0.6rem;">
@@ -490,8 +490,7 @@ const $modules = new function () {
                     <div class="flex-center justify-between">
                         <div class="tile-title flex-center">
                             <component :is="info.hyperlinks && comment.url ? 'a' : 'span'" class="tile-title__name mr-2" :href="comment.url" target="_blank">{{ comment.author }}</component>
-                            <time class="tile-title__time mr-2">{{ comment.date }}</time>
-                            <span v-for="item of agent" :key="item.name" class="text-gray tooltip mr-2" :data-tooltip="item.tooltip">{{ item.name }}</span>
+                            <time class="tile-title__time">{{ comment.date }}</time>
                         </div>
                         <div class="tile-action flex-center">
                             <span v-if="comment.approved == 0" class="text-error mr-2">待审核</span>
@@ -501,6 +500,9 @@ const $modules = new function () {
                         </div>
                     </div>
                     <div class="tile-subtitle text-break" v-html="comment.content"></div>
+                    <div v-if="metas.length" class="comment-metas flex-center justify-start mt-1">
+                        <span v-for="item of metas" :key="item.name" :class="['text-gray mr-2', { tooltip: !!item.tooltip }]" :data-tooltip="item.tooltip">{{ item.name }}</span>
+                    </div>
                     
                     <template v-if="showReply">
                         <div class="divider"></div>
@@ -542,18 +544,24 @@ const $modules = new function () {
                     tooltips: this.comment.sign.toUpperCase(),
                 }
             },
-            agent() {
-                const { browser, os } = new UAParser(this.comment.agent).getResult();
-                const result = [];
-                if ( this.info.browser ) result.push({
-                    name: browser.name,
-                    tooltip: [browser.name, browser.version].join(' '),
+            metas() {
+                const metas = [];
+                const { ip_city, agent } = this.comment;
+                if ( ip_city ) metas.push({
+                    name: `来自${ip_city}`
                 });
-                if ( this.info.os ) result.push({
-                    name: os.name,
-                    tooltip: [os.name, os.version].join(' '),
-                });
-                return result;
+                if ( this.info.browser || this.info.os ) {
+                    const { browser, os } = new UAParser(agent).getResult();
+                    if ( this.info.os ) metas.push({
+                        name: os.name,
+                        tooltip: [os.name, os.version].join(' '),
+                    });
+                    if ( this.info.browser ) metas.push({
+                        name: browser.name,
+                        tooltip: [browser.name, browser.version].join(' '),
+                    });
+                }
+                return metas;
             }
         },
         mounted() {

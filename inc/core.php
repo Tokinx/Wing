@@ -277,6 +277,10 @@ function formatter_comment( $comment, $friends = [] ) {
     if ( $res->parent > 0 && get_comment( $res->parent ) ) {
         $res->content = '<a href="#comment-' . $res->parent . '">@' . get_comment_author( $res->parent ) . '</a> ' . $res->content;
     }
+    // 显示IP归属地，Powered by esay-location plugin：https://github.com/bigfa/esay-location
+    if ( function_exists( 'get_user_city' ) ) {
+        $res->ip_city = get_user_city( $res->ip );
+    }
 
     return $res;
 }
