@@ -14,6 +14,8 @@
             features: ['emoji', 'bold', 'italic'], // 编辑器功能
         },
         hyperlinks: <?= json_encode( get_theme_mod( 'biji_setting_hyperlinks', true ) ); ?>, // 评论者链接
+        browser: <?= json_encode( get_theme_mod( 'biji_setting_browser', false ) ); ?>, // 评论者浏览器
+        os: <?= json_encode( get_theme_mod( 'biji_setting_os', false ) ); ?>, // 评论者操作系统
         pagination: {
             rows: 10, // 每页评论数
             rolling: <?= json_encode( get_theme_mod( 'biji_setting_rolling', true ) ); ?>, // 滚动加载

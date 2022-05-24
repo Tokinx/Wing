@@ -488,9 +488,10 @@ const $modules = new function () {
                 </div>
                 <div class="tile-content w-0">
                     <div class="flex-center justify-between">
-                        <div class="tile-title">
+                        <div class="tile-title flex-center">
                             <component :is="info.hyperlinks && comment.url ? 'a' : 'span'" class="tile-title__name mr-2" :href="comment.url" target="_blank">{{ comment.author }}</component>
-                            <time class="tile-title__time">{{ comment.date }}</time>
+                            <time class="tile-title__time mr-2">{{ comment.date }}</time>
+                            <span v-for="item of agent" :key="item.name" class="text-gray tooltip mr-2" :data-tooltip="item.tooltip">{{ item.name }}</span>
                         </div>
                         <div class="tile-action flex-center">
                             <span v-if="comment.approved == 0" class="text-error mr-2">待审核</span>
@@ -540,7 +541,23 @@ const $modules = new function () {
                     icon: this.comment.sign === 'admin' ? 'czs-crown' : 'czs-trophy',
                     tooltips: this.comment.sign.toUpperCase(),
                 }
+            },
+            agent() {
+                const { browser, os } = new UAParser(this.comment.agent).getResult();
+                const result = [];
+                if ( this.info.browser ) result.push({
+                    name: browser.name,
+                    tooltip: [browser.name, browser.version].join(' '),
+                });
+                if ( this.info.os ) result.push({
+                    name: os.name,
+                    tooltip: [os.name, os.version].join(' '),
+                });
+                return result;
             }
+        },
+        mounted() {
+            window._exReload && window._exReload();
         },
         methods: {
             appendComment(data) {
@@ -563,7 +580,7 @@ const $modules = new function () {
                     <comment-form :info="{ post_id, editor, hyperlinks, visitor }" @append="appendComment" />
                     <ol class="comment-list reset-ul" @click="delegateCommentClick">
                         <template v-for="item in commentList" :key="item.id">
-                            <comment-item :info="{ post_id, editor, hyperlinks, visitor }" :comment="item" />
+                            <comment-item :info="{ post_id, editor, hyperlinks, browser, os, visitor }" :comment="item" />
                         </template>
                     </ol>
                     <div class="text-center load-next-comments">
@@ -596,6 +613,8 @@ const $modules = new function () {
                 adjacent_articles: false,
                 editor: { placeholder: 'Comment', features: ['emoji'] },
                 hyperlinks: true,
+                browser: false,
+                os: false,
                 pagination: { rows: 10, rolling: true, autoload: true },
                 visitor: {},
                 author: {},

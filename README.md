@@ -57,7 +57,8 @@ master仓库为基线，可以拉取最新的master分支，但不推荐
 
 | 库           | 授权  | 说明                           |
 |-------------|-----|------------------------------|
-| Vue.js      | MIT | 主题无jQuery，采用Vue驱动视图更新与组件化开发  |
+| Vue.js      | MIT | Vue驱动视图更新与组件化开发              |
+| spectre.css | MIT | 纯CSS组件库                      |
 | js-cookie   | MIT | 前端切换与记录主题模式                  |
 | qrcode      | MIT | 文章分享生成二维码图片                  |
 | dayjs       | MIT | 时间格式化                        |
@@ -65,3 +66,4 @@ master仓库为基线，可以拉取最新的master分支，但不推荐
 | ViewImage   | MIT | 图片灯箱插件，用于点击图片放大查看            |
 | caomei icon | PRO | 草莓图标库，已购买PRO版授权，仅限设计笔记系列主题使用 |
 | prettify    | MIT | 用于主题代码高亮                     |
+| UAParser.js | MIT | 用于访客UA解析                     |

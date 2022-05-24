@@ -165,15 +165,33 @@ function theme_customize_register( $wp_customize ) {
 						'type'        => 'checkbox',
 					]
 				],
-				[
-					"id"      => "biji_setting_hyperlinks",
-					"setting" => [ "default" => true ],
-					"control" => [
-						'label'       => '输出访客网站',
-						'description' => '评论者的链接是否可以点击',
-						'type'        => 'checkbox',
-					]
-				],
+                [
+                    "id"      => "biji_setting_hyperlinks",
+                    "setting" => [ "default" => true ],
+                    "control" => [
+                        'label'       => '输出访客网站',
+                        'description' => '评论者的链接是否可以点击',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_browser",
+                    "setting" => [ "default" => false ],
+                    "control" => [
+                        'label'       => '输出访客浏览器信息',
+                        'description' => '显示评论者的浏览器和版本信息',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_os",
+                    "setting" => [ "default" => false ],
+                    "control" => [
+                        'label'       => '输出访客系统信息',
+                        'description' => '显示评论者的操作系统和版本信息',
+                        'type'        => 'checkbox',
+                    ]
+                ],
 				[
 					"id"      => "biji_setting_autoload",
 					"setting" => [ "default" => false ],
