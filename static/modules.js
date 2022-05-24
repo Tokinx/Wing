@@ -490,7 +490,7 @@ const $modules = new function () {
                     <div class="flex-center justify-between">
                         <div class="tile-title flex-center">
                             <component :is="info.hyperlinks && comment.url ? 'a' : 'span'" class="tile-title__name mr-2" :href="comment.url" target="_blank">{{ comment.author }}</component>
-                            <time class="tile-title__time">{{ comment.date }}</time>
+                            <time class="tile-title__time tooltip" :data-tooltip="comment.date">{{ commentDate }}</time>
                         </div>
                         <div class="tile-action flex-center">
                             <span v-if="comment.approved == 0" class="text-error mr-2">待审核</span>
@@ -562,10 +562,11 @@ const $modules = new function () {
                     });
                 }
                 return metas;
-            }
-        },
-        mounted() {
-            window._exReload && window._exReload();
+            },
+            commentDate() {
+                if ( Lately ) return Lately.format(this.comment.date);
+                return this.comment.date;
+            },
         },
         methods: {
             appendComment(data) {
