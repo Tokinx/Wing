@@ -19,7 +19,7 @@ if ( have_posts() ) {
                     <div class="card uni-card flex-center text-center p-2">
                         <a class="text-gray text-tiny m-2" href="<?= ( $url ?: 'javascript:void(0);' ); ?>"
                            target="<?= ( $url ? '_blank' : '_self' ); ?>">
-                            <figure class="avatar avatar-xl badge" data-badge="<?= $comment->cnt ?>"
+                            <figure class="avatar avatar-xl bg-gray badge" data-badge="<?= $comment->cnt ?>"
                                     data-initial="<?= $alt; ?>">
                                 <img src="<?= $avatar; ?>" alt="<?= $alt; ?>" no-view/>
                             </figure>

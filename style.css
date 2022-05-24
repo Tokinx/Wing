@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.4
+	Version: 0.7.5
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3425,6 +3425,94 @@ body .layout .uni-shadow, body .layout .uni-card {
 body .layout .uni-card {
   border: none;
   background-color: rgba(247, 248, 249, 0.02);
+}
+body .layout .db--nav {
+  position: relative;
+  padding: 2rem;
+  margin: -1.05rem -2rem 1rem;
+  background-color: rgba(188, 195, 206, 0.1);
+  z-index: 1;
+}
+body .layout .db--genres {
+  gap: 5px;
+}
+body .layout .db--genreItem {
+  margin: 0;
+  background: rgba(188, 195, 206, 0.1);
+}
+body .layout .db--score {
+  color: #fff;
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  z-index: 1;
+}
+body .layout .db--title {
+  margin-top: 0;
+  position: absolute;
+  inset: 0;
+  padding: 5%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8) 0, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.8));
+  display: flex;
+  align-items: flex-end;
+  text-align: center;
+  justify-content: center;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  transition: all 300ms;
+}
+body .layout .db--title a {
+  color: #fff;
+}
+body .layout .db--title:hover {
+  padding-bottom: 10%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8) 0, transparent 20%, transparent 60%, rgba(0, 0, 0, 0.8));
+}
+body .layout .db--list {
+  margin: -1%;
+}
+body .layout .db--item {
+  margin: 1%;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 0;
+  padding: 16% 11.5%;
+}
+body .layout .db--item .ipc-signpost {
+  position: absolute;
+  width: 96px;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  transform: translateX(-1rem);
+  opacity: 0;
+  transition: 300ms;
+}
+body .layout .db--item .lds-ripple {
+  margin: 5%;
+}
+body .layout .db--item:hover .ipc-signpost {
+  transform: translateX(0);
+  opacity: 1;
+}
+body .layout .db--image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+@media (max-width: 38rem) {
+  body .layout .db--list {
+    margin: -2%;
+  }
+  body .layout .db--item {
+    margin: 2%;
+    padding: 22% 14.5%;
+  }
+}
+@media (max-width: 25rem) {
+  body .layout .db--item {
+    padding: 32% 22.5%;
+  }
 }
 body .layout #header {
   position: relative;
