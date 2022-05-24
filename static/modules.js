@@ -492,8 +492,9 @@ const $modules = new function () {
                             <component :is="info.hyperlinks && comment.url ? 'a' : 'span'" class="tile-title__name mr-2" :href="comment.url" target="_blank">{{ comment.author }}</component>
                             <time class="tile-title__time">{{ comment.date }}</time>
                         </div>
-                        <div class="tile-action">
-                            <button class="btn btn-link btn-sm text-tiny flex-center" @click="showReply = true">
+                        <div class="tile-action flex-center">
+                            <span v-if="comment.approved == 0" class="text-error mr-2">待审核</span>
+                            <button class="btn btn-link btn-sm flex-center" @click="showReply = true">
                                 <i class="czs-comment"></i>
                              </button>
                         </div>
@@ -942,7 +943,7 @@ const $modules = new function () {
             handleMenuClick(item) {
                 // 防抖
                 if ( this.loading ) return;
-                const { id, type, content, images,status } = this.note;
+                const { id, type, content, images, status } = this.note;
                 switch (item.id) {
                     case 'quote':
                         this.$emit('event', { event: item.id });
