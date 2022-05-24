@@ -127,13 +127,16 @@ get_header(); ?>
                         this.search.topics = '';
                         this.paging.page = 1;
                     },
+                    // 点击话题
                     handleTopic(topic) {
                         this.reset();
                         this.search.topics = topic;
                         this.getNoteList(false);
                     },
-                    handleNoteCard({ event }, note, index) {
+                    // 笔记卡片一些操作
+                    handleNoteCard({ event, content, images }, note, index) {
                         switch (event) {
+                            // 引用
                             case 'quote':
                                 $h.scrollTo({
                                     callback: () => {
@@ -141,17 +144,20 @@ get_header(); ?>
                                     }
                                 });
                                 break;
-                            case 'edit':
-                                // 编辑
+                            // 新内容更新到节点上
+                            case 'update':
+                                note.content = content;
+                                note.images = images;
                                 break;
+                            // 从节点上删除内容
                             case 'delete':
                                 this.noteList.splice(index, 1);
                                 break;
                         }
                     },
                     handleTabs(item) {
+                        // 切换tab并滚动到顶部
                         this.search.type = item.id;
-                        // 滚动到顶部
                         $h.scrollTo();
                     },
                     // 加载下一页
@@ -161,6 +167,7 @@ get_header(); ?>
                         this.paging.page++;
                         this.getNoteList();
                     },
+                    // 获取笔记列表
                     getNoteList(append = true) {
                         if ( this.loading ) return;
                         this.loading = true;
@@ -176,19 +183,10 @@ get_header(); ?>
                             this.loading = false;
                         });
                     },
+                    // 提交笔记
                     submitNote({ content, images }) {
-                        // 从content提取topic：#topic1 #topic2 ...
-                        const topics = (content.match(/#([^#|^<]+)/g) || []).map(item => item.replace('#', '')).filter(item => !!item);
-                        const fields = [];
-                        if ( (images || []).length ) {
-                            fields.push({ name: 'images', value: images.map(item => item.id).join(',') });
-                        }
                         this.$refs.editor.setLoading(true);
-                        $h.rest('wp/v2/notes', {
-                            method: 'POST',
-                            query: { _locale: 'user' },
-                            data: { ...this.form, content, topics, fields },
-                        })
+                        $modules.actions.setNotes(this.form, { content, images })
                         .then(() => {
                             this.$refs.editor.clear();
                             this.reset();

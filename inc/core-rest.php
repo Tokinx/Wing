@@ -110,7 +110,10 @@ function ajax_get_all_posts_callback() {
                 $post->images = array_map( function ( $id ) {
                     $url = wp_get_attachment_url( $id );
 
-                    return replace_domain( $url );
+                    return [
+                        'id'         => $id,
+                        'source_url' => replace_domain( $url ),
+                    ];
                 }, $ids );
             }
         }

@@ -24,7 +24,7 @@ function note_custom_init() {
 		'query_var'           => true, // 可通过query_var获取
 		'delete_with_user'    => true, // 删除时同时删除文章
 		'supports'            => [ 'title', 'editor', 'author', 'custom-fields', 'trackbacks', 'comments' ], // 支持的功能
-//		'show_ui'             => false, // 后台不显示界面
+		'show_ui'             => false, // 后台不显示界面
 		'exclude_from_search' => true, // 搜索结果中排出
 		'show_in_nav_menus'   => false, // 导航菜单中不显示
 		'show_in_rest'        => true, // 在REST API中显示

@@ -24,7 +24,7 @@
         if ( $h.store.comments && $h.store.comments.$refs.affiliate ) {
             $h.store.comments.$refs.affiliate.handlePraise();
         } else {
-            $modules.actions.submit_praise(<?php the_ID(); ?>);
+            $modules.actions.setPraise(<?php the_ID(); ?>);
         }
     }
 </script>

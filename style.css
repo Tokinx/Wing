@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.5.27
+	Version: 0.7.1
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3654,6 +3654,15 @@ body .layout #notes .chip:hover {
 body .layout #notes .modal .notes-item {
   animation: slide-down 200ms ease-in-out;
 }
+body .layout #notes .edit-status .editor {
+  border: none;
+}
+body .layout #notes .article-content > p {
+  word-break: break-all;
+}
+body .layout #notes .article-content > p:not(:last-child) {
+  margin-bottom: 0.2rem;
+}
 body .layout #notes .notes-core {
   width: 100%;
 }
@@ -3722,9 +3731,6 @@ body .layout #notes .notes-item:not(:last-child) {
 body .layout #notes .notes-item > .card .tile {
   padding: 0.6rem 1rem;
 }
-body .layout #notes .notes-item > .card .tile p {
-  margin-bottom: 0.5rem;
-}
 body .layout #notes .notes-item > .card .tile-header {
   width: 100%;
   margin-bottom: 0.5rem;
@@ -3742,9 +3748,6 @@ body .layout #notes .notes-item > .card .tile-content .article-content {
 }
 body .layout #notes .notes-item > .card .tile-content .article-content.w-100 {
   width: 100%;
-}
-body .layout #notes .notes-item > .card .tile-content .article-content > p {
-  word-break: break-all;
 }
 body .layout #notes .notes-item > .card .tile-content *:last-child {
   margin-bottom: 0;
@@ -4444,7 +4447,6 @@ body #app.animation-end #main .content::after {
 }
 .editor-content {
   font-size: 0.7rem;
-  padding: 0.5rem;
   outline: none;
 }
 .editor-content.is-empty::before {

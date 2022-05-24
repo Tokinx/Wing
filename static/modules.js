@@ -92,7 +92,7 @@ const $modules = new function () {
                 });
             },
             handlePraise() {
-                $modules.actions.submit_praise(this.post_id).then((cookie) => {
+                $modules.actions.setPraise(this.post_id).then((cookie) => {
                     this.praise = cookie;
                 });
             },
@@ -155,7 +155,7 @@ const $modules = new function () {
                     <div
                         :ref="refName"
                         contenteditable
-                        class="editor-content article-content"
+                        class="editor-content article-content p-2"
                         :class="{ 'is-empty': !content }"
                         v-bind="{ placeholder }"
                         @input="onInput"
@@ -166,7 +166,7 @@ const $modules = new function () {
                     </div>
                     
                     <input v-if="features.indexOf('image') > -1" ref="upload" class="d-none" type="file" accept="image/*" multiple @change="handleUpload" />
-                    <div v-if="images.length" class="editor-preview m-2">
+                    <div v-if="images.length" class="editor-preview mx-2 mb-1">
                         <div class="editor-preview-box flex-center">
                             <div v-for="(image, index) in images" :key="image.id" class="editor-preview__item d-flex">
                                 <img :src="image.source_url" class="s-rounded mr-2" />
@@ -186,7 +186,7 @@ const $modules = new function () {
                         <div class="flex-center">
                             <slot name="send">
                                 <slot name="send-l"></slot>
-                                <button class="btn btn-primary btn-sm flex-center" @click="submit">
+                                <button class="editor-send btn btn-primary btn-sm flex-center" @click="submit">
                                     <i class="dashicons dashicons-edit-page mr-1"></i> {{ sendText }}
                                 </button>
                                 <slot name="send-r"></slot>
@@ -203,6 +203,7 @@ const $modules = new function () {
         },
         data() {
             return {
+                id: null,
                 refName: `editor-${Date.now()}`,
                 loading: false,
                 uploading: false,
@@ -217,10 +218,13 @@ const $modules = new function () {
         },
         methods: {
             submit() {
-                this.$emit('submit', {
-                    content: this.content,
-                    images: this.images
-                });
+                // this.content 去除html标签和空格
+                const content = this.content.replace(/<[^>]+>/g, '').replace(/\s+/g, '');
+                if ( content.length ) {
+                    this.$emit('submit', { content: this.content, images: this.images, id: this.id });
+                } else {
+                    this.$toast({ message: '内容不能为空' });
+                }
             },
             setLoading(loading) {
                 this.loading = loading;
@@ -258,7 +262,6 @@ const $modules = new function () {
                 e.preventDefault();
             },
             handleUpload(e) {
-                console.log(e);
                 const { files } = (e.target || {});
                 const len = { flag: 0, count: files.length };
                 this.uploading = true;
@@ -771,69 +774,78 @@ const $modules = new function () {
         template: `
             <div :class="'notes-item feat-' + featId">
                 <div class="card uni-card">
-                    <div class="tile card-body d-block">
-                        <div class="tile-header flex-center justify-between">
-                            <div class="article-header text-gray text-tiny w-100 d-flex align-center">
-                                <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
-                                    <a :href="note.permalink">{{ note.title }}</a>
-                                </h3>
-                                <ul v-else class="article-info d-flex text-gray text-tiny reset-ul m-0">
-                                    <li>
-                                        <time :datetime="note.date" itemprop="datePublished" pubdate>{{ note_date }}</time>
-                                    </li>
-                                    <li :class="['c-hand', { 'text-error': praise }]" @click="handleMenuClick({ id: 'praise' })">
-                                        <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ note_praise }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-    
-                            <slot name="right-icon">
-                                <div v-if="logged && !isPost" class="dropdown" hover-show>
-                                    <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
-                                        <i class="dashicons dashicons-ellipsis"></i>
-                                    </a>
-                                    <ul class="menu menu-left uni-card bg-blur">
-                                        <div v-if="loading" class="loading loading-full"></div>
-                                        <li class="menu-item">
-                                            <a v-for="item in menu" :key="item.id" href="javascript:void(0);" @click="debounceMenuClick(item)"
-                                                class="align-center" style="display: flex;">
-                                                <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
-                                            </a>
+                    <template v-if="!isEditor">
+                        <div class="tile card-body d-block">
+                            <div class="tile-header flex-center justify-between">
+                                <div class="article-header text-gray text-tiny w-100 d-flex align-center">
+                                    <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
+                                        <a :href="note.permalink">{{ note.title }}</a>
+                                    </h3>
+                                    <ul v-else class="article-info d-flex text-gray text-tiny reset-ul m-0">
+                                        <li>
+                                            <time :datetime="note.date" itemprop="datePublished" pubdate>{{ noteDate }}</time>
+                                        </li>
+                                        <li :class="['c-hand', { 'text-error': praise }]" @click="handleMenuClick({ id: 'praise' })">
+                                            <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ notePraise }}</span>
                                         </li>
                                     </ul>
                                 </div>
-                            </slot>
-                        </div>
-                        <div class="tile-content p-0">
-                            <div :class="['flex-wrap', { 'd-flex': !isPost }]">
-                                <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
-                                <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
+        
+                                <slot name="right-icon">
+                                    <div v-if="logged && !isPost" class="dropdown" hover-show>
+                                        <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
+                                            <i class="dashicons dashicons-ellipsis"></i>
+                                        </a>
+                                        <ul class="menu menu-left uni-card bg-blur">
+                                            <div v-if="loading" class="loading loading-full"></div>
+                                            <li class="menu-item" v-for="item in menu" :key="item.id"  @click="debounceMenuClick(item)">
+                                                <a href="javascript:void(0);" class="align-center" style="display: flex;">
+                                                    <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </slot>
                             </div>
-                            <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
-                                <div class="notes-item-images__item mx-1 c-zoom-in" v-for="(url, index) in note.images" :key="url">
-                                    <img class="s-rounded" :src="url" alt @click="handleViewImage(url)"/>
+                            <div class="tile-content p-0">
+                                <div :class="['flex-wrap', { 'd-flex': !isPost }]">
+                                    <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
+                                    <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
+                                </div>
+                                <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
+                                    <div class="notes-item-images__item mx-1 c-zoom-in" v-for="item in note.images" :key="item.id">
+                                        <img class="s-rounded" :src="item.source_url" alt @click="handleViewImage(item.source_url)"/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tile-footer text-gray text-tiny flex-center justify-between">
-                            <div class="flex-center">
-                                <time v-if="isPost" class="mr-2">{{ note_date }}</time>
-                                <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleComment">
-                                    <i class="czs-talk mr-1"></i> {{ note.comment_count }}
-                                </button>
+                            <div class="tile-footer text-gray text-tiny flex-center justify-between">
+                                <div class="flex-center">
+                                    <time v-if="isPost" class="mr-2">{{ noteDate }}</time>
+                                    <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleComment">
+                                        <i class="czs-talk mr-1"></i> {{ note.comment_count }}
+                                    </button>
+                                </div>
+        
+                                <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
+                                    阅读原文 <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
+                                </a>
+                                <span v-else class="flex-center">
+                                    <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
+                                </span>
                             </div>
-    
-                            <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
-                                阅读原文 <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
-                            </a>
-                            <span v-else class="flex-center">
-                                <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
-                            </span>
                         </div>
-                    </div>
+                    </template>
+                    <template v-else>
+                        <editor class="edit-status" ref="editor" v-bind="{ ...bindEditor }" @submit="handleSubmit">
+                            <button slot="send-l" class="btn btn-link btn-sm mr-2" @click="isEditor=false">取消</button>
+                        </editor>
+                    </template>
                 </div>
             </div>
         `,
+        components: {
+            Editor: that.Editor,
+        },
         props: {
             logged: { type: Boolean, default: false },
             lately: { type: Boolean, default: true },
@@ -841,6 +853,7 @@ const $modules = new function () {
         },
         data() {
             return {
+                isEditor: false,
                 loading: false,
                 menu: [
                     { id: 'quote', icon: 'dashicons dashicons-format-quote', name: '引用' },
@@ -849,7 +862,8 @@ const $modules = new function () {
                     { id: 'praise', icon: 'dashicons dashicons-heart', name: '喜欢' },
                 ],
                 comment: null,
-                praise: !!Cookies.get(`praise_${this.note.id}`)
+                praise: !!Cookies.get(`praise_${this.note.id}`),
+                bindEditor: $h.store.notes.editor,
             }
         },
         computed: {
@@ -865,7 +879,7 @@ const $modules = new function () {
                 if ( !content ) return '';
                 if ( this.isPost ) return `<p>${content}</p>`;
                 // 高亮话题 #话题1 话题2
-                (content.match(/#([^#|^<]+)/g) || []).forEach(topic => {
+                (content.match(/#([^#|^<\s]+)/g) || []).forEach(topic => {
                     content = content.replace(topic, `<span class="chip c-hand text-primary" data-topic="${topic}">${topic}</span>`);
                 });
 
@@ -889,14 +903,14 @@ const $modules = new function () {
             category() {
                 return (this.note.category || []).map(({ name }) => name).join(', ');
             },
-            note_date() {
+            noteDate() {
                 if ( !this.note.date ) return '';
                 if ( this.lately ) {
                     return Lately && Lately.format(this.note.date);
                 }
                 return dayjs && dayjs(this.note.date).format('YYYY-MM-DD');
             },
-            note_praise() {
+            notePraise() {
                 return String(this.note.fields && (this.note.fields.praise || 0));
             },
             // 防抖
@@ -928,13 +942,22 @@ const $modules = new function () {
             handleMenuClick(item) {
                 // 防抖
                 if ( this.loading ) return;
-                const { id, type } = this.note;
+                const { id, type, content, images,status } = this.note;
                 switch (item.id) {
                     case 'quote':
                         this.$emit('event', { event: item.id });
                         break;
                     case 'edit':
-                        this.$emit('event', { event: item.id });
+                        this.isEditor = true;
+                        this.$nextTick(() => {
+                            const e = this.$refs.editor;
+                            const target = e.$refs[e.refName];
+                            target.innerHTML = content;
+                            e.content = content;
+                            e.images = images || [];
+                            // 将光标定位到最后
+                            getSelection().collapse(target, target.childNodes.length);
+                        });
                         break;
                     case 'delete':
                         this.loading = true;
@@ -951,15 +974,26 @@ const $modules = new function () {
                         })
                         break;
                     case 'praise':
-                        $modules.actions.submit_praise(id).then(() => {
+                        $modules.actions.setPraise(id).then(() => {
                             this.praise = !!Cookies.get(`praise_${id}`);
                         });
                         break;
                 }
             },
             handleViewImage(url) {
-                window.ViewImage && ViewImage.display(this.note.images, url);
-            }
+                window.ViewImage && ViewImage.display(this.note.images.map(({ source_url }) => source_url), url);
+            },
+            handleSubmit({ content, images }) {
+                const e = this.$refs.editor;
+                e.setLoading(true);
+                that.actions.setNotes(this.note, { content, images })
+                .then(({ content }) => {
+                    this.isEditor = false;
+                    this.$emit('event', { event: 'update', content: content.rendered, images })
+                }).finally(() => {
+                    e.setLoading(false);
+                });
+            },
         }
     };
     // // 右侧侧边栏
@@ -1163,13 +1197,26 @@ const $modules = new function () {
     };
     // 喜欢
     this.actions = {
-        submit_praise(post_id) {
+        setPraise(post_id) {
             return $h.ajax({ query: { action: 'submit_praise', post_id } }).then(num => {
                 Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
                     if ( !i && (+num) > (+el.innerText) ) new Vue().$toast({ type: 'success', message: '祝你财源广进' });
                     el && (el.innerHTML = num);
                 });
                 return !!Cookies.get(`praise_${post_id}`);
+            });
+        },
+        setNotes(form, { content, images }) {
+            // 从content提取topic：#topic1 #topic2 ...
+            const topics = (content.match(/#([^#|^<\s]+)/g) || []).map(item => item.replace('#', '')).filter(item => !!item);
+            const fields = [];
+            if ( (images || []).length ) {
+                fields.push({ name: 'images', value: images.map(item => item.id).join(',') });
+            }
+            return $h.rest(`wp/v2/notes/${form.id || ''}`, {
+                method: !form.id ? 'POST' : 'PUT',
+                query: { _locale: 'user' },
+                data: { ...form, content, topics, fields },
             });
         },
     }
