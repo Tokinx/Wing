@@ -26,6 +26,9 @@
 		<?php } if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
         window.prettyPrint && prettyPrint();
 		<?php } ?>
+        if ( window.WP_DOUBAN && document.querySelector('.db--container') ) {
+            new WP_DOUBAN();
+        }
     }
 </script>
 </div>

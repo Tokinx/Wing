@@ -5,7 +5,7 @@
 	Description: Smooth and concise
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.5
+	Version: 0.7.6
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3419,12 +3419,17 @@ body .layout .uni-bg {
   background-color: #fff;
   transition: 300ms;
 }
-body .layout .uni-shadow, body .layout .uni-card {
+body .layout .uni-shadow, body .layout .uni-card, body .layout #aside .header-nav li .sub-menu,
+body .layout #aside .footer-nav li .sub-menu {
   box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(48, 55, 66, 0.06);
 }
-body .layout .uni-card {
+body .layout .uni-card, body .layout #aside .header-nav li .sub-menu,
+body .layout #aside .footer-nav li .sub-menu {
   border: none;
   background-color: rgba(247, 248, 249, 0.02);
+}
+body .layout .db--container .lds-ripple {
+  margin: 5%;
 }
 body .layout .db--nav {
   position: relative;
@@ -3435,10 +3440,15 @@ body .layout .db--nav {
 }
 body .layout .db--genres {
   gap: 5px;
+  padding: 0;
+  margin-bottom: 1rem;
 }
 body .layout .db--genreItem {
   margin: 0;
   background: rgba(188, 195, 206, 0.1);
+}
+body .layout .db--genreItem:hover, body .layout .db--genreItem.is-active {
+  background-color: #3366ff;
 }
 body .layout .db--score {
   color: #fff;
@@ -3486,9 +3496,6 @@ body .layout .db--item .ipc-signpost {
   transform: translateX(-1rem);
   opacity: 0;
   transition: 300ms;
-}
-body .layout .db--item .lds-ripple {
-  margin: 5%;
 }
 body .layout .db--item:hover .ipc-signpost {
   transform: translateX(0);
@@ -3677,9 +3684,14 @@ body .layout #aside .footer-nav li {
   position: relative;
   color: #66758c;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   -webkit-font-smoothing: unset;
   -moz-osx-font-smoothing: unset;
+  padding: 0 0.5rem;
+  border-radius: 0.3rem;
+  transition: 100ms;
+  line-height: 1;
 }
 body .layout #aside .header-nav li:not(:last-child),
 body .layout #aside .footer-nav li:not(:last-child) {
@@ -3687,37 +3699,56 @@ body .layout #aside .footer-nav li:not(:last-child) {
 }
 body .layout #aside .header-nav li::before,
 body .layout #aside .footer-nav li::before {
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 9rem;
+  position: relative;
+  top: 1px;
   margin-right: 0.3rem;
 }
 body .layout #aside .header-nav li a,
 body .layout #aside .footer-nav li a {
   display: block;
+  padding: 0.5rem 0;
   flex: 1;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
   color: currentColor;
   text-decoration: none;
-  transition: 100ms;
-  line-height: 1;
 }
-body .layout #aside .header-nav li a:hover,
-body .layout #aside .footer-nav li a:hover {
+body .layout #aside .header-nav li:hover,
+body .layout #aside .footer-nav li:hover {
   background-color: rgba(188, 195, 206, 0.1);
 }
 body .layout #aside .header-nav li[class*=current-],
 body .layout #aside .footer-nav li[class*=current-] {
   color: #fff;
 }
-body .layout #aside .header-nav li[class*=current-] a, body .layout #aside .header-nav li[class*=current-]::before,
-body .layout #aside .footer-nav li[class*=current-] a,
-body .layout #aside .footer-nav li[class*=current-]::before {
+body .layout #aside .header-nav li[class*=current-],
+body .layout #aside .footer-nav li[class*=current-] {
   background-color: #3366ff;
+}
+body .layout #aside .header-nav li .sub-menu,
+body .layout #aside .footer-nav li .sub-menu {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  transform-origin: 50% -5rem;
+  transform: rotateX(-20deg);
+  transition: all 300ms;
+  z-index: 1;
+}
+body .layout #aside .header-nav li:hover,
+body .layout #aside .footer-nav li:hover {
+  perspective: 60rem;
+  z-index: 1;
+}
+body .layout #aside .header-nav li:hover .sub-menu,
+body .layout #aside .footer-nav li:hover .sub-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: rotateX(0);
 }
 body .layout #aside .header-nav a,
 body .layout #aside .footer-nav a {
@@ -4630,7 +4661,8 @@ body ol.reset-ul li {
   margin: 0;
   list-style: none;
 }
-body .bg-blur, body .layout .article-dialog .notes-item {
+body .bg-blur, body .layout #aside .header-nav li .sub-menu,
+body .layout #aside .footer-nav li .sub-menu, body .layout .article-dialog .notes-item {
   backdrop-filter: blur(0.5rem);
   -webkit-backdrop-filter: blur(0.5rem);
 }
