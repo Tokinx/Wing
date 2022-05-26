@@ -14,6 +14,8 @@
                         features: ['emoji', 'bold', 'italic'],
                     },
                     hyperlinks: <?= json_encode( get_theme_mod( 'biji_setting_hyperlinks', true ) ); ?>,
+                    browser: <?= json_encode( get_theme_mod( 'biji_setting_browser', false ) ); ?>,
+                    os: <?= json_encode( get_theme_mod( 'biji_setting_os', false ) ); ?>,
                     pagination: {
                         rows: 10,
                         rolling: <?= json_encode( get_theme_mod( 'biji_setting_rolling', true ) ); ?>,
