@@ -140,7 +140,7 @@ function ajax_get_all_posts_callback() {
 
     // 缓存每日回顾
     if ( $type === 'review' ) {
-        set_transient( 'review', $result, 24 * HOUR_IN_SECONDS );
+        set_transient( 'review', $result, 12 * HOUR_IN_SECONDS );
     }
 
     wp_send_json( $result );
