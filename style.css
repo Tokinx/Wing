@@ -2,10 +2,10 @@
 /*
 	Theme Name: Wing
 	Theme URL: https://theme.biji.io/wing
-	Description: Smooth and concise
+	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.6
+	Version: 0.7.7
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -4639,10 +4639,14 @@ body a, body a:hover, body a:visited {
 body a:hover {
   text-decoration: underline;
 }
-body pre code {
+body pre {
+  border: none !important;
   line-height: 1.6;
   background: rgba(188, 195, 206, 0.1);
   box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.2) inset;
+}
+body pre code {
+  background: none;
 }
 body code {
   margin: 0 0.2rem;
