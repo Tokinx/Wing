@@ -547,9 +547,7 @@ const $modules = new function () {
             metas() {
                 const metas = [];
                 const { ip_city, agent } = this.comment;
-                if ( ip_city ) metas.push({
-                    name: `来自${ip_city}`
-                });
+                if ( ip_city ) metas.push({ name: `来自${ip_city}` });
                 if ( this.info.browser || this.info.os ) {
                     const { browser, os } = new UAParser(agent).getResult();
                     if ( this.info.os ) metas.push({
@@ -564,8 +562,7 @@ const $modules = new function () {
                 return metas;
             },
             commentDate() {
-                if ( Lately ) return Lately.format(this.comment.date);
-                return this.comment.date;
+                return window.Lately ? Lately.format(this.comment.date) : this.comment.date;
             },
         },
         methods: {
@@ -633,20 +630,14 @@ const $modules = new function () {
             parameter() {
                 return { type: 'comment', post_id: this.post_id, ...this.paging, ...this.pagination }
             },
-            elContent() {
-                return document.querySelector('.content');
-            },
             isNextPage() {
                 const { total, page } = this.paging;
                 return total === null || page < total;
             },
         },
-        mounted() {
+        created() {
             // 自动加载
-            if ( this.pagination.autoload ) {
-                const { offsetHeight, scrollHeight } = this.elContent;
-                scrollHeight <= offsetHeight && this.loadNextComments();
-            }
+            if ( this.pagination.autoload ) this.loadNextComments();
         },
         methods: {
             loadNextComments() {
@@ -892,7 +883,7 @@ const $modules = new function () {
                 ],
                 comment: null,
                 praise: !!Cookies.get(`praise_${this.note.id}`),
-                bindEditor: $h.store.notes.editor,
+                bindEditor: $h.store.notes ? $h.store.notes.editor : false,
             }
         },
         computed: {
