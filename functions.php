@@ -141,22 +141,24 @@ function bark_push_msg( $comment_id ) {
     if ( (int) $comment->comment_parent <= 0 || $comment->comment_approved === 'spam' ) {
         return false;
     }
-    $token     = trim( get_theme_mod( 'biji_setting_bark' ) );
-    $blog_name = trim( get_bloginfo( 'name' ) );
-    $title     = trim( get_the_title( $comment->comment_post_ID ) ) ?: $blog_name;
-    $message   = trim( $comment->comment_author . '：' . $comment->comment_content );
-    $avatar    = get_avatar_url( $comment->comment_author_email );
-    $replay    = htmlspecialchars( get_comment_link( $comment_id ) );
-    if ( strpos( $avatar, 'http' ) !== 0 ) {
-        $avatar = 'https:' . $avatar;
+    $token   = trim( get_theme_mod( 'biji_setting_bark' ) );
+    $query   = [
+        'group'  => trim( get_bloginfo( 'name' ) ),
+        'avatar' => get_avatar_url( $comment->comment_author_email ),
+        'url'    => htmlspecialchars( get_comment_link( $comment_id ) ),
+    ];
+    $title   = trim( get_the_title( $comment->comment_post_ID ) ) ?: $query['group'];
+    $message = trim( $comment->comment_author . '：' . $comment->comment_content );
+    if ( strpos( $query['avatar'], 'http' ) !== 0 ) {
+        $query['avatar'] = 'https:' . $query['avatar'];
     }
 
-    $stream_opts = [
+    $stream = stream_context_create( [
         "ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
-        "http" => [ "timeout" => 5 ], // 超时时间 5 秒
-    ];
+        "http" => [ "timeout" => 10 ], // 超时时间-秒
+    ] );
 
-    return file_get_contents( "https://api.day.app/$token/$title/$message?icon=$avatar&group=$blog_name&url=$replay", false, stream_context_create( $stream_opts ) );
+    return file_get_contents( "https://api.day.app/$token/$title/$message?" . http_build_query( $query ), false, $stream );
 }
 
 add_action( 'comment_post', 'bark_push_msg' );
@@ -201,10 +203,10 @@ function comment_mail_notify( $comment_id ) {
 												' . trim( $parent->comment_content ) . '
 											</div>
 										</div>
-										<img src="' . get_image_base64( get_avatar_url( $to ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
+										<img src="' . get_avatar_url( $to ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
 									</div>
 									<div>
-									<img src="' . get_image_base64( get_avatar_url( trim( $comment->comment_author_email ) ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
+									<img src="' . get_avatar_url( trim( $comment->comment_author_email ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
 										<div style="display: inline-block;width: 80%;">
 											<span style="color: #666;">' . $comment->comment_author . '</span>
 											<div style="background-color: #3274ff;color:#fff;border-radius: 10px;border-top-left-radius: 0;padding: 5% 8%;">

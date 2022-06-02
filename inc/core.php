@@ -353,34 +353,6 @@ function get_readers_wall( $count = 12 ) {
     return $result;
 }
 
-// 图片转base64，捕获异常
-function get_image_base64( $url = '' ) {
-    try {
-        if ( strpos( $url, 'http' ) !== 0 ) {
-            $url = 'https:' . $url;
-        }
-        $key = md5( $url );
-
-        if ( false === ( $base64 = get_transient( $key ) ) ) {
-            $stream_opts  = [
-                "ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
-                "http" => [ "timeout" => 5 ], // 超时时间 5 秒
-            ];
-            $base64string = chunk_split( base64_encode( file_get_contents( "$url", false, stream_context_create( $stream_opts ) ) ) );
-            // 正则提取Content-Type
-            preg_match( '/Content-Type: (.*?);/', implode( ';', $http_response_header ), $match );
-            $mime   = $match[1] ?: 'image/png';
-            $base64 = "data:" . $mime . ";base64,$base64string";
-            // 缓存base64
-            set_transient( $key, $base64, MONTH_IN_SECONDS );
-        }
-
-        return $base64;
-    } catch ( Error $e ) {
-        return "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=";
-    }
-}
-
 // 获取主题更新
 new ThemeUpdateChecker( THEME_NAME, "https://dev.biji.io/update?" . http_build_query( [
         'theme'     => THEME_NAME,
