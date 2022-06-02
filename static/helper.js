@@ -46,7 +46,9 @@ const $h = {
         const { query = {}, data, method = 'GET', headers = {}, ...others } = args;
         const queryString = this.toQueryString(query);
         const body = method === 'GET' ? null : JSON.stringify(data);
-        const urlWithQuery = queryString ? `${url}?${queryString}` : url;
+        // 兼容未开启伪静态的情况
+        const join = url.indexOf('?rest_route=') > -1 ? '&' : '?';
+        const urlWithQuery = queryString ? `${url}${join}${queryString}` : url;
         const _headers = { 'Content-Type': 'application/json', 'X-WP-Nonce': $base.nonce, ...headers };
         if ( headers['Content-Type'] === null ) delete _headers['Content-Type'];
         return fetch(urlWithQuery, { method, headers: _headers, body, ...others })
@@ -60,7 +62,6 @@ const $h = {
                     return rv.text();
                 }
             }
-
             return Promise.reject(rv);
         }).catch(rv => {
             return new Promise((resolve, reject) => {
