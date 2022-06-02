@@ -169,7 +169,7 @@ const $modules = new function () {
                     <div v-if="images.length" class="editor-preview mx-2 mb-1">
                         <div class="editor-preview-box flex-center">
                             <div v-for="(image, index) in images" :key="image.id" class="editor-preview__item d-flex">
-                                <img :src="image.source_url" class="s-rounded mr-2" />
+                                <img :src="image.source_url" class="s-rounded" />
                                 <a href="javascript:void(0);" class="editor-preview__item-remove btn btn-clear bg-error m-0" @click="handleRemoveImage(index)"></a>
                             </div>
                         </div>
@@ -833,7 +833,7 @@ const $modules = new function () {
                                     <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
                                 </div>
                                 <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
-                                    <div class="notes-item-images__item mx-1 c-zoom-in" v-for="item in note.images" :key="item.id">
+                                    <div class="notes-item-images__item c-zoom-in" v-for="item in note.images" :key="item.id">
                                         <img class="s-rounded" :src="item.source_url" alt @click="handleViewImage(item.source_url)"/>
                                     </div>
                                 </div>
