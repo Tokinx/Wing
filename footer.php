@@ -3,29 +3,34 @@
 </section><!-- core -->
 
 <footer id="footer">
-    <div class="d-flex flex-center justify-between">
+    <div class="d-flex flex-center justify-between flex-wrap">
         <div class='left'>
             <span>&copy; <?= date( 'Y' ) ?> <a
                         href="<?= get_bloginfo( 'url' ) ?>"><?= get_bloginfo( 'name' ) ?></a></span>
-			<?php if ( get_icp_num() ) { ?>
-                <span> . <a href="https://beian.miit.gov.cn/" target="_blank"><?= get_icp_num(); ?></a></span>
-			<?php } ?>
         </div>
         <div class='right'>
             <span>Theme by <a class="theme-name" href="https://biji.io" target="_blank"><?= THEME_NAME ?></a></span>
         </div>
     </div>
+    <div class="text-center text-tiny mt-2 w-100" style="opacity: 0.2;">
+        <?php if ( $code = get_icp_num() ) { ?>
+            <span class="mx-1"><a href="https://beian.miit.gov.cn" target="_blank"><?= $code; ?></a></span>
+        <?php } ?>
+        <?php if ( $code = get_theme_mod( 'biji_setting_net' ) ) { ?>
+            <span class="mx-1"><a href="https://www.beian.gov.cn/portal/registerSystemInfo" target="_blank"><?= $code; ?></a></span>
+        <?php } ?>
+    </div>
 </footer>
 
 <script data-no-instant>
     function _exReload() {
-		<?php if (get_theme_mod( 'biji_setting_lately', true )) { ?>
+        <?php if (get_theme_mod( 'biji_setting_lately', true )) { ?>
         window.Lately && Lately.init();
-		<?php }  if (get_theme_mod( 'biji_setting_view_image', true )) { ?>
+        <?php }  if (get_theme_mod( 'biji_setting_view_image', true )) { ?>
         window.ViewImage && ViewImage.init();
-		<?php } if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
+        <?php } if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
         window.prettyPrint && prettyPrint();
-		<?php } ?>
+        <?php } ?>
         if ( window.WP_DOUBAN && document.querySelector('.db--container') ) {
             new WP_DOUBAN();
         }
