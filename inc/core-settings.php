@@ -18,20 +18,6 @@ function theme_customize_register( $wp_customize ) {
 				'priority'    => 100,
 			],
 			"settings" => [
-                [
-                    "id"      => "biji_setting_icp",
-                    "setting" => [ "default" => "" ],
-                    "control" => [
-                        'label' => 'ICP备案号',
-                    ]
-                ],
-                [
-                    "id"      => "biji_setting_net",
-                    "setting" => [ "default" => "" ],
-                    "control" => [
-                        'label' => '公网备案号',
-                    ]
-                ],
 				[
 					"id"      => "biji_setting_cdn",
 					"setting" => [ "default" => "" ],
@@ -135,6 +121,20 @@ function theme_customize_register( $wp_customize ) {
 						]
 					]
 				],
+                [
+                    "id"      => "biji_setting_icp",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label' => 'ICP备案号',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_net",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label' => '公网备案号',
+                    ]
+                ],
 				[
 					"id"      => "biji_setting_rest_abuse",
 					"setting" => [ "default" => false ],
