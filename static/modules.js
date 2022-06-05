@@ -298,12 +298,13 @@ const $modules = new function () {
                 // 清除前后空格与空标签
                 const value = editor.innerHTML.trim().replace(/style\s*?=\s*?(['"])[\s\S]*?\1/g, '');
                 // 移除多余的br标签
-                if ( !editor.textContent ) {
+                if ( !editor.innerHTML || ['<p><br></p>', '<p><div><br></div></p>'].includes(editor.innerHTML) ) {
                     this.clearText();
                 } else {
                     this.content = value;
                 }
             },
+            // 粘贴
             onPaste(e) {
                 e.preventDefault();
                 let text = null;
@@ -331,6 +332,7 @@ const $modules = new function () {
                 //     }
                 // }
             },
+            // 聚焦
             handleFocus() {
                 const editor = this.editor;
                 // 判断当前是否有焦点
@@ -342,6 +344,7 @@ const $modules = new function () {
             insertText(text) {
                 this.handleFocus();
                 if ( document.body.createTextRange ) {
+                    let textRange = "";
                     if ( document.selection ) {
                         textRange = document.selection.createRange();
                     } else if ( window.getSelection ) {
@@ -368,7 +371,7 @@ const $modules = new function () {
             // 插入节点
             execCommand(type) {
                 this.handleFocus();
-                document.execCommand(type, false, null);
+                document.execCommand(type);
             },
         }
     };
@@ -1220,7 +1223,10 @@ const $modules = new function () {
         setPraise(post_id) {
             return $h.ajax({ query: { action: 'submit_praise', post_id } }).then(num => {
                 Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
-                    if ( !i && (+num) > (+el.innerText) ) new Vue().$toast({ type: 'success', message: '祝你财源广进' });
+                    if ( !i && (+num) > (+el.innerText) ) new Vue().$toast({
+                        type: 'success',
+                        message: '祝你财源广进'
+                    });
                     el && (el.innerHTML = num);
                 });
                 return !!Cookies.get(`praise_${post_id}`);
