@@ -30,7 +30,9 @@
         window.ViewImage && ViewImage.init();
         <?php } if (get_theme_mod( 'biji_setting_prettify', true )) { ?>
         window.prettyPrint && prettyPrint();
-        <?php } ?>
+        <?php }
+        echo get_theme_mod( 'biji_setting_foot_script' ) ?: "";
+        ?>
         if ( window.WP_DOUBAN && document.querySelector('.db--container') ) {
             new WP_DOUBAN();
         }

@@ -135,6 +135,22 @@ function theme_customize_register( $wp_customize ) {
                         'label' => '公网备案号',
                     ]
                 ],
+                [
+                    "id"      => "biji_setting_article_foot",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label' => '文章底部追加内容',
+                        'type'  => 'textarea',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_foot_script",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label' => '页脚追加脚本',
+                        'type'  => 'textarea',
+                    ]
+                ],
 				[
 					"id"      => "biji_setting_rest_abuse",
 					"setting" => [ "default" => false ],
