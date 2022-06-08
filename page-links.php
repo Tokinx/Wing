@@ -68,7 +68,7 @@ get_header();
             `,
                 data() {
                     return {
-                        post_id: <? the_ID();?>,
+                        post_id: <?php the_ID();?>,
                         loading: false,
                         links: [],
                         tableColumn: [
