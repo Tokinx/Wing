@@ -34,7 +34,7 @@ const $modules = new function () {
                                     <div ref="qr" class="card uni-shadow qr-image p-2"></div>
                                 </div>
                             </div>
-                            <button v-if="settings" @click="handleLinkSettings" class="btn btn-action btn-link text-gray flex-center uni-bg ml-2">
+                            <button v-if="settings" @click="handleLinkSettings" class="btn btn-action btn-link text-gray flex-center mx-1">
                                 <i class="czs-setting-l"></i>
                             </button>
                         </div>
@@ -72,7 +72,7 @@ const $modules = new function () {
                 return this.author.display_name ? this.author.display_name.charAt(0) : 'A';
             },
             settings() {
-                return document.querySelector('#Links')
+                return !!window.LinkSettingDialog;
             }
         },
         created() {
@@ -97,7 +97,8 @@ const $modules = new function () {
                 });
             },
             handleLinkSettings() {
-                $modules.LinkSettingDialog(this.post_id);
+                if ( !window.LinkSettingDialog ) return;
+                window.LinkSettingDialog();
             },
         }
     };
@@ -461,11 +462,11 @@ const $modules = new function () {
                     data: this.form,
                     method: 'POST',
                 })
-                .then(({ data }) => {
-                    this.$refs.editor.clear();
-                    this.$toast({ type: 'success', message: '提交成功' });
-                    this.$emit('append', data);
-                }).finally(() => {
+                  .then(({ data }) => {
+                      this.$refs.editor.clear();
+                      this.$toast({ type: 'success', message: '提交成功' });
+                      this.$emit('append', data);
+                  }).finally(() => {
                     this.sending = false;
                     this.$refs.editor.setLoading(false);
                 });
@@ -652,15 +653,15 @@ const $modules = new function () {
             getCommentList() {
                 this.loading = true;
                 $h.ajax({ query: { action: 'get_next_comments', ...this.parameter } })
-                .then(res => {
-                    if ( res && res.data ) {
-                        res.data.length && this.commentList.push(...res.data);
-                        this.paging.total = res.total;
-                    }
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
+                  .then(res => {
+                      if ( res && res.data ) {
+                          res.data.length && this.commentList.push(...res.data);
+                          this.paging.total = res.total;
+                      }
+                  })
+                  .finally(() => {
+                      this.loading = false;
+                  });
             },
             appendComment(data) {
                 this.commentList.unshift(data);
@@ -740,12 +741,12 @@ const $modules = new function () {
             getHeatmap() {
                 this.loading = true;
                 $h.ajax({ query: { action: 'get_heatmap' } })
-                .then(({ data }) => {
-                    this.heatmap = data;
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
+                  .then(({ data }) => {
+                      this.heatmap = data;
+                  })
+                  .finally(() => {
+                      this.loading = false;
+                  });
             },
         }
     };
@@ -780,9 +781,9 @@ const $modules = new function () {
                 $h.ajax({
                     query: { action: 'get_topics' }
                 })
-                .then(({ data }) => {
-                    this.topics = data;
-                }).finally(() => {
+                  .then(({ data }) => {
+                      this.topics = data;
+                  }).finally(() => {
                     this.loading = false;
                 });
             },
@@ -985,14 +986,14 @@ const $modules = new function () {
                     case 'delete':
                         this.loading = true;
                         $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: true } })
-                        .then(({ code, message }) => {
-                            if ( !!code ) {
-                                this.$toast({ type: 'error', message });
-                            } else {
-                                this.$toast({ type: 'success', message: '删除成功' });
-                                this.$emit('event', { event: item.id });
-                            }
-                        }).finally(() => {
+                          .then(({ code, message }) => {
+                              if ( !!code ) {
+                                  this.$toast({ type: 'error', message });
+                              } else {
+                                  this.$toast({ type: 'success', message: '删除成功' });
+                                  this.$emit('event', { event: item.id });
+                              }
+                          }).finally(() => {
                             this.loading = false;
                         })
                         break;
@@ -1010,10 +1011,10 @@ const $modules = new function () {
                 const e = this.$refs.editor;
                 e.setLoading(true);
                 that.actions.setNotes(this.note, { content, images })
-                .then(({ content }) => {
-                    this.isEditor = false;
-                    this.$emit('event', { event: 'update', content: content.rendered, images })
-                }).finally(() => {
+                    .then(({ content }) => {
+                        this.isEditor = false;
+                        this.$emit('event', { event: 'update', content: content.rendered, images })
+                    }).finally(() => {
                     e.setLoading(false);
                 });
             },
@@ -1085,16 +1086,16 @@ const $modules = new function () {
                 getNote() {
                     this.loading = true;
                     $h.ajax({ query: { action: 'get_all_posts', type: 'single', ids: post_id, page: 1, rows: 1 } })
-                    .then(({ data }) => {
-                        if ( data && data.length ) {
-                            const { permalink } = this.note = data[0];
-                            if ( history.state ) history.state.url = permalink;
-                            history.replaceState(history.state, null, permalink);
-                        } else {
-                            this.destroy();
-                            this.$toast({ type: 'warning', message: '资源已被删除' });
-                        }
-                    }).finally(() => {
+                      .then(({ data }) => {
+                          if ( data && data.length ) {
+                              const { permalink } = this.note = data[0];
+                              if ( history.state ) history.state.url = permalink;
+                              history.replaceState(history.state, null, permalink);
+                          } else {
+                              this.destroy();
+                              this.$toast({ type: 'warning', message: '资源已被删除' });
+                          }
+                      }).finally(() => {
                         this.loading = false;
                         this.$nextTick(() => {
                             _exReload && _exReload();
@@ -1114,110 +1115,6 @@ const $modules = new function () {
     }
 
 
-    // 友情链接设置
-    this.LinkSettingDialog = (post_id) => {
-        const Dialog = Vue.extend({
-            template: `
-                <div class="modal modal-lg active modal-links">
-                    <a href="javascript: void(0);" class="modal-overlay" @click="hide" aria-label="Close"></a>
-                    <div class="modal-container">
-                        <div class="modal-header">
-                            <a href="javascript: void(0);" class="btn btn-clear text-gray float-right" @click="hide" aria-label="Close"></a>
-                            <div class="modal-title h5 text-gray">{{ lang.title }}</div>
-                        </div>
-                        <form method="post" action>
-                            <div class="modal-body article" ref="body">
-                                <div v-if="loading" class="loading" style="position: absolute;inset: 0;z-index: 1;"></div>
-                                <ul class="columns reset-ul" :style="{ opacity: loading ? 0.3 : 1 }">
-                                    <li v-for="(item, index) of links" :key="index" class="column col-4 col-sm-6 p-2">
-                                        <button class="btn btn-clear bg-error btn-sm text-white flex-center" @click="handleRemoveLink(index)"></button>
-                                        <div class="card uni-card p-2">
-                                            <div class="form-group">
-                                                <input class="form-input input-sm" v-model="item.name" type="text" placeholder="Name" required />
-                                            </div>
-                                            <div class="form-group">
-                                                <input class="form-input input-sm" v-model="item.url" type="text" placeholder="Link" required />
-                                            </div>
-                                            <div class="form-group">
-                                                <textarea class="form-input input-sm" v-model="item.description" type="text" placeholder="Description" rows="2" required />
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="modal-footer">
-                                <div class="btn btn-link float-left" @click="handleAddLinks">{{ lang.add }}</div>
-                                <button class="btn btn-primary" :disabled="loading" @click="submit">{{ lang.save }}</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `,
-            data() {
-                return {
-                    post_id, loading: false, links: [],
-                    lang: {
-                        title: '友情链接设置',
-                        add: '添加链接',
-                        save: '全部保存',
-                    }
-                };
-            },
-            created() {
-                this.getLinks();
-            },
-            methods: {
-                getLinks() {
-                    this.loading = true;
-                    $h.ajax({
-                        query: { action: 'get_post_meta', post_id: this.post_id, key: 'links' },
-                    })
-                    .then(({ data }) => {
-                        this.links = JSON.parse(data);
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    })
-                },
-                submit(e) {
-                    if ( this.links.some(item => (!item.name || !item.url)) ) return;
-                    this.loading = true;
-                    $h.ajax({
-                        query: { action: 'submit_post_meta', 'post_id': this.post_id, 'key': 'links' },
-                        data: { content: JSON.stringify(this.links) },
-                        method: 'POST',
-                    })
-                    .then((html) => {
-                        this.reRender(html);
-                        this.$toast({ type: 'success', message: '保存成功！' });
-                        this.hide();
-                    }).finally(() => {
-                        this.loading = false;
-                    });
-                    e.preventDefault();
-                },
-                reRender(html) {
-                    document.querySelector("#Links").innerHTML = html;
-                },
-                handleAddLinks() {
-                    this.links.push({});
-                    this.$nextTick(() => {
-                        const el = this.$refs.body;
-                        el.scrollTop = el.scrollHeight;
-                    });
-                },
-                handleRemoveLink(index) {
-                    this.links.splice(index, 1);
-                },
-                hide() {
-                    this.$el.remove();
-                },
-            },
-        });
-
-        const vm = new Dialog({ el: document.createElement('div') });
-        document.querySelector('#core').appendChild(vm.$el);
-    };
     // 喜欢
     this.actions = {
         setPraise(post_id) {

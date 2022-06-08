@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.12
+	Version: 0.7.13
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -4307,7 +4307,8 @@ body .layout .modal-links .modal-body li {
 body .layout .modal-links .modal-body li > .btn-clear {
   position: absolute;
   top: 0;
-  right: -5px;
+  right: 0;
+  margin: 0;
   opacity: 0;
 }
 body .layout .modal-links .modal-body li:hover > .btn-clear {
