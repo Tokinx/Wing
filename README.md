@@ -47,7 +47,7 @@ master仓库为基线，可以拉取最新的master分支，但不推荐
 
 你的支持是这个项目维护下去的坚实动力。
 
-| 微信                                                                   | 支付宝                                                                   |
+| WeChat                                                                   | AliPay                                                                   |
 |----------------------------------------------------------------------|-----------------------------------------------------------------------|
 | ![WeChat](https://biji-cdn.wuzii.com/wp-content/uploads/c_wxpay.png) | ![AliPay](https://biji-cdn.wuzii.com/wp-content/uploads/c_alipay.png) |
 
@@ -67,3 +67,7 @@ master仓库为基线，可以拉取最新的master分支，但不推荐
 | caomei icon | PRO | 草莓图标库，已购买PRO版授权，仅限设计笔记系列主题使用 |
 | prettify    | MIT | 用于主题代码高亮                     |
 | UAParser.js | MIT | 用于访客UA解析                     |
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Tokinx/Wing&type=Date)](https://star-history.com/#Tokinx/Wing&Date)
