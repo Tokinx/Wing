@@ -21,6 +21,8 @@ get_header();
         endif;
         ?>
     </section>
+    <!--判断是否登录-->
+<?php if ( is_super_admin() ): ?>
     <script>
         // 友情链接设置
         window.LinkSettingDialog = () => {
@@ -191,7 +193,8 @@ get_header();
             document.querySelector('#main').appendChild(vm.$el);
         };
     </script>
-<?php
+
+<?php endif;
 if ( comments_open() || get_comments_number() ) :
     comments_template();
 endif;
