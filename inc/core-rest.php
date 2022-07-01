@@ -408,7 +408,7 @@ function ajax_get_heatmap_callback() {
             'post_status'    => 'publish',
             'orderby'        => 'date',
             'order'          => 'ASC',
-            'author__in'     => get_current_user_id(),
+            'author__in'     => max(get_current_user_id(), 1),
             'date_query'     => [
                 'after' => "-$after_day day",
             ],
@@ -501,17 +501,17 @@ function ajax_get_topics_callback() {
 add_action( 'wp_ajax_get_topics', 'ajax_get_topics_callback' );
 add_action( 'wp_ajax_nopriv_get_topics', 'ajax_get_topics_callback' );
 
-// 删除热力图缓存
-function update_heatmap_cache() {
-    // 判断是否为登陆用户
-    if ( ! is_user_logged_in() ) {
-        return;
+// 删除旧缓存
+function update_cache() {
+    delete_transient( 'readers_wall' );
+    if ( is_user_logged_in() ) {
+        // 只有登录用户才可以删除热力图缓存
+        delete_transient( 'heatmap' );
     }
-    delete_transient( 'heatmap' );
 }
 
-add_action( 'save_post', 'update_heatmap_cache' );
-add_action( 'comment_post', 'update_heatmap_cache' );
+add_action( 'save_post', 'update_cache' );
+add_action( 'comment_post', 'update_cache' );
 
 // 获取访客信息
 function ajax_get_visitor_info_callback() {

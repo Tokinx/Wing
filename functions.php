@@ -191,12 +191,10 @@ function comment_mail_notify( $comment_id ) {
 					<tbody>
 						<tr>
 							<td style="color: #000; line-height: 1.6;">
-								<h1 style="font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center">
-								' . $title . '
-								</h1>
+								<h1 style="font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center">' . $title . '</h1>
 								<div style="height: 240px;background-color: #3274ff;"></div>
 								<div style="margin: -120px 4% 0;background-color: #fff;font-size: 18px;padding: 8%;box-shadow: 0 0 0 1px rgb(0, 85, 255, 0.1), 3px 3px 0 rgb(0, 85, 255, 0.1);font-size: 14px;">
-									<div style="text-align: right;margin-bottom: 8%;">
+									<div style="margin-bottom: 8%;">
 										<div style="display: inline-block;width: 80%;">
 											<span style="color: #666;">' . trim( $parent->comment_author ) . '</span>
 											<div style="background-color: #F5F7FA;border-radius: 10px;border-top-right-radius: 0;padding: 5% 8%;">
@@ -205,7 +203,7 @@ function comment_mail_notify( $comment_id ) {
 										</div>
 										<img src="' . get_avatar_url( $to ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
 									</div>
-									<div>
+									<div style="margin-bottom: 8%;">
 									<img src="' . get_avatar_url( trim( $comment->comment_author_email ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
 										<div style="display: inline-block;width: 80%;">
 											<span style="color: #666;">' . $comment->comment_author . '</span>
@@ -214,9 +212,9 @@ function comment_mail_notify( $comment_id ) {
 											</div>
 										</div>
 									</div>
-									<div style="border-top: 1px dashed #ddd;margin-top: 10%;text-align: center;">
+									<div style="border-top: 1px dashed #ddd;text-align: center;">
 										<a target="_blank" href="' . htmlspecialchars( get_comment_link( $comment_id ) ) . '"
-											style="background-color: #3274ff; border: none; color: white !important; margin: 10% auto 0; padding: 3% 10%; display: inline-block;text-decoration: none;"
+											style="background-color: #3274ff; border: none; color: white !important; margin: 8% auto 0; padding: 3% 10%; display: inline-block;text-decoration: none;"
 											rel="noopener">立即回复</a>
 									</div>
 								</div>
