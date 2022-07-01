@@ -483,7 +483,7 @@ const $modules = new function () {
                 <div class="tile-icon">
                     <figure :class="['avatar bg-gray', {'avatar-lg': comment.parent == 0}]">
                         <img :src="comment.avatar" alt="" />
-                        <div v-if="comment.sign === 'friends'" class="avatar-icon s-circle">
+                        <div v-if="sign.icon" class="avatar-icon s-circle">
                             <button class="btn btn-sm btn-warning comment-sign s-circle flex-center tooltip" :data-tooltip="sign.tooltips" style="height: 100%;width: 100%;font-size: 0.6rem;">
                                 <i :class="sign.icon"></i>
                             </button>
@@ -543,9 +543,12 @@ const $modules = new function () {
         },
         computed: {
             sign() {
+                const _sign = this.comment.sign || "";
+                if(_sign === 'admin' && !this.info.admin_icon) return {};
+                const _icon = { admin: 'czs-crown', friends: 'czs-trophy' }
                 return {
-                    icon: this.comment.sign === 'admin' ? 'czs-crown' : 'czs-trophy',
-                    tooltips: this.comment.sign.toUpperCase(),
+                    icon: _icon[_sign] || "",
+                    tooltips: _sign.toUpperCase(),
                 }
             },
             metas() {
@@ -1114,9 +1117,8 @@ const $modules = new function () {
         document.querySelector('#notes').appendChild(vm.$el);
     }
 
-
-    // 喜欢
     this.actions = {
+        // 喜欢
         setPraise(post_id) {
             return $h.ajax({ query: { action: 'submit_praise', post_id } }).then(num => {
                 Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
@@ -1129,6 +1131,7 @@ const $modules = new function () {
                 return !!Cookies.get(`praise_${post_id}`);
             });
         },
+        // 创建&编辑笔记
         setNotes(form, { content, images }) {
             // 从content提取topic：#topic1 #topic2 ...
             const topics = (content.match(/#([^#|^<\s]+)/g) || []).map(item => item.replace('#', '')).filter(item => !!item);

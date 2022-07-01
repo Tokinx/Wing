@@ -49,7 +49,6 @@ function theme_customize_register( $wp_customize ) {
 								biji_setting_exclude.val(String(result)).trigger("input");
 							}
 						</script>',
-						// 'input_attrs' => ['placeholder' => "例如：1, 2, 3"],
 					]
 				],
 				[
@@ -246,6 +245,15 @@ function theme_customize_register( $wp_customize ) {
 					"control" => [
 						'label'       => 'Bark Key',
 						'description' => '有新的评论时通过 <a href="https://github.com/Finb/Bark" target="_blank">Bark</a> 通知你',
+					]
+				],
+				[
+					"id"      => "biji_setting_admin",
+					"setting" => [ "default" => true ],
+					"control" => [
+						'label'       => '博主评论标识',
+						'description' => '特殊标识以避免有人冒充管理员评论',
+						'type'        => 'checkbox',
 					]
 				],
 				[
