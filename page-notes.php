@@ -28,7 +28,7 @@ get_header(); ?>
                     hyperlinks: <?= json_encode( get_theme_mod( 'biji_setting_hyperlinks', true ) ); ?>,
                     browser: <?= json_encode( get_theme_mod( 'biji_setting_browser', false ) ); ?>,
                     os: <?= json_encode( get_theme_mod( 'biji_setting_os', false ) ); ?>,
-                    admin_icon: <?= json_encode( get_theme_mod( 'biji_setting_admin', true ) ); ?>, // 博主评论标识
+                    admin_icon: <?= json_encode( get_theme_mod( 'biji_setting_admin', true ) ); ?>,
                     pagination: {
                         rows: 10,
                         rolling: <?= json_encode( get_theme_mod( 'biji_setting_rolling', true ) ); ?>,
@@ -176,28 +176,24 @@ get_header(); ?>
                         this.loading = true;
                         $h.ajax({
                             query: { action: 'get_all_posts', ...this.search, ...this.paging, },
-                        })
-                        .then(({ data, total }) => {
+                        }).then(({ data, total }) => {
                             if ( append ) this.noteList.push(...data);
                             else this.noteList = data;
                             this.paging.total = total;
-                        })
-                        .finally(() => {
+                        }).finally(() => {
                             this.loading = false;
                         });
                     },
                     // 提交笔记
                     submitNote({ content, images }) {
                         this.$refs.editor.setLoading(true);
-                        $modules.actions.setNotes(this.form, { content, images })
-                        .then(() => {
+                        $modules.actions.setNotes(this.form, { content, images }).then(() => {
                             this.$refs.editor.clear();
                             this.reset();
                             if ( ['all', 'note'].includes(this.search.type) || (this.private && this.search.type === 'private') ) {
                                 this.getNoteList(false);
                             }
-                        })
-                        .finally(() => {
+                        }).finally(() => {
                             this.$refs.editor.setLoading(false);
                         });
                     }

@@ -2,7 +2,7 @@
     <div id="single-note"></div>
     <script>
         !(() => {
-              const $config = {
+            const $config = {
                 post_id: <?= get_the_ID() ?>,
                 permalink: <?= json_encode( get_permalink() ) ?>,
                 lately: <?= json_encode( get_theme_mod( 'biji_setting_lately', true ) ) ?>,
@@ -65,16 +65,14 @@
                         this.loading = true;
                         $h.ajax({
                             query: { action: 'get_all_posts', type: 'single', ids: this.post_id },
-                        })
-                        .then(({ data }) => {
+                        }).then(({ data }) => {
                             if ( data && data.length > 0 ) {
                                 this.note = data[0];
                             } else {
                                 // 跳转回首页
                                 window.location.href = $base.origin;
                             }
-                        })
-                        .finally(() => {
+                        }).finally(() => {
                             this.loading = false;
                         });
                     },

@@ -593,7 +593,7 @@ const $modules = new function () {
                     <comment-form :info="{ post_id, editor, hyperlinks, visitor }" @append="appendComment" />
                     <ol class="comment-list reset-ul" @click="delegateCommentClick">
                         <template v-for="item in commentList" :key="item.id">
-                            <comment-item :info="{ post_id, editor, hyperlinks, browser, os, visitor }" :comment="item" />
+                            <comment-item :info="{ post_id, editor, hyperlinks, browser, os, admin_icon, visitor }" :comment="item" />
                         </template>
                     </ol>
                     <div class="text-center load-next-comments">
@@ -620,7 +620,7 @@ const $modules = new function () {
                 commentList: [],
                 paging: { page: 0, total: null, filter: [] },
 
-                // 评论区配置
+                // 评论区默认设置
                 post_id: null,
                 author_information: false,
                 adjacent_articles: false,
@@ -628,6 +628,7 @@ const $modules = new function () {
                 hyperlinks: true,
                 browser: false,
                 os: false,
+                admin_icon: true,
                 pagination: { rows: 10, rolling: true, autoload: true },
                 visitor: {},
                 author: {},
