@@ -264,7 +264,15 @@ function theme_customize_register( $wp_customize ) {
                         'description' => '填入邮箱地址，每行一条',
                         'type'        => 'textarea',
                     ]
-                ]
+                ],
+//                [
+//                    "id"        => "biji_setting_upload",
+//                    "setting"   => [ "default" => "", "type" => "option" ],
+//                    "control"   => [
+//                        'label' => '上传图片示例',
+//                    ],
+//                    'customize' => 'WP_Customize_Image_Control',
+//                ]
             ]
         ]
     ];
@@ -273,7 +281,13 @@ function theme_customize_register( $wp_customize ) {
         $wp_customize->add_section( $section["id"], $section["args"] );
         foreach ( $section["settings"] as $item ) {
             $wp_customize->add_setting( $item["id"], $item["setting"] );
-            $wp_customize->add_control( $item["id"], array_merge( $item["control"], [ "section" => $section["id"] ] ) );
+
+            $args = array_merge( $item["control"], [ "section" => $section["id"] ] );
+            if ( array_key_exists( 'customize', $item ) ) {
+                $wp_customize->add_control( new $item['customize']( $wp_customize, $item["id"], $args ) );
+            } else {
+                $wp_customize->add_control( $item["id"], $args );
+            }
         }
     }
 }
