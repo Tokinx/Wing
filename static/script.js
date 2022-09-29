@@ -176,10 +176,10 @@ window.$vm = new Vue({
         return {
             animation: "",
             modeList: [
-                { name: '自动', icon: 'czs-bot', mode: 'auto' },
-                { name: '明亮', icon: 'czs-sun', mode: 'light' },
-                { name: '暗黑', icon: 'czs-moon', mode: 'dark' },
-                // { name: '护眼', icon: 'czs-eye', mode: 'relax' },
+                { name: 'Auto', icon: 'czs-bot', mode: 'auto' },
+                { name: 'Light', icon: 'czs-sun', mode: 'light' },
+                { name: 'Dark', icon: 'czs-moon', mode: 'dark' },
+                // { name: 'Relax', icon: 'czs-eye', mode: 'relax' },
             ],
         };
     },
