@@ -4388,10 +4388,6 @@ body .layout #comments .comment-list li.comment:last-child {
 body .layout #comments .comment-list li.comment p {
   margin: 0;
 }
-body .layout #comments .comment-list li.comment pre {
-  overflow: auto;
-  padding: 0.5rem;
-}
 body .layout #comments .comment-list > li.comment .tile-action .btn {
   color: #bcc3ce;
 }
@@ -4666,6 +4662,9 @@ body pre {
   line-height: 1.6;
   background: rgba(188, 195, 206, 0.1);
   box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.2) inset;
+  overflow: auto;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
 }
 body pre code {
   background: none;
