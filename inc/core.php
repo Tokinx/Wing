@@ -39,12 +39,9 @@ add_filter( 'preprocess_comment', 'scp_comment_post' );
 // Gravatar头像使用镜像服务器
 function biji_replace_avatar( $avatar ) {
     if ( get_theme_mod( 'biji_setting_avatar' ) ) {
-        $cdn  = rtrim( get_theme_mod( 'biji_setting_avatar' ), '/' );
-        $path = "";
-        if ( strpos( $cdn, "/avatar" ) || strpos( $cdn, "/gravatar" ) ) {
-            $path = "avatar";
-        }
-        $avatar = preg_replace( "/(.*?).gravatar.com\/$path/", "$cdn/$path", $avatar );
+        $cdn    = parse_url( get_theme_mod( 'biji_setting_avatar' ) );
+        $host   = $cdn["host"];
+        $avatar = preg_replace( "/\/\/(.*?).gravatar.com/", "//$host", $avatar );
     }
 
     return $avatar;

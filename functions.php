@@ -40,9 +40,10 @@ function biji_enqueue_scripts() {
     wp_enqueue_script( 'package', get_template_directory_uri() . '/static/package.js', [], THEME_VERSION, true );
     wp_enqueue_script( 'modules', get_template_directory_uri() . '/static/modules.js', [], THEME_VERSION, true );
     wp_enqueue_script( 'script', get_template_directory_uri() . '/static/script.js', [], THEME_VERSION, true );
+    $avatar_url = parse_url( get_avatar_url(null) );
     wp_localize_script( 'script', 'BaseData', [
         'origin' => site_url(),
-        'avatar' => ( get_theme_mod( 'biji_setting_avatar' ) ?: '//cn.gravatar.com/avatar' ),
+        'avatar' => "//" . $avatar_url["host"],
         'ajax'   => admin_url( 'admin-ajax.php' ),
         'rest'   => rest_url(),
         'nonce'  => wp_create_nonce( 'wp_rest' )

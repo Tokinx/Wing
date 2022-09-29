@@ -14,7 +14,7 @@ const $h = {
     visitor(email, cb) {
         email = (email || '').trim();
         if ( !email || !/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email) ) {
-            cb && cb({ avatar: `${$base.avatar}/default?d=mm&f=y&r=g` })
+            cb && cb({ avatar: `${$base.avatar}/avatar/default?d=mm&f=y&r=g` })
             return;
         }
         this.ajax({ query: { action: 'get_visitor_info', email } }).then(({ data }) => cb && cb(data));
