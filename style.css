@@ -4310,18 +4310,13 @@ body .layout .modal-links .modal-body {
   padding-bottom: 0;
   height: 50vh;
 }
-body .layout .modal-links .modal-body li {
-  position: relative;
-}
-body .layout .modal-links .modal-body li > .btn-clear {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
-  opacity: 0;
-}
-body .layout .modal-links .modal-body li:hover > .btn-clear {
-  opacity: 1;
+body .layout .modal-links .modal-body .drag-handle {
+  vertical-align: middle;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  color: #bcc3ce;
+  padding: 5px;
 }
 body .layout .modal-links .modal-footer .btn {
   border-radius: 0.2rem;

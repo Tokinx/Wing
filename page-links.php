@@ -54,6 +54,9 @@ get_header();
                                                         <button class="btn btn-link btn-sm" @click="handleEditLink(index)">{{ rows.edit ? '确定' : '编辑' }}</button>
                                                         <button class="btn btn-link btn-sm text-error" @click="handleRemoveLink(index)">删除</button>
                                                     </template>
+                                                    <template v-else-if="prop === 'drag-handle'">
+                                                        <div v-show="!rows.edit" class="drag-handle dashicons dashicons-menu c-move"></div>
+                                                    </template>
                                                 </template>
                                             </td>
                                         </tr>
@@ -74,6 +77,14 @@ get_header();
                         loading: false,
                         links: [],
                         tableColumn: [
+                            {
+                                name: '',
+                                prop: 'drag-handle',
+                                slot: true,
+                                bind: {
+                                    style: { width: '50px', minWidth: '50px' }
+                                }
+                            },
                             // {
                             //     name: '图像',
                             //     prop: 'image',
@@ -120,6 +131,7 @@ get_header();
                     const $table = this.$refs.DragSort;
                     new Sortable($table, {
                         draggable: ".drag",
+                        handle: ".drag-handle",
                         onUpdate: ({ oldIndex, newIndex }) => {
                             const $new = $table.children[newIndex];
                             const $old = $table.children[oldIndex];
