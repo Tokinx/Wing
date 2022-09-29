@@ -267,7 +267,7 @@ function theme_customize_register( $wp_customize ) {
                 ],
 //                [
 //                    "id"        => "biji_setting_upload",
-//                    "setting"   => [ "default" => "", "type" => "option" ],
+//                    "setting"   => [ "default" => "" ],
 //                    "control"   => [
 //                        'label' => '上传图片示例',
 //                    ],
