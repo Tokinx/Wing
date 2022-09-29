@@ -760,7 +760,7 @@ const $modules = new function () {
         template: `
             <ul class="topic-list menu">
                 <li v-for="topic in topics" :key="topic.id" class="menu-item" @click="handleTopic(topic)">
-                    <a href="javascript:void(0);" :class="{ active: active ===topic.name }">{{ topic.name }}</a>
+                    <a href="javascript:void(0);" :class="{ active: active ===topic.name }">#{{ topic.name }}</a>
                     <div class="menu-badge">
                         <label class="label text-tiny">{{ topic.count }}</label>
                     </div>

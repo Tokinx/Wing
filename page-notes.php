@@ -65,7 +65,7 @@ get_header(); ?>
                                     </li>
                                     <div v-if="loading" class="loading"></div>
                                     <span v-else-if="search.topics" class="chip text-primary">
-                                        {{ search.topics }}
+                                        #{{ search.topics }}
                                         <a href="javascript: void(0);" class="btn btn-clear" @click="handleTopic('')" aria-label="Close" role="button"></a>
                                     </span>
                                 </ul>
