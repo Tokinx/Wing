@@ -3426,6 +3426,9 @@ body .layout #aside .footer-nav li .sub-menu {
 body .layout .uni-card, body .layout #aside .header-nav li .sub-menu,
 body .layout #aside .footer-nav li .sub-menu {
   border: none;
+}
+body .layout .uni-card:not([class*=bg-]), body .layout #aside .header-nav li .sub-menu:not([class*=bg-]),
+body .layout #aside .footer-nav li .sub-menu:not([class*=bg-]) {
   background-color: rgba(247, 248, 249, 0.02);
 }
 body .layout .db--container .lds-ripple {
@@ -3809,8 +3812,8 @@ body .layout #notes .notes-tabbar {
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 9;
   transition: 300ms;
-  margin: 0 -5%;
-  padding: 0 5%;
+  margin: 0 -2%;
+  padding: 0 2%;
 }
 body .layout #notes .notes-tabbar .tab {
   margin: 0 0 1rem;
@@ -4691,6 +4694,9 @@ body .layout #aside .footer-nav li .sub-menu, body .layout .article-dialog .note
   backdrop-filter: blur(0.5rem);
   -webkit-backdrop-filter: blur(0.5rem);
 }
+body .bg-translucent {
+  background-color: rgba(255, 255, 255, 0.8);
+}
 body .w-0 {
   width: 0;
 }
@@ -4895,6 +4901,9 @@ body .view-image-tools {
 .dark #app.layout .uni-bg {
   background-color: #2a3039;
 }
+.dark #app.layout .bg-translucent {
+  background-color: rgba(48, 55, 66, 0.8);
+}
 .dark #app.layout .modal-overlay {
   background-color: rgba(48, 55, 66, 0.8);
 }
@@ -4907,6 +4916,9 @@ body .view-image-tools {
 }
 .dark #app.layout .modal-container .form-input:not(:focus), .dark body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), body .dark #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), .dark body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus), body .dark #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
+}
+.dark #app.layout .menu a:hover, .dark #app.layout .menu a:focus, .dark #app.layout .menu a:active {
+  background-color: rgba(69, 80, 96, 0.5);
 }
 .dark #app.layout #header .logo .fullname a {
   color: #f7f8f9;
@@ -4946,6 +4958,9 @@ body .view-image-tools {
 .dark #app.layout #notes .notes-item h3.h5 a:not(:hover) {
   color: #fff !important;
 }
+.dark #app.layout #notes .notes-item .dropdown .menu {
+  box-shadow: 0 0 1px #455060;
+}
 .dark #app.layout #comments #comment_form .userinfo {
   background-color: #303742;
   box-shadow: 0 0 2rem 1px rgba(188, 195, 206, 0.2), 0 0 0 999rem rgba(48, 55, 66, 0.2);
@@ -4971,6 +4986,9 @@ body .view-image-tools {
   body.auto #app.layout .uni-bg {
     background-color: #2a3039;
   }
+  body.auto #app.layout .bg-translucent {
+    background-color: rgba(48, 55, 66, 0.8);
+  }
   body.auto #app.layout .modal-overlay {
     background-color: rgba(48, 55, 66, 0.8);
   }
@@ -4983,6 +5001,9 @@ body .view-image-tools {
   }
   body.auto #app.layout .modal-container .form-input:not(:focus), body.auto #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), body.auto #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
+  }
+  body.auto #app.layout .menu a:hover, body.auto #app.layout .menu a:focus, body.auto #app.layout .menu a:active {
+    background-color: rgba(69, 80, 96, 0.5);
   }
   body.auto #app.layout #header .logo .fullname a {
     color: #f7f8f9;
@@ -5021,6 +5042,9 @@ body.auto #app.layout #aside .footer-nav li:not([class*=current-]) {
   }
   body.auto #app.layout #notes .notes-item h3.h5 a:not(:hover) {
     color: #fff !important;
+  }
+  body.auto #app.layout #notes .notes-item .dropdown .menu {
+    box-shadow: 0 0 1px #455060;
   }
   body.auto #app.layout #comments #comment_form .userinfo {
     background-color: #303742;

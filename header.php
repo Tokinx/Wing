@@ -24,7 +24,7 @@
                 <a class="right-btn dropdown-toggle flex-center s-circle" href="javascript:void(0);" tabindex="0">
                     <i class="czs-clothes-l text-small"></i>
                 </a>
-                <ul class="menu menu-left mode-switch uni-card bg-blur" @click="toggleSkinMode">
+                <ul class="menu menu-left mode-switch uni-card bg-blur bg-translucent" @click="toggleSkinMode">
                     <li v-for="item of modeList" class="menu-item">
                         <a class="flex-center" :data-mode="item.mode" href="javascript:void(0);">
                             <i :class="[item.icon, 'mr-1']"></i>{{ item.name }}

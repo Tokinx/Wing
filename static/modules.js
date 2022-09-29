@@ -824,7 +824,7 @@ const $modules = new function () {
                                         <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
                                             <i class="dashicons dashicons-ellipsis"></i>
                                         </a>
-                                        <ul class="menu menu-left uni-card bg-blur">
+                                        <ul class="menu menu-left uni-card bg-blur bg-translucent">
                                             <div v-if="loading" class="loading loading-full"></div>
                                             <li class="menu-item" v-for="item in menu" :key="item.id"  @click="debounceMenuClick(item)">
                                                 <a href="javascript:void(0);" class="align-center" style="display: flex;">
