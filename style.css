@@ -3817,10 +3817,10 @@ body .layout #notes .notes-tabbar .tab {
   border-color: rgba(188, 195, 206, 0.2);
 }
 body .layout #notes .notes-tabbar .tab.drift {
-  margin: 1rem -0.5rem;
-  padding: 0 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0 1rem;
   border-radius: 0.2rem;
-  border: none;
+  border-color: transparent;
 }
 body .layout #notes .notes-tabbar .tab-item {
   margin: 0 1rem -1px 0;
