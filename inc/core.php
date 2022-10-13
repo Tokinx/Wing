@@ -25,6 +25,14 @@ if ( function_exists( 'register_sidebar' ) ) {
     ] );
 }
 
+function replace_submenu_class( $menu ) {
+    $menu = preg_replace( '/ class="sub-menu"/', '/ class="sub-menu uni-card uni-bg bg-blur" /', $menu );
+
+    return $menu;
+}
+
+add_filter( 'wp_nav_menu', 'replace_submenu_class' );
+
 // 拦截纯英文评论
 function scp_comment_post( $incoming_comment ) {
     if ( ! get_theme_mod( 'biji_setting_enc', false ) && ! preg_match( '/[一-龥]/u', $incoming_comment['comment_content'] ) ) {

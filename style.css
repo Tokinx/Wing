@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.21
+	Version: 0.7.22
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3398,7 +3398,7 @@ a.text-error:visited {
 
 body {
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-  background: #f7f8f9;
+  background-color: rgba(247, 248, 249, 0.8);
   transition: 300ms;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -3415,20 +3415,17 @@ body .layout .container {
   width: 92%;
   margin: 0 auto;
 }
-body .layout .uni-bg {
-  background-color: #fff;
+body .layout .uni-bg, body .layout #notes .notes-tabbar .tab.drift {
+  background-color: rgba(255, 255, 255, 0.9);
   transition: 300ms;
 }
-body .layout .uni-shadow, body .layout .uni-card, body .layout #aside .header-nav li .sub-menu,
-body .layout #aside .footer-nav li .sub-menu {
-  box-shadow: 0 0 0 1px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(48, 55, 66, 0.06);
+body .layout .uni-shadow, body .layout #notes .notes-tabbar .tab.drift, body .layout .uni-card {
+  box-shadow: 0 0 0 0.5px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(48, 55, 66, 0.06);
 }
-body .layout .uni-card, body .layout #aside .header-nav li .sub-menu,
-body .layout #aside .footer-nav li .sub-menu {
+body .layout .uni-card {
   border: none;
 }
-body .layout .uni-card:not([class*=bg-]), body .layout #aside .header-nav li .sub-menu:not([class*=bg-]),
-body .layout #aside .footer-nav li .sub-menu:not([class*=bg-]) {
+body .layout .uni-card:not([class*=bg-]) {
   background-color: rgba(247, 248, 249, 0.02);
 }
 body .layout .db--container .lds-ripple {
@@ -3619,11 +3616,11 @@ body .layout #aside {
   margin-right: 1rem;
   z-index: 0;
 }
-body .layout #aside .uni-bg {
+body .layout #aside .uni-bg, body .layout #aside #notes .notes-tabbar .tab.drift, body .layout #notes .notes-tabbar #aside .tab.drift {
   border-radius: 0.6rem;
   padding: 0.5rem;
 }
-body .layout #aside .uni-bg:not(:last-child) {
+body .layout #aside .uni-bg:not(:last-child), body .layout #aside #notes .notes-tabbar .tab.drift:not(:last-child), body .layout #notes .notes-tabbar #aside .tab.drift:not(:last-child) {
   margin-bottom: 1rem;
 }
 body .layout #aside .widget_block .wp-block-social-links {
@@ -3678,12 +3675,12 @@ body .layout #aside .widget_block .wp-block-cover__gradient-background,
 body .layout #aside .widget_block img {
   border-radius: 0.5rem;
 }
-body .layout #aside .header-nav,
-body .layout #aside .footer-nav {
+body .layout #aside .header_nav,
+body .layout #aside .footer_nav {
   padding: 1rem;
 }
-body .layout #aside .header-nav li,
-body .layout #aside .footer-nav li {
+body .layout #aside .header_nav li,
+body .layout #aside .footer_nav li {
   position: relative;
   color: #66758c;
   display: flex;
@@ -3696,38 +3693,38 @@ body .layout #aside .footer-nav li {
   transition: 100ms;
   line-height: 1;
 }
-body .layout #aside .header-nav li:not(:last-child),
-body .layout #aside .footer-nav li:not(:last-child) {
+body .layout #aside .header_nav li:not(:last-child),
+body .layout #aside .footer_nav li:not(:last-child) {
   margin-bottom: 0.2rem;
 }
-body .layout #aside .header-nav li::before,
-body .layout #aside .footer-nav li::before {
+body .layout #aside .header_nav li::before,
+body .layout #aside .footer_nav li::before {
   position: relative;
   top: 1px;
   margin-right: 0.3rem;
 }
-body .layout #aside .header-nav li a,
-body .layout #aside .footer-nav li a {
+body .layout #aside .header_nav li a,
+body .layout #aside .footer_nav li a {
   display: block;
   padding: 0.5rem 0;
   flex: 1;
   color: currentColor;
   text-decoration: none;
 }
-body .layout #aside .header-nav li:hover,
-body .layout #aside .footer-nav li:hover {
+body .layout #aside .header_nav li:hover,
+body .layout #aside .footer_nav li:hover {
   background-color: rgba(188, 195, 206, 0.1);
 }
-body .layout #aside .header-nav li[class*=current-],
-body .layout #aside .footer-nav li[class*=current-] {
+body .layout #aside .header_nav li[class*=current-],
+body .layout #aside .footer_nav li[class*=current-] {
   color: #fff;
 }
-body .layout #aside .header-nav li[class*=current-],
-body .layout #aside .footer-nav li[class*=current-] {
+body .layout #aside .header_nav li[class*=current-],
+body .layout #aside .footer_nav li[class*=current-] {
   background-color: #3366ff;
 }
-body .layout #aside .header-nav li .sub-menu,
-body .layout #aside .footer-nav li .sub-menu {
+body .layout #aside .header_nav li .sub-menu,
+body .layout #aside .footer_nav li .sub-menu {
   visibility: hidden;
   opacity: 0;
   position: absolute;
@@ -3742,19 +3739,19 @@ body .layout #aside .footer-nav li .sub-menu {
   transition: all 300ms;
   z-index: 1;
 }
-body .layout #aside .header-nav li:hover,
-body .layout #aside .footer-nav li:hover {
+body .layout #aside .header_nav li:hover,
+body .layout #aside .footer_nav li:hover {
   perspective: 60rem;
   z-index: 1;
 }
-body .layout #aside .header-nav li:hover .sub-menu,
-body .layout #aside .footer-nav li:hover .sub-menu {
+body .layout #aside .header_nav li:hover .sub-menu,
+body .layout #aside .footer_nav li:hover .sub-menu {
   opacity: 1;
   visibility: visible;
   transform: rotateX(0);
 }
-body .layout #aside .header-nav a,
-body .layout #aside .footer-nav a {
+body .layout #aside .header_nav a,
+body .layout #aside .footer_nav a {
   box-shadow: none;
 }
 body .layout #main {
@@ -3808,16 +3805,22 @@ body .layout #notes .notes-core .editor-box .btn-private .dashicons {
   font-size: 1rem;
 }
 body .layout #notes .notes-tabbar {
-  top: 0;
-  background-color: rgba(255, 255, 255, 0.8);
+  top: -1px;
   z-index: 9;
   transition: 300ms;
-  margin: 0 -2%;
-  padding: 0 2%;
+  padding: 1px 0.5rem 0;
+  margin: 0 -0.5rem;
 }
 body .layout #notes .notes-tabbar .tab {
   margin: 0 0 1rem;
-  border-color: rgba(188, 195, 206, 0.1);
+  transition: 300ms;
+  border-color: rgba(188, 195, 206, 0.2);
+}
+body .layout #notes .notes-tabbar .tab.drift {
+  margin: 1rem -0.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.2rem;
+  border: none;
 }
 body .layout #notes .notes-tabbar .tab-item {
   margin: 0 1rem -1px 0;
@@ -4458,7 +4461,7 @@ body .layout #footer a.theme-name::after {
     background-color: #fff;
     z-index: 202;
   }
-  body .layout #aside .uni-bg {
+  body .layout #aside .uni-bg, body .layout #aside #notes .notes-tabbar .tab.drift, body .layout #notes .notes-tabbar #aside .tab.drift {
     background-color: rgba(188, 195, 206, 0.1);
   }
   body .layout #main {
@@ -4504,20 +4507,6 @@ body .layout #core {
     }
   }
 }
-body #app #main .content {
-  position: relative;
-}
-body #app #main .content::after {
-  content: "";
-  background-color: #fff;
-  position: absolute;
-  top: 0;
-  left: -2.5%;
-  width: 0;
-  height: 100%;
-  transition: 300ms;
-  z-index: 999;
-}
 body #app::after {
   position: fixed;
   top: 0;
@@ -4534,19 +4523,33 @@ body #app.animation-toward::after, body #app.animation-start::after {
 body #app.animation-toward #main .content, body #app.animation-start #main .content {
   opacity: 0.8;
 }
-body #app.animation-toward #main .content {
+body #app:not(.less-animation) #main .content {
+  position: relative;
+}
+body #app:not(.less-animation) #main .content::after {
+  content: "";
+  background-color: #fff;
+  position: absolute;
+  top: 0;
+  left: -2.5%;
+  width: 0;
+  height: 100%;
+  transition: 300ms;
+  z-index: 999;
+}
+body #app:not(.less-animation).animation-toward #main .content {
   animation: trans-out 300ms forwards;
 }
 @keyframes trans-out {
   100% {
-    transform: translateX(1rem);
     opacity: 0;
+    transform: translateX(1rem);
   }
 }
-body #app.animation-toward #main .content::after {
+body #app:not(.less-animation).animation-toward #main .content::after {
   width: 105%;
 }
-body #app.animation-end #main .content {
+body #app:not(.less-animation).animation-end #main .content {
   animation: trans-in 300ms;
 }
 @keyframes trans-in {
@@ -4555,10 +4558,21 @@ body #app.animation-end #main .content {
     transform: translateX(-1rem);
   }
 }
-body #app.animation-end #main .content::after {
+body #app:not(.less-animation).animation-end #main .content::after {
   left: unset;
   right: -2.5%;
   width: 0;
+}
+body #app.less-animation #main .content {
+  transition: 300ms;
+}
+body #app.less-animation.animation-toward #main .content {
+  opacity: 0;
+  transform: translateY(1rem);
+}
+body #app.less-animation.animation-end #main .content {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .editor {
@@ -4684,13 +4698,9 @@ body ol.reset-ul li {
   margin: 0;
   list-style: none;
 }
-body .bg-blur, body .layout #aside .header-nav li .sub-menu,
-body .layout #aside .footer-nav li .sub-menu, body .layout .article-dialog .notes-item {
+body .bg-blur, body .layout .article-dialog .notes-item {
   backdrop-filter: blur(0.5rem);
   -webkit-backdrop-filter: blur(0.5rem);
-}
-body .bg-translucent {
-  background-color: rgba(255, 255, 255, 0.8);
 }
 body .w-0 {
   width: 0;
@@ -4885,170 +4895,164 @@ body .view-image-tools {
 
 /* Dark Mode */
 .dark {
-  background: #232830;
+  background-color: #232830;
 }
-.dark .chip {
+.dark body {
+  background-color: rgba(35, 40, 48, 0.8);
+}
+.dark body .chip {
   background-color: rgba(188, 195, 206, 0.1);
 }
-.dark .loading-full {
+.dark body .loading-full {
   background-color: rgba(42, 48, 57, 0.5);
 }
-.dark #app.layout .uni-bg {
-  background-color: #2a3039;
+.dark body #app.layout .uni-bg, .dark body #app.layout #notes .notes-tabbar .tab.drift {
+  background-color: rgba(42, 48, 57, 0.9);
 }
-.dark #app.layout .bg-translucent {
+.dark body #app.layout .modal-overlay {
   background-color: rgba(48, 55, 66, 0.8);
 }
-.dark #app.layout .modal-overlay {
-  background-color: rgba(48, 55, 66, 0.8);
-}
-.dark #app.layout .modal-container {
+.dark body #app.layout .modal-container {
   background-color: #303742;
 }
-.dark #app.layout .modal-container .form-input, .dark body #app.layout .modal-container #comments #comment_form .editor-content, body .dark #app.layout .modal-container #comments #comment_form .editor-content, .dark body #app.layout #comments #comment_form .modal-container .editor-content, body .dark #app.layout #comments #comment_form .modal-container .editor-content {
+.dark body #app.layout .modal-container .form-input, .dark body #app.layout .modal-container #comments #comment_form .editor-content, .dark body #app.layout #comments #comment_form .modal-container .editor-content {
   color: #bcc3ce;
   background-color: rgba(188, 195, 206, 0.1);
 }
-.dark #app.layout .modal-container .form-input:not(:focus), .dark body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), body .dark #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), .dark body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus), body .dark #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
+.dark body #app.layout .modal-container .form-input:not(:focus), .dark body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), .dark body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
-.dark #app.layout .menu a:hover, .dark #app.layout .menu a:focus, .dark #app.layout .menu a:active {
+.dark body #app.layout .menu a:hover, .dark body #app.layout .menu a:focus, .dark body #app.layout .menu a:active {
   background-color: rgba(69, 80, 96, 0.5);
 }
-.dark #app.layout #header .logo .fullname a {
+.dark body #app.layout #header .logo .fullname a {
   color: #f7f8f9;
 }
-.dark #app.layout #header .header__right .dark-mode-btn {
+.dark body #app.layout #header .header__right .dark-mode-btn {
   display: none;
 }
-.dark #app.layout #header .header__right .light-mode-btn {
+.dark body #app.layout #header .header__right .light-mode-btn {
   display: inline-flex;
 }
-.dark #app.layout #aside {
+.dark body #app.layout #aside {
   background: #303742;
 }
-.dark #app.layout #aside .header-nav li:not([class*=current-]),
-.dark #app.layout #aside .footer-nav li:not([class*=current-]) {
+.dark body #app.layout #aside .header_nav li:not([class*=current-]),
+.dark body #app.layout #aside .footer_nav li:not([class*=current-]) {
   color: #bcc3ce;
 }
-.dark #app.layout #main {
+.dark body #app.layout #main {
   color: #f7f8f9;
 }
-.dark #app.layout #main .content::after, .dark #app.layout #main {
+.dark body #app.layout #main .content::after {
   background-color: #2a3039;
 }
-.dark #app.layout #main .article-mask:not(:hover) .card-title {
+.dark body #app.layout #main .article-mask:not(:hover) .card-title {
   color: #f7f8f9 !important;
 }
-.dark #app.layout #main .article-item {
+.dark body #app.layout #main .article-item {
   background-color: rgba(102, 117, 140, 0.1);
   box-shadow: unset;
 }
-.dark #app.layout #main .pagination li a {
+.dark body #app.layout #main .pagination li a {
   color: #f7f8f9;
 }
-.dark #app.layout #notes .notes-tabbar {
-  background-color: rgba(42, 48, 57, 0.8);
-}
-.dark #app.layout #notes .notes-item h3.h5 a:not(:hover) {
+.dark body #app.layout #notes .notes-item h3.h5 a:not(:hover) {
   color: #fff !important;
 }
-.dark #app.layout #notes .notes-item .dropdown .menu {
+.dark body #app.layout #notes .notes-item .dropdown .menu {
   box-shadow: 0 0 1px #455060;
 }
-.dark #app.layout #comments #comment_form .userinfo {
+.dark body #app.layout #comments #comment_form .userinfo {
   background-color: #303742;
   box-shadow: 0 0 2rem 1px rgba(188, 195, 206, 0.2), 0 0 0 999rem rgba(48, 55, 66, 0.2);
 }
-.dark #app.layout #comments #comment_form .form-input, .dark body #app.layout #comments #comment_form .editor-content, body .dark #app.layout #comments #comment_form .editor-content {
+.dark body #app.layout #comments #comment_form .form-input, .dark body #app.layout #comments #comment_form .editor-content {
   color: #bcc3ce;
 }
-.dark #app.layout #comments #comment_form .form-input:not(:focus), .dark body #app.layout #comments #comment_form .editor-content:not(:focus), body .dark #app.layout #comments #comment_form .editor-content:not(:focus) {
+.dark body #app.layout #comments #comment_form .form-input:not(:focus), .dark body #app.layout #comments #comment_form .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
 
 /* 定义 dark 模式的颜色 */
 @media (prefers-color-scheme: dark) {
-  body.auto {
-    background: #232830;
+  html.auto {
+    background-color: #232830;
   }
-  body.auto .chip {
+  html.auto body {
+    background-color: rgba(35, 40, 48, 0.8);
+  }
+  html.auto body .chip {
     background-color: rgba(188, 195, 206, 0.1);
   }
-  body.auto .loading-full {
+  html.auto body .loading-full {
     background-color: rgba(42, 48, 57, 0.5);
   }
-  body.auto #app.layout .uni-bg {
-    background-color: #2a3039;
+  html.auto body #app.layout .uni-bg, html.auto body #app.layout #notes .notes-tabbar .tab.drift {
+    background-color: rgba(42, 48, 57, 0.9);
   }
-  body.auto #app.layout .bg-translucent {
+  html.auto body #app.layout .modal-overlay {
     background-color: rgba(48, 55, 66, 0.8);
   }
-  body.auto #app.layout .modal-overlay {
-    background-color: rgba(48, 55, 66, 0.8);
-  }
-  body.auto #app.layout .modal-container {
+  html.auto body #app.layout .modal-container {
     background-color: #303742;
   }
-  body.auto #app.layout .modal-container .form-input, body.auto #app.layout .modal-container #comments #comment_form .editor-content, body.auto #app.layout #comments #comment_form .modal-container .editor-content {
+  html.auto body #app.layout .modal-container .form-input, html.auto body #app.layout .modal-container #comments #comment_form .editor-content, html.auto body #app.layout #comments #comment_form .modal-container .editor-content {
     color: #bcc3ce;
     background-color: rgba(188, 195, 206, 0.1);
   }
-  body.auto #app.layout .modal-container .form-input:not(:focus), body.auto #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), body.auto #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
+  html.auto body #app.layout .modal-container .form-input:not(:focus), html.auto body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), html.auto body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
-  body.auto #app.layout .menu a:hover, body.auto #app.layout .menu a:focus, body.auto #app.layout .menu a:active {
+  html.auto body #app.layout .menu a:hover, html.auto body #app.layout .menu a:focus, html.auto body #app.layout .menu a:active {
     background-color: rgba(69, 80, 96, 0.5);
   }
-  body.auto #app.layout #header .logo .fullname a {
+  html.auto body #app.layout #header .logo .fullname a {
     color: #f7f8f9;
   }
-  body.auto #app.layout #header .header__right .dark-mode-btn {
+  html.auto body #app.layout #header .header__right .dark-mode-btn {
     display: none;
   }
-  body.auto #app.layout #header .header__right .light-mode-btn {
+  html.auto body #app.layout #header .header__right .light-mode-btn {
     display: inline-flex;
   }
-  body.auto #app.layout #aside {
+  html.auto body #app.layout #aside {
     background: #303742;
   }
-  body.auto #app.layout #aside .header-nav li:not([class*=current-]),
-body.auto #app.layout #aside .footer-nav li:not([class*=current-]) {
+  html.auto body #app.layout #aside .header_nav li:not([class*=current-]),
+html.auto body #app.layout #aside .footer_nav li:not([class*=current-]) {
     color: #bcc3ce;
   }
-  body.auto #app.layout #main {
+  html.auto body #app.layout #main {
     color: #f7f8f9;
   }
-  body.auto #app.layout #main .content::after, body.auto #app.layout #main {
+  html.auto body #app.layout #main .content::after {
     background-color: #2a3039;
   }
-  body.auto #app.layout #main .article-mask:not(:hover) .card-title {
+  html.auto body #app.layout #main .article-mask:not(:hover) .card-title {
     color: #f7f8f9 !important;
   }
-  body.auto #app.layout #main .article-item {
+  html.auto body #app.layout #main .article-item {
     background-color: rgba(102, 117, 140, 0.1);
     box-shadow: unset;
   }
-  body.auto #app.layout #main .pagination li a {
+  html.auto body #app.layout #main .pagination li a {
     color: #f7f8f9;
   }
-  body.auto #app.layout #notes .notes-tabbar {
-    background-color: rgba(42, 48, 57, 0.8);
-  }
-  body.auto #app.layout #notes .notes-item h3.h5 a:not(:hover) {
+  html.auto body #app.layout #notes .notes-item h3.h5 a:not(:hover) {
     color: #fff !important;
   }
-  body.auto #app.layout #notes .notes-item .dropdown .menu {
+  html.auto body #app.layout #notes .notes-item .dropdown .menu {
     box-shadow: 0 0 1px #455060;
   }
-  body.auto #app.layout #comments #comment_form .userinfo {
+  html.auto body #app.layout #comments #comment_form .userinfo {
     background-color: #303742;
     box-shadow: 0 0 2rem 1px rgba(188, 195, 206, 0.2), 0 0 0 999rem rgba(48, 55, 66, 0.2);
   }
-  body.auto #app.layout #comments #comment_form .form-input, body.auto #app.layout #comments #comment_form .editor-content {
+  html.auto body #app.layout #comments #comment_form .form-input, html.auto body #app.layout #comments #comment_form .editor-content {
     color: #bcc3ce;
   }
-  body.auto #app.layout #comments #comment_form .form-input:not(:focus), body.auto #app.layout #comments #comment_form .editor-content:not(:focus) {
+  html.auto body #app.layout #comments #comment_form .form-input:not(:focus), html.auto body #app.layout #comments #comment_form .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
 }

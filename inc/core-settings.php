@@ -121,6 +121,14 @@ function theme_customize_register( $wp_customize ) {
                     ]
                 ],
                 [
+                    "id"        => "biji_setting_background",
+                    "setting"   => [ "default" => "" ],
+                    "control"   => [
+                        'label' => '主题背景图',
+                    ],
+                    'customize' => 'WP_Customize_Image_Control',
+                ],
+                [
                     "id"      => "biji_setting_icp",
                     "setting" => [ "default" => "" ],
                     "control" => [
@@ -265,14 +273,6 @@ function theme_customize_register( $wp_customize ) {
                         'type'        => 'textarea',
                     ]
                 ],
-//                [
-//                    "id"        => "biji_setting_upload",
-//                    "setting"   => [ "default" => "" ],
-//                    "control"   => [
-//                        'label' => '上传图片示例',
-//                    ],
-//                    'customize' => 'WP_Customize_Image_Control',
-//                ]
             ]
         ]
     ];

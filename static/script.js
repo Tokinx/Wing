@@ -185,7 +185,7 @@ window.$vm = new Vue({
     },
     mounted() {
         new WingPjax({
-            // selector: '.header-nav a, .footer-nav a, .article-list a',
+            // selector: '.header_nav a, .footer_nav a, .article-list a',
             origin: $base.origin,
             before() {
                 $h.scrollTo();
@@ -254,7 +254,7 @@ window.$vm = new Vue({
             ((body) => {
                 body.remove('auto', 'light', 'dark');
                 body.add(mode);
-            })(document.body.classList);
+            })(document.documentElement.classList);
         },
         sleep(timer = 300) {
             return new Promise(resolve => {

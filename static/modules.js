@@ -117,7 +117,7 @@ const $modules = new function () {
                             <i class="dashicons dashicons-smiley"></i>
                         </button>
                         <div class="editor-tool-emoji popover-container">
-                            <div class="card uni-card bg-white">
+                            <div class="card uni-card card uni-card uni-bg bg-blur">
                                 <div class="card-body flex-center" style="flex-wrap: wrap">
                                     <button v-for="emoji in emojis" :key="emoji" class="btn btn-link btn-action flex-center" @click="$emit('emoji', emoji)">{{ emoji }}</button>
                                 </div>
@@ -824,7 +824,7 @@ const $modules = new function () {
                                         <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
                                             <i class="dashicons dashicons-ellipsis"></i>
                                         </a>
-                                        <ul class="menu menu-left uni-card bg-blur bg-translucent">
+                                        <ul class="menu menu-left uni-card uni-bg bg-blur">
                                             <div v-if="loading" class="loading loading-full"></div>
                                             <li class="menu-item" v-for="item in menu" :key="item.id"  @click="debounceMenuClick(item)">
                                                 <a href="javascript:void(0);" class="align-center" style="display: flex;">
