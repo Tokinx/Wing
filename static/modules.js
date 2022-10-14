@@ -544,7 +544,7 @@ const $modules = new function () {
         computed: {
             sign() {
                 const _sign = this.comment.sign || "";
-                if(_sign === 'admin' && !this.info.admin_icon) return {};
+                if ( _sign === 'admin' && !this.info.admin_icon ) return {};
                 const _icon = { admin: 'czs-crown', friends: 'czs-trophy' }
                 return {
                     icon: _icon[_sign] || "",
@@ -801,7 +801,7 @@ const $modules = new function () {
         name: 'note-card',
         template: `
             <div :class="'notes-item feat-' + featId">
-                <div class="card uni-card">
+                <div :class="['card uni-card', { 'uni-bg bg-blur': isDialog }]">
                     <template v-if="!isEditor">
                         <div class="tile card-body d-block">
                             <div class="tile-header flex-center justify-between">
@@ -820,15 +820,24 @@ const $modules = new function () {
                                 </div>
         
                                 <slot name="right-icon">
-                                    <div v-if="logged && !isPost" class="dropdown" hover-show>
-                                        <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle" tabindex="0">
+                                    <div v-if="!isPost" class="dropdown" hover-show>
+                                        <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle text-gray" tabindex="0">
                                             <i class="dashicons dashicons-ellipsis"></i>
                                         </a>
-                                        <ul class="menu menu-left uni-card uni-bg bg-blur">
+                                        <ul class="menu menu-left uni-card uni-bg bg-blur" style="overflow: unset; min-width: 6rem;">
                                             <div v-if="loading" class="loading loading-full"></div>
-                                            <li class="menu-item" v-for="item in menu" :key="item.id"  @click="debounceMenuClick(item)">
-                                                <a href="javascript:void(0);" class="align-center" style="display: flex;">
-                                                    <i v-if="item.icon" :class="[item.icon, 'mr-1']"></i> {{ item.name }}
+                                            <div class="text-center">
+                                                <li v-if="!item.hide" :class="['menu-item d-inline-block tooltip mt-0', { 'ml-1': index}]" v-for="(item, index) in menus.icons" :key="item.id"
+                                                    :data-tooltip="item.name" @click="debounceMenuClick(item)">
+                                                    <a  :href="item.href || 'javascript:void(0);'" class="align-center" style="display: flex;">
+                                                        <i v-if="item.icon" :class="[item.icon]"></i>
+                                                    </a>
+                                                </li>
+                                            </div>
+                                            <div class="divider my-1" v-if="menus.texts.length"></div>
+                                            <li class="menu-item" v-for="item in menus.texts" :key="item.id"  @click="debounceMenuClick(item)">
+                                                <a :href="item.href || 'javascript:void(0);'" class="align-center" style="display: flex;">
+                                                    <i v-if="item.icon" :class="[item.icon, 'mr-2']"></i> {{ item.name }}
                                                 </a>
                                             </li>
                                         </ul>
@@ -855,7 +864,7 @@ const $modules = new function () {
                                 </div>
         
                                 <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
-                                    阅读原文 <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
+                                    Read Article <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
                                 </a>
                                 <span v-else class="flex-center">
                                     <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
@@ -877,24 +886,36 @@ const $modules = new function () {
         props: {
             logged: { type: Boolean, default: false },
             lately: { type: Boolean, default: true },
-            note: { type: Object, default: () => ({}) }
+            note: { type: Object, default: () => ({}) },
+            isDialog: { type: Boolean, default: false },
         },
         data() {
             return {
                 isEditor: false,
                 loading: false,
-                menu: [
-                    { id: 'quote', icon: 'dashicons dashicons-format-quote', name: '引用' },
-                    { id: 'edit', icon: 'dashicons dashicons-edit', name: '编辑' },
-                    { id: 'delete', icon: 'dashicons dashicons-trash', name: '删除' },
-                    { id: 'praise', icon: 'dashicons dashicons-heart', name: '喜欢' },
-                ],
                 comment: null,
                 praise: !!Cookies.get(`praise_${this.note.id}`),
                 bindEditor: $h.store.notes ? $h.store.notes.editor : false,
             }
         },
         computed: {
+            menus() {
+                const praise_icon = `czs-heart${this.praise ? ' text-error' : '-l'}`;
+                const detail_href = ['', this.note.type, this.note.id].join('/');
+                const texts = !this.logged ? [] : [
+                    { id: 'quote', icon: 'czs-bookmark-l', name: 'Quote' },
+                    { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
+                    { id: 'delete', icon: 'czs-trash-l', name: 'Delete' },
+                ];
+                return {
+                    texts,
+                    icons: [
+                        { id: 'links', icon: 'czs-share', name: 'Copy Link' },
+                        { id: 'praise', icon: praise_icon, name: 'Like' },
+                        { id: 'detail', icon: 'czs-talk-l', name: 'View Detail', href: detail_href },
+                    ]
+                };
+            },
             isPost() {
                 return this.note.type === 'post';
             },
@@ -936,7 +957,7 @@ const $modules = new function () {
                 if ( this.lately ) {
                     return Lately && Lately.format(this.note.date);
                 }
-                return dayjs && dayjs(this.note.date).format('YYYY-MM-DD');
+                return dayjs && dayjs(this.note.date).format('YYYY/MM/DD');
             },
             notePraise() {
                 return String(this.note.fields && (this.note.fields.praise || 0));
@@ -994,7 +1015,7 @@ const $modules = new function () {
                               if ( !!code ) {
                                   this.$toast({ type: 'error', message });
                               } else {
-                                  this.$toast({ type: 'success', message: '删除成功' });
+                                  this.$toast({ type: 'success', message: 'Deleted successfully' });
                                   this.$emit('event', { event: item.id });
                               }
                           }).finally(() => {
@@ -1005,6 +1026,11 @@ const $modules = new function () {
                         $modules.actions.setPraise(id).then(() => {
                             this.praise = !!Cookies.get(`praise_${id}`);
                         });
+                        break;
+                    case 'links':
+                        // 复制链接
+                        $h.copyText(`${location.origin}${location.pathname}?note=${id}`);
+                        this.$toast({ type: 'success', message: 'Copied!' });
                         break;
                 }
             },
@@ -1072,7 +1098,7 @@ const $modules = new function () {
                 <div class="modal active article-dialog">
                     <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
                     <div v-if="loading" class="loading"></div>
-                    <note-card v-else v-bind="{ lately, note }">
+                    <note-card v-else v-bind="{ lately, note, isDialog: true }">
                         <button slot="right-icon" href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></button>
                     </note-card>
                 </div>
@@ -1123,10 +1149,10 @@ const $modules = new function () {
         setPraise(post_id) {
             return $h.ajax({ query: { action: 'submit_praise', post_id } }).then(num => {
                 Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
-                    if ( !i && (+num) > (+el.innerText) ) new Vue().$toast({
-                        type: 'success',
-                        message: '祝你财源广进'
-                    });
+                    if ( !i && (+num) > (+el.innerText) ) {
+                        new Vue().$toast({ type: 'success', message: '祝你财源广进' });
+                    }
+                    el.parentNode.classList.toggle('text-error');
                     el && (el.innerHTML = num);
                 });
                 return !!Cookies.get(`praise_${post_id}`);

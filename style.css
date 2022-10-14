@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.22
+	Version: 0.7.23
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3818,7 +3818,7 @@ body .layout #notes .notes-tabbar .tab {
 }
 body .layout #notes .notes-tabbar .tab.drift {
   margin: 1rem 0 0;
-  padding: 0 1rem;
+  padding: 0 0 0 1rem;
   border-radius: 0.2rem;
   border-color: transparent;
 }
@@ -3864,7 +3864,7 @@ body .layout #notes .notes-item > .card .tile-header .dropdown .loading {
   backdrop-filter: unset;
   -webkit-backdrop-filter: unset;
 }
-body .layout #notes .notes-item > .card .tile-header .dropdown .loading ~ li {
+body .layout #notes .notes-item > .card .tile-header .dropdown .loading ~ * {
   filter: blur(0.2rem);
 }
 body .layout #notes .notes-item > .card .tile-content .article-content {
@@ -4572,7 +4572,7 @@ body #app.less-animation.animation-toward #main .content {
 }
 body #app.less-animation.animation-end #main .content {
   opacity: 1;
-  transform: translateY(0);
+  transform: unset;
 }
 
 .editor {
@@ -4698,7 +4698,7 @@ body ol.reset-ul li {
   margin: 0;
   list-style: none;
 }
-body .bg-blur, body .layout .article-dialog .notes-item {
+body .bg-blur {
   backdrop-filter: blur(0.5rem);
   -webkit-backdrop-filter: blur(0.5rem);
 }
@@ -4887,10 +4887,23 @@ body .dashicons {
 }
 body .view-image {
   backdrop-filter: unset;
-  -webkit-backdrop-filter: unset;
 }
 body .view-image-tools {
-  background-color: rgba(48, 55, 66, 0.3);
+  backdrop-filter: unset;
+  background-color: rgba(48, 55, 66, 0.8);
+  transition: 300ms;
+  opacity: 0.3;
+  transform: scale(0.96);
+}
+body .view-image-tools:hover {
+  opacity: 1;
+  transform: scale(1);
+}
+body .view-image-btn {
+  background: unset;
+}
+body .view-image-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Dark Mode */

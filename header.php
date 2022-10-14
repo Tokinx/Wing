@@ -8,7 +8,7 @@
     <?php if ( $_background = get_theme_mod( 'biji_setting_background', '' ) ): ?>
         <style>
             html {
-                background-image: url(<?= $_background ?>);
+                background-image: url("<?= $_background ?>");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
