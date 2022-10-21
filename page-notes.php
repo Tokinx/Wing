@@ -159,8 +159,8 @@ get_header(); ?>
                                 note.content = content;
                                 note.images = images;
                                 break;
-                            // 从节点上删除内容
-                            case 'delete':
+                            // 从节点上移除内容
+                            case 'archive':
                                 this.noteList.splice(index, 1);
                                 break;
                         }

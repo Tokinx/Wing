@@ -905,7 +905,7 @@ const $modules = new function () {
                 const texts = !this.logged ? [] : [
                     { id: 'quote', icon: 'czs-bookmark-l', name: 'Quote' },
                     { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
-                    { id: 'delete', icon: 'czs-trash-l', name: 'Delete' },
+                    { id: 'archive', icon: 'czs-box-l', name: 'Archive' },
                 ];
                 return {
                     texts,
@@ -1008,14 +1008,14 @@ const $modules = new function () {
                             getSelection().collapse(target, target.childNodes.length);
                         });
                         break;
-                    case 'delete':
+                    case 'archive':
                         this.loading = true;
-                        $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: true } })
+                        $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: false } })
                           .then(({ code, message }) => {
                               if ( !!code ) {
                                   this.$toast({ type: 'error', message });
                               } else {
-                                  this.$toast({ type: 'success', message: 'Deleted successfully' });
+                                  this.$toast({ type: 'success', message: 'Archived successfully' });
                                   this.$emit('event', { event: item.id });
                               }
                           }).finally(() => {
