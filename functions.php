@@ -40,7 +40,7 @@ function biji_enqueue_scripts() {
     wp_enqueue_script( 'package', get_template_directory_uri() . '/static/package.js', [], THEME_VERSION, true );
     wp_enqueue_script( 'modules', get_template_directory_uri() . '/static/modules.js', [], THEME_VERSION, true );
     wp_enqueue_script( 'script', get_template_directory_uri() . '/static/script.js', [], THEME_VERSION, true );
-    $avatar_url = parse_url( get_avatar_url(null) );
+    $avatar_url = parse_url( get_avatar_url( null ) );
     wp_localize_script( 'script', 'BaseData', [
         'origin' => site_url(),
         'avatar' => "//" . $avatar_url["host"],
@@ -173,82 +173,82 @@ function comment_mail_notify( $comment_id ) {
         $parent   = get_comment( $comment->comment_parent );
         $to       = trim( $parent->comment_author_email );
         $subject  = '您在 [' . get_option( "blogname" ) . '] 的留言有了新回复';
-        $title    = trim( get_the_title( $comment->comment_post_ID ) ) ?: get_option( "blogname" );
+        $title    = trim( get_the_title( $comment->comment_post_ID ) );
         $message  = '<table cellspacing="0" border="0" cellpadding="0" align="center" width="100%" bgcolor="transparent" style="border-collapse: separate; border-spacing: 0; letter-spacing: 0; max-width: 580px;">
-	<tbody>
-		<tr>
-			<td>
-				<table style="width: 100%;padding-top: 5%;">
-					<tbody>
-						<tr>
-							<td style="padding: 10px 0; border-bottom: 1px dashed #ddd;line-height:20px;">
-								<div style="float: left; font-weight: bold;font-size: 20px;">' . get_option( "blogname" ) . '</div>
-								<div style="float: right; font-size: 14px; color: #AAB2BD;">' . get_option( "blogdescription" ) . '</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<table width="100%" style="border-collapse: separate; border-spacing: 0; table-layout: fixed">
-					<tbody>
-						<tr>
-							<td style="color: #000; line-height: 1.6;">
-								<h1 style="font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center">' . $title . '</h1>
-								<div style="height: 240px;background-color: #3274ff;"></div>
-								<div style="margin: -120px 4% 0;background-color: #fff;font-size: 18px;padding: 8%;box-shadow: 0 0 0 1px rgb(0, 85, 255, 0.1), 3px 3px 0 rgb(0, 85, 255, 0.1);font-size: 14px;">
-									<div style="margin-bottom: 8%;">
-										<div style="display: inline-block;width: 80%;">
-											<span style="color: #666;">' . trim( $parent->comment_author ) . '</span>
-											<div style="background-color: #F5F7FA;border-radius: 10px;border-top-right-radius: 0;padding: 5% 8%;">
-												' . trim( $parent->comment_content ) . '
-											</div>
-										</div>
-										<img src="' . get_avatar_url( $to ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
-									</div>
-									<div style="margin-bottom: 8%;">
-									<img src="' . get_avatar_url( trim( $comment->comment_author_email ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
-										<div style="display: inline-block;width: 80%;">
-											<span style="color: #666;">' . $comment->comment_author . '</span>
-											<div style="background-color: #3274ff;color:#fff;border-radius: 10px;border-top-left-radius: 0;padding: 5% 8%;">
-												' . trim( $comment->comment_content ) . '
-											</div>
-										</div>
-									</div>
-									<div style="border-top: 1px dashed #ddd;text-align: center;">
-										<a target="_blank" href="' . htmlspecialchars( get_comment_link( $comment_id ) ) . '"
-											style="background-color: #3274ff; border: none; color: white !important; margin: 8% auto 0; padding: 3% 10%; display: inline-block;text-decoration: none;"
-											rel="noopener">立即回复</a>
-									</div>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</td>
-		</tr>
-	</tbody>
-</table>
-
-<table width="100%" align="center" style="border-collapse: separate; border-spacing: 0; padding: 5% 0; table-layout: fixed; text-align: center">
-	<tbody>
-		<tr>
-			<td style="font-size: 12px; padding: 0;">
-				<table cellspacing="0" border="0" cellpadding="0" align="center" width="100%" bgcolor="transparent"
-					style="border-collapse: separate; border-spacing: 0; letter-spacing: 0; max-width: 580px;">
-					<tbody>
-						<tr>
-							<td valign="top" align="center" style="font-size: 12px; color: #aaa;">
-								<div>
-									<p>这是由系统自动发送的电子邮件，请勿直接回复。</p>
-									<p>© ' . date( "Y" ) . ' <a href="' . get_option( "home" ) . '" style="color: #aaa;" target="_blank">' . get_option( "blogname" ) . '</a></p>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</td>
-		</tr>
-	</tbody>
-</table>';
+        <tbody>
+            <tr>
+                <td>
+                    <table cellspacing="0" border="0" cellpadding="0" style="width: 100%;padding-top: 5%;border-spacing: 0;">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 10px 0; border-bottom: 1px dashed #ddd;line-height:20px;">
+                                    <div style="float: left; font-weight: bold;font-size: 20px;">' . get_option( "blogname" ) . '</div>
+                                    <div style="float: right; font-size: 14px; color: #AAB2BD;">' . get_option( "blogdescription" ) . '</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" cellspacing="0" border="0" cellpadding="0" style="border-collapse: separate; border-spacing: 0; table-layout: fixed">
+                        <tbody>
+                            <tr>
+                                <td style="color: #000; line-height: 1.6;">
+                                    ' . ( $title ? "<h1 style=\"font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center;\">' . $title . '</h1>" : "" ) . '
+                                    <div style="height: 240px;background-color: #3274ff;"></div>
+                                    <div style="margin: -120px 4% 0;background-color: #fff;font-size: 18px;padding: 8%;box-shadow: 0 0 0 1px rgb(0, 85, 255, 0.1), 3px 3px 0 rgb(0, 85, 255, 0.1);font-size: 14px;">
+                                        <div style="margin-bottom: 8%;text-align: right;">
+                                            <div style="display: inline-block;max-width: 80%;">
+                                                <span style="color: #666;">' . trim( $parent->comment_author ) . '</span>
+                                                <div style="background-color: #F5F7FA;border-radius: 10px;border-top-right-radius: 0;padding: 5% 8%;text-align: left;">
+                                                    ' . trim( $parent->comment_content ) . '
+                                                </div>
+                                            </div>
+                                            <img src="' . get_avatar_url( $to ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-left: 2%;">
+                                        </div>
+                                        <div style="margin-bottom: 8%;">
+                                            <img src="' . get_avatar_url( trim( $comment->comment_author_email ) ) . '" style="border-radius: 50%;width: 15%;display: inline-block;vertical-align: top;margin-right: 2%;">
+                                            <div style="display: inline-block;max-width: 80%;">
+                                                <span style="color: #666;">' . $comment->comment_author . '</span>
+                                                <div style="background-color: #3274ff;color:#fff;border-radius: 10px;border-top-left-radius: 0;padding: 5% 8%;">
+                                                    ' . trim( $comment->comment_content ) . '
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="border-top: 1px dashed #ddd;text-align: center;">
+                                            <a target="_blank" href="' . htmlspecialchars( get_comment_link( $comment_id ) ) . '"
+                                                style="background-color: #3274ff; border: none; color: white !important; margin: 8% auto 0; padding: 3% 0; width: 120px; display: inline-block;text-decoration: none;"
+                                                rel="noopener">立即回复</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <table width="100%" cellspacing="0" border="0" cellpadding="0" align="center" style="border-collapse: separate; border-spacing: 0; padding: 5% 0; table-layout: fixed; text-align: center">
+        <tbody>
+            <tr>
+                <td style="font-size: 12px; padding: 0;">
+                    <table cellspacing="0" border="0" cellpadding="0" align="center" width="100%" bgcolor="transparent"
+                        style="border-collapse: separate; border-spacing: 0; letter-spacing: 0; max-width: 580px;">
+                        <tbody>
+                            <tr>
+                                <td valign="top" align="center" style="font-size: 12px; color: #aaa;">
+                                    <div>
+                                        <p>这是由系统自动发送的电子邮件，请勿直接回复。</p>
+                                        <p>© ' . date( "Y" ) . ' <a href="' . get_option( "home" ) . '" style="color: #aaa;" target="_blank">' . get_option( "blogname" ) . '</a></p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>';
         $from     = "From: \"" . get_option( 'blogname' ) . "\" <$wp_email>";
         $headers  = "$from\nContent-Type: text/html; charset=" . get_option( 'blog_charset' ) . "\n";
         wp_mail( $to, $subject, $message, $headers );
