@@ -901,7 +901,7 @@ const $modules = new function () {
         computed: {
             menus() {
                 const praise_icon = `czs-heart${this.praise ? ' text-error' : '-l'}`;
-                const detail_href = ['', this.note.type, this.note.id].join('/');
+                const detail_href = this.note.permalink;
                 const texts = !this.logged ? [] : [
                     { id: 'quote', icon: 'czs-bookmark-l', name: 'Quote' },
                     { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
@@ -991,7 +991,7 @@ const $modules = new function () {
             handleMenuClick(item) {
                 // 防抖
                 if ( this.loading ) return;
-                const { id, type, content, images, status } = this.note;
+                const { id, type, content, images, permalink } = this.note;
                 switch (item.id) {
                     case 'quote':
                         this.$emit('event', { event: item.id });
@@ -1029,7 +1029,7 @@ const $modules = new function () {
                         break;
                     case 'links':
                         // 复制链接
-                        $h.copyText(`${location.origin}${location.pathname}?note=${id}`);
+                        $h.copyText(permalink);
                         this.$toast({ type: 'success', message: 'Copied!' });
                         break;
                 }
