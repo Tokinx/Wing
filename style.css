@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.23
+	Version: 0.7.24
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3403,6 +3403,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
   /* Layouts */
   /* Page Animation */
 }
@@ -4935,8 +4936,12 @@ body .view-image-btn:hover {
 .dark body #app.layout .modal-container .form-input:not(:focus), .dark body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), .dark body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
-.dark body #app.layout .menu a:hover, .dark body #app.layout .menu a:focus, .dark body #app.layout .menu a:active {
+.dark body #app.layout .menu-item a:hover, .dark body #app.layout .menu-item a:focus, .dark body #app.layout .menu-item a:active, .dark body #app.layout .menu-item a.active {
   background-color: rgba(69, 80, 96, 0.5);
+}
+.dark body #app.layout .menu-badge .label {
+  color: #bcc3ce;
+  background-color: rgba(188, 195, 206, 0.1);
 }
 .dark body #app.layout #header .logo .fullname a {
   color: #f7f8f9;
@@ -5017,8 +5022,12 @@ body .view-image-btn:hover {
   html.auto body #app.layout .modal-container .form-input:not(:focus), html.auto body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), html.auto body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
-  html.auto body #app.layout .menu a:hover, html.auto body #app.layout .menu a:focus, html.auto body #app.layout .menu a:active {
+  html.auto body #app.layout .menu-item a:hover, html.auto body #app.layout .menu-item a:focus, html.auto body #app.layout .menu-item a:active, html.auto body #app.layout .menu-item a.active {
     background-color: rgba(69, 80, 96, 0.5);
+  }
+  html.auto body #app.layout .menu-badge .label {
+    color: #bcc3ce;
+    background-color: rgba(188, 195, 206, 0.1);
   }
   html.auto body #app.layout #header .logo .fullname a {
     color: #f7f8f9;
