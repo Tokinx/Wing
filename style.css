@@ -4020,6 +4020,7 @@ body .layout .topic-list {
 }
 body .layout .single-note .notes-item .card {
   box-shadow: none;
+  background-color: unset;
 }
 body .layout .single-note .notes-item .card .tile {
   padding: 0 !important;
@@ -4514,7 +4515,7 @@ body #app::after {
   left: 0;
   width: 100%;
   height: 2px;
-  background: #eef0f3 linear-gradient(to right, #3366ff 30%, #eef0f3 30%) top left/150% 150% no-repeat;
+  background: transparent linear-gradient(to right, #3366ff 30%, transparent 30%) top left/150% 150% no-repeat;
   z-index: 999;
 }
 body #app.animation-toward::after, body #app.animation-start::after {
@@ -4936,7 +4937,7 @@ body .view-image-btn:hover {
 .dark body #app.layout .modal-container .form-input:not(:focus), .dark body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), .dark body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
   border-color: rgba(188, 195, 206, 0.2);
 }
-.dark body #app.layout .menu-item a:hover, .dark body #app.layout .menu-item a:focus, .dark body #app.layout .menu-item a:active, .dark body #app.layout .menu-item a.active {
+.dark body #app.layout .menu .menu-item a:hover, .dark body #app.layout .menu .menu-item a:focus, .dark body #app.layout .menu .menu-item a:active, .dark body #app.layout .menu .menu-item a.active {
   background-color: rgba(69, 80, 96, 0.5);
 }
 .dark body #app.layout .menu-badge .label {
@@ -5022,7 +5023,7 @@ body .view-image-btn:hover {
   html.auto body #app.layout .modal-container .form-input:not(:focus), html.auto body #app.layout .modal-container #comments #comment_form .editor-content:not(:focus), html.auto body #app.layout #comments #comment_form .modal-container .editor-content:not(:focus) {
     border-color: rgba(188, 195, 206, 0.2);
   }
-  html.auto body #app.layout .menu-item a:hover, html.auto body #app.layout .menu-item a:focus, html.auto body #app.layout .menu-item a:active, html.auto body #app.layout .menu-item a.active {
+  html.auto body #app.layout .menu .menu-item a:hover, html.auto body #app.layout .menu .menu-item a:focus, html.auto body #app.layout .menu .menu-item a:active, html.auto body #app.layout .menu .menu-item a.active {
     background-color: rgba(69, 80, 96, 0.5);
   }
   html.auto body #app.layout .menu-badge .label {
