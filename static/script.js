@@ -106,11 +106,12 @@ class WingPjax {
         Promise.race([new Promise(resolve => {
             setTimeout(() => resolve(new Response("timeout")), timer);
         }), fetch(url)])
-        .then(rv => rv.text()).then((element) => {
+               .then(rv => rv.text()).then((element) => {
             try {
                 if ( element === 'timeout' ) throw 'timeout';
                 staff.success(element);
-            } catch (e) {
+            }
+            catch (e) {
                 new Promise(resolver => {
                     staff.error();
                     resolver();
@@ -139,7 +140,8 @@ class WingPjax {
                                 newScript.innerHTML = script.innerHTML;
                                 resolve();
                             }
-                        } catch (e) {
+                        }
+                        catch (e) {
                             resolve();
                         }
                         const parentNode = script.parentNode;
@@ -184,31 +186,33 @@ window.$vm = new Vue({
         };
     },
     mounted() {
-        new WingPjax({
-            // selector: '.header_nav a, .footer_nav a, .article-list a',
-            origin: $base.origin,
-            before() {
-                $h.scrollTo();
-                $vm.animation = 'animation-start';
-                // 清除当前页面创建的实例
-                Object.keys($h.tasks).forEach(name => {
-                    $h.tasks[name] = null;
-                    $h.store[name] = null;
-                });
-                return $vm.sleep(0);
-            },
-            complete() {
-                $vm.animation = 'animation-toward';
-                // 更新节点
-                return $vm.sleep().then(() => ['#core']);
-            },
-            after() {
-                $vm.sleep(100).then(() => {
-                    $vm.animation = 'animation-end';
-                    $vm.overload();
-                });
-            },
-        });
+        if ( !!$base.pjax ) {
+            new WingPjax({
+                // selector: '.header_nav a, .footer_nav a, .article-list a',
+                origin: $base.origin,
+                before() {
+                    $h.scrollTo();
+                    $vm.animation = 'animation-start';
+                    // 清除当前页面创建的实例
+                    Object.keys($h.tasks).forEach(name => {
+                        $h.tasks[name] = null;
+                        $h.store[name] = null;
+                    });
+                    return $vm.sleep(0);
+                },
+                complete() {
+                    $vm.animation = 'animation-toward';
+                    // 更新节点
+                    return $vm.sleep().then(() => ['#core']);
+                },
+                after() {
+                    $vm.sleep(100).then(() => {
+                        $vm.animation = 'animation-end';
+                        $vm.overload();
+                    });
+                },
+            });
+        }
 
         this.overload();
 

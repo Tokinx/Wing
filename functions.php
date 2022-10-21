@@ -46,7 +46,8 @@ function biji_enqueue_scripts() {
         'avatar' => "//" . $avatar_url["host"],
         'ajax'   => admin_url( 'admin-ajax.php' ),
         'rest'   => rest_url(),
-        'nonce'  => wp_create_nonce( 'wp_rest' )
+        'nonce'  => wp_create_nonce( 'wp_rest' ),
+        'pjax'   => get_theme_mod( 'biji_setting_pjax', true )
     ] );
 }
 

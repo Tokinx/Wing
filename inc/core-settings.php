@@ -35,20 +35,12 @@ function theme_customize_register( $wp_customize ) {
                     ]
                 ],
                 [
-                    "id"      => "biji_setting_exclude",
-                    "setting" => [ "default" => "" ],
+                    "id"      => "biji_setting_pjax",
+                    "setting" => [ "default" => true ],
                     "control" => [
-                        'label'       => '首页过滤分类',
-                        'description' => $category_checkbox . '
-						<script>
-							const biji_setting_exclude = jQuery("#_customize-input-biji_setting_exclude").hide();
-							function bijiHandleExcludeChange(result = []) {
-								jQuery(".biji_setting_exclude:checked").each(function() {
-									result.push(this.value);
-								});
-								biji_setting_exclude.val(String(result)).trigger("input");
-							}
-						</script>',
+                        'label'       => '开启PJAX',
+                        'description' => '如果遇到插件兼容问题，请关闭此选项',
+                        'type'        => 'checkbox',
                     ]
                 ],
                 [
@@ -56,7 +48,7 @@ function theme_customize_register( $wp_customize ) {
                     "setting" => [ "default" => true ],       // , "transport" => "postMessage"
                     "control" => [
                         'label'       => '开启代码高亮',
-                        'description' => '如安装了代码高亮插件，可以关闭此选项',
+                        'description' => '如需安装第三方代码高亮插件请关闭此选项',
                         'type'        => 'checkbox',
                     ]
                 ],
@@ -83,7 +75,7 @@ function theme_customize_register( $wp_customize ) {
                     "setting" => [ "default" => true ],
                     "control" => [
                         'label'       => '开启作者信息栏',
-                        'description' => '文章底部作者信息，支持点赞和二维码',
+                        'description' => '文章底部作者信息，支持点赞和文章二维码',
                         'type'        => 'checkbox',
                     ]
                 ],
@@ -100,16 +92,33 @@ function theme_customize_register( $wp_customize ) {
                     "id"      => "biji_setting_note_feed",
                     "setting" => [ "default" => false ],
                     "control" => [
-                        'label'       => '笔记注入订阅源',
+                        'label'       => '笔记注入Feed、RSS',
                         'description' => '开启后发布的笔记会被订阅者获取到',
                         'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_exclude",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label'       => '首页过滤分类',
+                        'description' => $category_checkbox . '
+						<script>
+							const biji_setting_exclude = jQuery("#_customize-input-biji_setting_exclude").hide();
+							function bijiHandleExcludeChange(result = []) {
+								jQuery(".biji_setting_exclude:checked").each(function() {
+									result.push(this.value);
+								});
+								biji_setting_exclude.val(String(result)).trigger("input");
+							}
+						</script>',
                     ]
                 ],
                 [
                     "id"      => "biji_setting_mode",
                     "setting" => [ "default" => "auto" ],
                     "control" => [
-                        'label'       => '主题色彩模式',
+                        'label'       => '主题默认色彩模式',
                         'description' => '已设置显示模式的访客不受此设置影响',
                         'type'        => 'radio',
                         'choices'     => [
