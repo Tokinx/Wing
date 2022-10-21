@@ -3745,8 +3745,8 @@ body .layout #aside .footer_nav li:hover {
   perspective: 60rem;
   z-index: 1;
 }
-body .layout #aside .header_nav li:hover .sub-menu,
-body .layout #aside .footer_nav li:hover .sub-menu {
+body .layout #aside .header_nav li:hover > .sub-menu,
+body .layout #aside .footer_nav li:hover > .sub-menu {
   opacity: 1;
   visibility: visible;
   transform: rotateX(0);
