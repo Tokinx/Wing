@@ -243,6 +243,16 @@ window.$vm = new Vue({
 
             window._exReload && _exReload();
 
+            const _probes = document.querySelector("#aside .probes");
+            (new IntersectionObserver(
+                ([e]) => {
+                    const aside = document.querySelector("#aside .sticky");
+                    aside.classList.toggle("active", e.intersectionRatio < 1);
+                    // TODO: Scroll to top
+                },
+                { threshold: [1] }
+            )).observe(_probes);
+
             // Safari Hack
             if ( navigator.vendor.indexOf("Apple") > -1 ) {
                 document.querySelectorAll("[srcset]").forEach(img => {

@@ -201,6 +201,50 @@ function get_post_thumbnail_url( $post_id = null ) {
     return false;
 }
 
+
+// 获取文章目录
+function get_post_toc( $post_id = null ) {
+    $post_id = $post_id ?: get_the_ID();
+    $content = apply_filters( 'the_content', get_post_field( 'post_content', $post_id ) );
+    // 提取标题
+    preg_match_all( "#<h(\d).*?>(.*?)</h\d>#sim", $content, $match );
+    $toc = [];
+    if ( ! empty( $match[1] ) ) {
+        $min = min( $match[1] );
+        foreach ( $match[1] as $k => $v ) {
+            // 移除标题中的html标签
+            if ( ! ( $title = trim( strip_tags( $match[2][ $k ] ) ) ) ) {
+                continue;
+            }
+            $toc[] = [
+                'anchor' => $k,
+                'indent' => $match[1][ $k ] - $min, // 相对缩进
+                'title'  => $title,
+            ];
+        }
+    }
+    if ( count( $toc ) < 1 ) {
+        return false;
+    }
+
+    $_li = "";
+    foreach ( $toc as $v ) {
+        $_li .= '<li class="toc-item nav-item" style="text-indent: ' . ( $v['indent'] ) . 'em"><a href="#toc-' . $v['anchor'] . '">' . $v['title'] . '</a></li>';
+    }
+
+    return "<ul class='toc-list toc-content'>$_li</ul>";
+}
+
+// 为标题添加锚点
+add_filter( 'the_content', function ( $content ) {
+    $k       = 0;
+    $content = preg_replace_callback( '#<h(\d)(.*?)>(.*?)</h\d>#im', function ( $matches ) use ( &$k ) {
+        return '<h' . $matches[1] . $matches[2] . ' id="toc-' . $k ++ . '">' . $matches[3] . '</h' . $matches[1] . '>';
+    }, $content );
+
+    return $content;
+} );
+
 /* Mini Pagenavi v1.0 by Willin Kan. Edit by zwwooooo */
 if ( ! function_exists( 'the_pagination' ) ) {
     function the_pagination( $p = 2 ) {

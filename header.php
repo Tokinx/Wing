@@ -52,8 +52,25 @@
     <section id="core" class="container off-canvas off-canvas-sidebar-show">
         <!-- Aside -->
         <aside id="aside" class="off-canvas-sidebar">
+            <div class="probes"></div>
             <section class="sticky">
                 <?php
+                if ( is_single() && get_theme_mod( 'biji_setting_toc', true ) && ( $_toc = get_post_toc() ) ) :
+                    ?>
+                    <input type="radio" id="tab-toc" name="aside-radio" hidden checked>
+                    <input type="radio" id="tab-nav" name="aside-radio" hidden>
+                    <ul class="aside-tab">
+                        <li class="toc-active">
+                            <label for="tab-toc" class="c-hand flex flex-center"><i class="czs-read-l"></i></label>
+                        </li>
+                        <li class="nav-active">
+                            <label for="tab-nav" class="c-hand flex flex-center"><i
+                                        class="czs-choose-list-l"></i></label>
+                        </li>
+                    </ul>
+                    <?php
+                    print $_toc;
+                endif;
                 foreach ( [ 'header_nav', 'footer_nav' ] as $name ) {
                     if ( has_nav_menu( $name ) ) {
                         wp_nav_menu( [

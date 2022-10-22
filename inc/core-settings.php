@@ -44,47 +44,11 @@ function theme_customize_register( $wp_customize ) {
                     ]
                 ],
                 [
-                    "id"      => "biji_setting_prettify",
-                    "setting" => [ "default" => true ],       // , "transport" => "postMessage"
-                    "control" => [
-                        'label'       => '开启代码高亮',
-                        'description' => '如需安装第三方代码高亮插件请关闭此选项',
-                        'type'        => 'checkbox',
-                    ]
-                ],
-                [
                     "id"      => "biji_setting_lately",
                     "setting" => [ "default" => true ],
                     "control" => [
                         'label'       => '开启时间格式化',
                         'description' => '开启后文章时间显示为：XX前',
-                        'type'        => 'checkbox',
-                    ]
-                ],
-                [
-                    "id"      => "biji_setting_view_image",
-                    "setting" => [ "default" => true ],
-                    "control" => [
-                        'label'       => '开启图片灯箱',
-                        'description' => '开启后文章图片可以使用灯箱放大查看',
-                        'type'        => 'checkbox',
-                    ]
-                ],
-                [
-                    "id"      => "biji_setting_author_information",
-                    "setting" => [ "default" => true ],
-                    "control" => [
-                        'label'       => '开启作者信息栏',
-                        'description' => '文章底部作者信息，支持点赞和文章二维码',
-                        'type'        => 'checkbox',
-                    ]
-                ],
-                [
-                    "id"      => "biji_setting_adjacent_articles",
-                    "setting" => [ "default" => false ],
-                    "control" => [
-                        'label'       => '开启相邻文章',
-                        'description' => '文章结尾显示前一篇、后一篇文章',
                         'type'        => 'checkbox',
                     ]
                 ],
@@ -152,14 +116,6 @@ function theme_customize_register( $wp_customize ) {
                     ]
                 ],
                 [
-                    "id"      => "biji_setting_article_foot",
-                    "setting" => [ "default" => "" ],
-                    "control" => [
-                        'label' => '文章底部追加内容',
-                        'type'  => 'textarea',
-                    ]
-                ],
-                [
                     "id"      => "biji_setting_foot_script",
                     "setting" => [ "default" => "" ],
                     "control" => [
@@ -188,11 +144,74 @@ function theme_customize_register( $wp_customize ) {
             ]
         ],
         [
+            "id"       => "biji_article",
+            "args"     => [
+                'title'       => '文章设置',
+                'description' => $style,
+                'priority'    => 101,
+            ],
+            "settings" => [
+                [
+                    "id"      => "biji_setting_prettify",
+                    "setting" => [ "default" => true ],       // , "transport" => "postMessage"
+                    "control" => [
+                        'label'       => 'Prettify.js',
+                        'description' => '开启后自动高亮显示文章和评论中的代码块',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_view_image",
+                    "setting" => [ "default" => true ],
+                    "control" => [
+                        'label'       => 'ViewImage.js',
+                        'description' => '开启后文章图片可以使用灯箱放大查看',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_author_information",
+                    "setting" => [ "default" => true ],
+                    "control" => [
+                        'label'       => '开启作者信息栏',
+                        'description' => '文章底部作者信息，支持点赞和文章二维码',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_adjacent_articles",
+                    "setting" => [ "default" => false ],
+                    "control" => [
+                        'label'       => '开启相邻文章',
+                        'description' => '文章结尾显示前一篇、后一篇文章',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_toc",
+                    "setting" => [ "default" => true ],
+                    "control" => [
+                        'label'       => '开启文章目录',
+                        'description' => '自动为文章生成目录，支持定位到指定标题',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"      => "biji_setting_article_foot",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label' => '文章底部追加内容',
+                        'type'  => 'textarea',
+                    ]
+                ],
+            ]
+        ],
+        [
             "id"       => "biji_comment",
             "args"     => [
                 'title'       => '评论设置',
                 'description' => $style,
-                'priority'    => 101,
+                'priority'    => 102,
             ],
             "settings" => [
                 [

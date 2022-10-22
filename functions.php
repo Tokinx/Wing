@@ -24,6 +24,8 @@ function biji_enqueue_scripts() {
     wp_enqueue_style( 'wp-block-library' ); // WordPress 核心
     wp_enqueue_style( 'wp-block-library-theme' ); // WordPress 核心
 
+    remove_filter( 'render_block', 'wp_render_layout_support_flag', 10, 2 );
+
     // 草莓ICON PRO
     wp_enqueue_style( 'caomei', get_template_directory_uri() . '/static/caomei/style.css', [], THEME_VERSION );
     wp_enqueue_style( 'style', get_template_directory_uri() . '/style.css', [], THEME_VERSION );

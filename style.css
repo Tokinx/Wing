@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.24
+	Version: 0.7.25
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3416,11 +3416,11 @@ body .layout .container {
   width: 92%;
   margin: 0 auto;
 }
-body .layout .uni-bg, body .layout #notes .notes-tabbar .tab.drift {
+body .layout .uni-bg, body .layout #notes .notes-tabbar .tab.drift, body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label {
   background-color: rgba(255, 255, 255, 0.9);
   transition: 300ms;
 }
-body .layout .uni-shadow, body .layout #notes .notes-tabbar .tab.drift, body .layout .uni-card {
+body .layout .uni-shadow, body .layout #notes .notes-tabbar .tab.drift, body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label, body .layout .uni-card {
   box-shadow: 0 0 0 0.5px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(48, 55, 66, 0.06);
 }
 body .layout .uni-card {
@@ -3614,14 +3614,26 @@ body .layout #core {
 body .layout #aside {
   max-width: 12rem;
   width: 100%;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   z-index: 0;
 }
-body .layout #aside .uni-bg, body .layout #aside #notes .notes-tabbar .tab.drift, body .layout #notes .notes-tabbar #aside .tab.drift {
+body .layout #aside .sticky {
+  top: 0;
+  padding: 0 0.5rem 0.5rem;
+  margin-left: -0.5rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 6.5rem);
+  transition: 300ms;
+}
+body .layout #aside .sticky.active {
+  top: 1rem;
+  max-height: calc(100vh - 1.5rem);
+}
+body .layout #aside .uni-bg, body .layout #aside #notes .notes-tabbar .tab.drift, body .layout #notes .notes-tabbar #aside .tab.drift, body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label {
   border-radius: 0.6rem;
   padding: 0.5rem;
 }
-body .layout #aside .uni-bg:not(:last-child), body .layout #aside #notes .notes-tabbar .tab.drift:not(:last-child), body .layout #notes .notes-tabbar #aside .tab.drift:not(:last-child) {
+body .layout #aside .uni-bg:not(:last-child), body .layout #aside #notes .notes-tabbar .tab.drift:not(:last-child), body .layout #notes .notes-tabbar #aside .tab.drift:not(:last-child), body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label:not(:last-child), body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label:not(:last-child) {
   margin-bottom: 1rem;
 }
 body .layout #aside .widget_block .wp-block-social-links {
@@ -3754,6 +3766,58 @@ body .layout #aside .footer_nav li:hover > .sub-menu {
 body .layout #aside .header_nav a,
 body .layout #aside .footer_nav a {
   box-shadow: none;
+}
+body .layout #aside .aside-tab {
+  margin: 0;
+  padding: 1px 0 0;
+  margin-bottom: 1rem;
+  transition: 300ms;
+}
+body .layout #aside .aside-tab li {
+  list-style: none;
+  margin: 0;
+  display: inline-block;
+}
+body .layout #aside .aside-tab li label {
+  display: block;
+  padding: 0.2rem 0.6rem !important;
+  line-height: 0;
+  color: #66758c;
+  border-radius: 0.2rem !important;
+}
+body .layout #aside .aside-tab ~ :not(.aside-tab) {
+  display: none;
+  animation: trans-in 300ms;
+}
+body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label {
+  color: #3366ff;
+}
+body .layout #aside #tab-toc:checked ~ .toc-content {
+  display: block;
+}
+body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label {
+  color: #3366ff;
+}
+body .layout #aside #tab-nav:checked ~ :not(.toc-content) {
+  display: block;
+}
+body .layout #aside .toc-list {
+  margin: 0;
+  padding: 0 0 0 0.5rem;
+  border-left: 1px solid rgba(188, 195, 206, 0.2);
+}
+body .layout #aside .toc-list .nav-item {
+  list-style: none;
+  margin: 0;
+  padding: 0.2rem 0;
+  color: #bcc3ce;
+}
+body .layout #aside .toc-list .nav-item a {
+  color: currentColor;
+  font-size: 0.7rem;
+}
+body .layout #aside .toc-list .nav-item a:hover {
+  color: #66758c;
 }
 body .layout #main {
   position: relative;
@@ -4463,7 +4527,13 @@ body .layout #footer a.theme-name::after {
     background-color: #fff;
     z-index: 202;
   }
-  body .layout #aside .uni-bg, body .layout #aside #notes .notes-tabbar .tab.drift, body .layout #notes .notes-tabbar #aside .tab.drift {
+  body .layout #aside .sticky {
+    top: 0 !important;
+    padding-top: 1rem;
+    max-height: 100vh !important;
+    margin-right: -0.5rem;
+  }
+  body .layout #aside .uni-bg, body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label, body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, body .layout #aside #notes .notes-tabbar .tab.drift, body .layout #notes .notes-tabbar #aside .tab.drift {
     background-color: rgba(188, 195, 206, 0.1);
   }
   body .layout #main {
@@ -4661,6 +4731,10 @@ body #app.less-animation.animation-end #main .content {
   border-radius: 5px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   overflow-y: scroll;
 }
@@ -4849,7 +4923,7 @@ body .text-white {
   color: #fff !important;
 }
 body .divider {
-  border-color: rgba(188, 195, 206, 0.1);
+  border-color: rgba(188, 195, 206, 0.2);
 }
 body .loading-full {
   position: absolute;
@@ -4887,6 +4961,16 @@ body .dashicons {
   width: unset;
   height: unset;
 }
+body .wp-block-social-links {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+body .wp-block-social-links > * {
+  margin: 0;
+}
 body .view-image {
   backdrop-filter: unset;
 }
@@ -4921,7 +5005,7 @@ body .view-image-btn:hover {
 .dark body .loading-full {
   background-color: rgba(42, 48, 57, 0.5);
 }
-.dark body #app.layout .uni-bg, .dark body #app.layout #notes .notes-tabbar .tab.drift {
+.dark body #app.layout .uni-bg, .dark body #app.layout #aside #tab-toc:checked ~ .aside-tab .toc-active label, .dark body #app.layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, .dark body #app.layout #notes .notes-tabbar .tab.drift {
   background-color: rgba(42, 48, 57, 0.9);
 }
 .dark body #app.layout .modal-overlay {
@@ -5007,7 +5091,7 @@ body .view-image-btn:hover {
   html.auto body .loading-full {
     background-color: rgba(42, 48, 57, 0.5);
   }
-  html.auto body #app.layout .uni-bg, html.auto body #app.layout #notes .notes-tabbar .tab.drift {
+  html.auto body #app.layout .uni-bg, html.auto body #app.layout #aside #tab-toc:checked ~ .aside-tab .toc-active label, html.auto body #app.layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, html.auto body #app.layout #notes .notes-tabbar .tab.drift {
     background-color: rgba(42, 48, 57, 0.9);
   }
   html.auto body #app.layout .modal-overlay {
