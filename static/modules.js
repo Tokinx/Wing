@@ -904,8 +904,13 @@ const $modules = new function () {
                 const texts = !this.logged ? [] : [
                     { id: 'quote', icon: 'czs-bookmark-l', name: 'Quote' },
                     { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
-                    { id: 'archive', icon: 'czs-box-l', name: 'Archive' },
                 ];
+                if ( this.note.status === 'private' ) {
+                    texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Publish' });
+                } else {
+                    texts.push({ id: 'private', icon: 'czs-lock-l', name: 'Private' });
+                }
+                texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive' });
                 return {
                     texts,
                     icons: [
@@ -1007,19 +1012,27 @@ const $modules = new function () {
                             getSelection().collapse(target, target.childNodes.length);
                         });
                         break;
-                    case 'archive':
+                    case 'publish':
+                    case 'private':
+                    // case 'draft':
+                    case 'trash':
+                        let request = Promise.reject;
+                        if ( item.id === 'trash' ) {
+                            request = $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: false } });
+                        } else if ( ['publish', 'private'].includes(item.id) ) {
+                            request = $h.rest(`wp/v2/${type}s/${id}`, { method: 'POST', query: { status: item.id } });
+                        }
                         this.loading = true;
-                        $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: false } })
-                          .then(({ code, message }) => {
-                              if ( !!code ) {
-                                  this.$toast({ type: 'error', message });
-                              } else {
-                                  this.$toast({ type: 'success', message: 'Archived successfully' });
-                                  this.$emit('event', { event: item.id });
-                              }
-                          }).finally(() => {
+                        request.then(({ code, message }) => {
+                            if ( !!code ) {
+                                this.$toast({ type: 'error', message });
+                            } else {
+                                this.$toast({ type: 'success', message: 'successfully' });
+                                this.$emit('event', { event: item.id });
+                            }
+                        }).finally(() => {
                             this.loading = false;
-                        })
+                        });
                         break;
                     case 'praise':
                         $modules.actions.setPraise(id).then(() => {

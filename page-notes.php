@@ -71,7 +71,7 @@ get_header(); ?>
                                 </ul>
                             </div>
                             <div class="notes-list" :style="{opacity:loading?0.5:1}">
-                                <note-card v-for="(note, index) in noteList" :key="note.id" v-bind="{ logged, lately, note }" @event="data => handleNoteCard(data, note, index)" @topic="handleTopic" />
+                                <note-card v-for="(note, index) in filterNoteList" :key="note.id" v-bind="{ logged, lately, note }" @event="data => handleNoteCard(data, note, index)" @topic="handleTopic" />
                                 <div v-if="paging.total && !loading && theEnd" class="text-center" style="opacity: 0.5;">没有更多了</div>
                             </div>
                         </main>
@@ -101,13 +101,30 @@ get_header(); ?>
                     superTabs() {
                         const tabs = [];
                         if ( this.logged ) {
-                            tabs.push(...[{ name: '回顾', id: 'review' }, { name: '私密', id: 'private' }]);
+                            tabs.push(...[
+                                { name: '回顾', id: 'review' },
+                                { name: '私密', id: 'private' }
+                            ]);
                         }
                         return [...$config.tabs, ...tabs];
                     },
                     theEnd() {
                         return this.noteList.length >= this.paging.total;
                     },
+                    filterNoteList() {
+                        const active = this.search.type;
+                        const types = ['private', 'trash'];
+                        return this.noteList.filter(note => {
+                            if ( active !== 'review' ) {
+                                if ( types.includes(active) ) {
+                                    return note.status === active;
+                                } else {
+                                    return !types.includes(note.status)
+                                }
+                            }
+                            return true;
+                        });
+                    }
                 },
                 watch: {
                     private(val) {
@@ -152,9 +169,10 @@ get_header(); ?>
                                 note.content = content;
                                 note.images = images;
                                 break;
-                            // 从节点上移除内容
-                            case 'archive':
-                                this.noteList.splice(index, 1);
+                            case 'publish':
+                            case 'private':
+                            case 'trash':
+                                note.status = event;
                                 break;
                         }
                     },
