@@ -72,7 +72,7 @@ const $modules = new function () {
                 return this.author.display_name ? this.author.display_name.charAt(0) : 'A';
             },
             settings() {
-                return !!window.LinkSettingDialog;
+                return !!document.querySelector("#Links");
             }
         },
         created() {

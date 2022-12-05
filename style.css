@@ -4291,7 +4291,7 @@ body .layout .wp-block-table table th, body .layout .wp-block-table table td {
   border-bottom-color: rgba(188, 195, 206, 0.3);
 }
 body .layout .wp-block-table.is-style-stripes table tbody tr:nth-child(odd) {
-  background: rgba(188, 195, 206, 0.1);
+  background: rgba(188, 195, 206, 0.1) !important;
 }
 body .layout .wp-block-table.is-style-stripes table tbody tr:hover, body .layout .wp-block-table.is-style-regular table tbody tr:hover {
   background: rgba(188, 195, 206, 0.2);
@@ -4795,7 +4795,7 @@ body .justify-between {
 }
 body .sticky {
   position: sticky;
-  top: 1rem;
+  top: 0;
 }
 body .align-start {
   align-items: flex-start;

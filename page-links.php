@@ -38,7 +38,7 @@ get_header();
                         <form method="post" action @submit="e => e.preventDefault()">
                             <div class="modal-body article wp-block-table is-style-stripes" ref="body">
                                 <div v-if="loading" class="loading" style="position: absolute;inset: 0;z-index: 1;"></div>
-                                <table class="table table-scroll" :style="{ opacity: loading ? 0.3 : 1 }">
+                                <table class="table table-scroll" :style="{ opacity: loading ? 0.3 : 1, height: '100%' }">
                                     <thead>
                                         <tr><th v-for="col of tableColumn" :key="col.prop" v-bind="col.bind">{{ col.name }}</th></tr>
                                     </thead>
