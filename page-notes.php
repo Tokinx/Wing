@@ -103,7 +103,8 @@ get_header(); ?>
                         if ( this.logged ) {
                             tabs.push(...[
                                 { name: '回顾', id: 'review' },
-                                { name: '私密', id: 'private' }
+                                { name: '私密', id: 'private' },
+                                { name: '归档', id: 'trash' }
                             ]);
                         }
                         return [...$config.tabs, ...tabs];

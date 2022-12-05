@@ -38,13 +38,13 @@ function ajax_get_all_posts_callback() {
         'has_password'   => false,
     ];
 
-    // 私密笔记
-    if ( $type === 'private' ) {
+    // 私密笔记 || 归档笔记
+    if ( $type === 'private' || $type === 'trash' ) {
         if ( ! is_user_logged_in() ) {
             wp_send_json_error( '非法访问，请求被拒绝', 401 );
         }
         $args['post_type']   = 'note';
-        $args['post_status'] = 'private';
+        $args['post_status'] = $type;
     }
     // 每日回顾
     if ( $type === 'review' ) {

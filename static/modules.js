@@ -905,12 +905,16 @@ const $modules = new function () {
                     { id: 'quote', icon: 'czs-bookmark-l', name: 'Quote' },
                     { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
                 ];
-                if ( this.note.status === 'private' ) {
+                const status = this.note.status;
+                if ( ['private', 'trash'].includes(status) ) {
                     texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Publish' });
-                } else {
+                }
+                if ( ['publish', 'trash'].includes(status) ) {
                     texts.push({ id: 'private', icon: 'czs-lock-l', name: 'Private' });
                 }
-                texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive' });
+                if ( status !== 'trash' ) {
+                    texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive' });
+                }
                 return {
                     texts,
                     icons: [
