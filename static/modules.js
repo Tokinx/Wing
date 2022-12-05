@@ -906,13 +906,13 @@ const $modules = new function () {
                     { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
                 ];
                 const status = this.note.status;
-                if ( ['private', 'trash'].includes(status) ) {
+                if ( this.logged && ['private', 'trash'].includes(status) ) {
                     texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Publish' });
                 }
-                if ( ['publish', 'trash'].includes(status) ) {
+                if ( this.logged && ['publish', 'trash'].includes(status) ) {
                     texts.push({ id: 'private', icon: 'czs-lock-l', name: 'Private' });
                 }
-                if ( status !== 'trash' ) {
+                if ( this.logged && status !== 'trash' ) {
                     texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive' });
                 }
                 return {
