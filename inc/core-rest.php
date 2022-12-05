@@ -6,7 +6,7 @@ function check_nonce() {
     if ( get_theme_mod( 'biji_setting_rest_abuse', false ) // 防滥用开关
          && ! wp_verify_nonce( $nonce, 'wp_rest' ) // 校验nonce
          && ! is_user_logged_in() ) {
-        wp_send_json_error( '非法访问，请求被拒绝', 401 );
+        wp_send_json_error( 'No permission to access', 401 );
     }
 }
 
@@ -35,13 +35,18 @@ function ajax_get_all_posts_callback() {
         'order'          => 'DESC',
         'author'         => get_current_user_id(),
         'tax_query'      => [],
-        'has_password'   => false,
+//        'has_password'   => false,
     ];
+
+    // 已登入用户，查询更多状态的文章
+    if ( $type !== 'note' && is_user_logged_in() ) {
+        $args['post_status'] = [ 'publish', 'private' ];
+    }
 
     // 私密笔记 || 归档笔记
     if ( $type === 'private' || $type === 'trash' ) {
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error( '非法访问，请求被拒绝', 401 );
+            wp_send_json_error( 'No permission to access', 401 );
         }
         $args['post_type']   = 'note';
         $args['post_status'] = $type;
@@ -49,7 +54,7 @@ function ajax_get_all_posts_callback() {
     // 每日回顾
     if ( $type === 'review' ) {
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error( '非法访问，请求被拒绝', 401 );
+            wp_send_json_error( 'No permission to access', 401 );
         }
         if ( get_transient( 'review' ) ) {
             wp_send_json( get_transient( 'review' ) );
@@ -177,7 +182,7 @@ function ajax_affiliate_info_callback() {
 
         wp_send_json_success( $data );
     } else {
-        wp_send_json_error( "参数错误", 400 );
+        wp_send_json_error( "Parameter error", 400 );
     }
 }
 
@@ -319,7 +324,7 @@ function ajax_get_next_comments_callback() {
         ];
         wp_send_json( $result );
     }
-    wp_send_json_error( "参数错误", 400 );
+    wp_send_json_error( "Parameter error", 400 );
 }
 
 add_action( 'wp_ajax_get_next_comments', 'ajax_get_next_comments_callback' );
@@ -366,7 +371,7 @@ function ajax_post_meta_callback() {
             wp_send_json_success( get_post_meta( $post_id, $key, true ) );
         }
     }
-    wp_send_json_error( "参数错误", 400 );
+    wp_send_json_error( "Parameter error", 400 );
 }
 
 add_action( 'wp_ajax_submit_post_meta', 'ajax_post_meta_callback' );
@@ -381,7 +386,7 @@ function ajax_get_post_meta_callback() {
         $key     = $_GET["key"];
         wp_send_json_success( get_post_meta( $post_id, $key, true ) ?: [] );
     }
-    wp_send_json_error( "参数错误", 400 );
+    wp_send_json_error( "Parameter error", 400 );
 }
 
 add_action( 'wp_ajax_get_post_meta', 'ajax_get_post_meta_callback' );
@@ -408,7 +413,7 @@ function ajax_get_heatmap_callback() {
             'post_status'    => 'publish',
             'orderby'        => 'date',
             'order'          => 'ASC',
-            'author__in'     => max(get_current_user_id(), 1),
+            'author__in'     => max( get_current_user_id(), 1 ),
             'date_query'     => [
                 'after' => "-$after_day day",
             ],

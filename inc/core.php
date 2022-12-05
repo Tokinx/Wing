@@ -35,7 +35,7 @@ add_filter( 'wp_nav_menu', 'replace_submenu_class' );
 // 拦截纯英文评论
 function scp_comment_post( $incoming_comment ) {
     if ( ! get_theme_mod( 'biji_setting_enc', false ) && ! preg_match( '/[一-龥]/u', $incoming_comment['comment_content'] ) ) {
-        wp_send_json_error( '评论内容必须包含中文', 403 );
+        wp_send_json_error( 'Comments must contain Chinese', 403 );
     }
 
     return $incoming_comment;

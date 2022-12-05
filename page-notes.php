@@ -53,7 +53,7 @@ get_header(); ?>
                         <main class="notes-core">
                             <editor v-if="logged" class="mb-2" ref="editor" @submit="submitNote" v-bind="editor">
                                 <a slot="send-l" href="javascript:void(0);" class="btn-private btn btn-link btn-action btn-sm flex-center mr-2"
-                                    :class="{ active: private }" @click="private = !private">
+                                    :class="{ active: private }" @click="handlePrivate">
                                     <i class="dashicons dashicons-privacy"></i>
                                 </a>
                             </editor>
@@ -114,6 +114,7 @@ get_header(); ?>
                     },
                     filterNoteList() {
                         const active = this.search.type;
+                        if ( ['all', 'post'].includes(active) ) return this.noteList;
                         const types = ['private', 'trash'];
                         return this.noteList.filter(note => {
                             if ( active !== 'review' ) {
@@ -130,14 +131,11 @@ get_header(); ?>
                 watch: {
                     private(val) {
                         this.form.status = val ? 'private' : 'publish';
-                        this.$toast({
-                            type: (this.private ? 'primary' : ''),
-                            message: '私密笔记已' + (this.private ? '开启' : '关闭')
-                        });
                     },
                     'search.type': function (val) {
                         this.reset();
                         this.getNoteList(false);
+                        this.private = val === "private";
                     }
                 },
                 created() {
@@ -147,6 +145,13 @@ get_header(); ?>
                     reset() {
                         this.search.topics = '';
                         this.paging.page = 1;
+                    },
+                    handlePrivate() {
+                        this.private = !this.private;
+                        this.$toast({
+                            type: (this.private ? 'primary' : ''),
+                            message: '私密笔记已' + (this.private ? '开启' : '关闭')
+                        });
                     },
                     // 点击话题
                     handleTopic(topic) {
@@ -174,6 +179,9 @@ get_header(); ?>
                             case 'private':
                             case 'trash':
                                 note.status = event;
+                                if(event === 'trash') {
+                                    this.noteList.splice(index, 1);
+                                }
                                 break;
                         }
                     },
@@ -209,6 +217,7 @@ get_header(); ?>
                         $modules.actions.setNotes(this.form, { content, images }).then(() => {
                             this.$refs.editor.clear();
                             this.reset();
+                            this.search.type = this.private ? 'private' : 'note';
                             if ( ['all', 'note'].includes(this.search.type) || (this.private && this.search.type === 'private') ) {
                                 this.getNoteList(false);
                             }
