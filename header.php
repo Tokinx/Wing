@@ -36,7 +36,7 @@
                 <a class="right-btn dropdown-toggle flex-center s-circle" href="javascript:void(0);" tabindex="0">
                     <i class="czs-clothes-l text-small"></i>
                 </a>
-                <ul class="menu menu-left mode-switch uni-card uni-bg bg-blur" @click="toggleSkinMode">
+                <ul class="menu menu-left mode-switch uni-card uni-bg bg-blur uni-shadow" @click="toggleSkinMode">
                     <li v-for="item of modeList" class="menu-item">
                         <a class="flex-center" :data-mode="item.mode" href="javascript:void(0);">
                             <i :class="[item.icon, 'mr-1']"></i>{{ item.name }}
@@ -54,9 +54,7 @@
         <aside id="aside" class="off-canvas-sidebar">
             <div class="probes"></div>
             <section class="sticky">
-                <?php
-                if ( is_single() && get_theme_mod( 'biji_setting_toc', true ) && ( $_toc = get_post_toc() ) ) :
-                    ?>
+                <?php if ( is_single() && get_theme_mod( 'biji_setting_toc', true ) && ( $_toc = get_post_toc() ) ) : ?>
                     <input type="radio" id="tab-toc" name="aside-radio" hidden checked>
                     <input type="radio" id="tab-nav" name="aside-radio" hidden>
                     <ul class="aside-tab">
@@ -68,8 +66,7 @@
                                         class="czs-choose-list-l"></i></label>
                         </li>
                     </ul>
-                    <?php
-                    print $_toc;
+                    <?php print $_toc;
                 endif;
                 foreach ( [ 'header_nav', 'footer_nav' ] as $name ) {
                     if ( has_nav_menu( $name ) ) {

@@ -26,8 +26,7 @@ if ( function_exists( 'register_sidebar' ) ) {
 }
 
 function replace_submenu_class( $menu ) {
-    $menu = preg_replace( '/ class="sub-menu"/', '/ class="sub-menu uni-card uni-bg bg-blur" /', $menu );
-
+    $menu = preg_replace( '/ class="sub-menu"/', '/ class="sub-menu" /', $menu );
     return $menu;
 }
 

@@ -125,13 +125,6 @@ get_header(); ?>
                 created() {
                     this.getNoteList(false);
                 },
-                mounted() {
-                    const _bar = document.querySelector(".notes-tabbar");
-                    (new IntersectionObserver(
-                        ([e]) => e.target.querySelector(".tab").classList.toggle("drift", e.intersectionRatio < 1),
-                        { threshold: [1] }
-                    )).observe(_bar);
-                },
                 methods: {
                     reset() {
                         this.search.topics = '';

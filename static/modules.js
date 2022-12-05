@@ -801,9 +801,8 @@ const $modules = new function () {
         name: 'note-card',
         template: `
             <div :class="'notes-item feat-' + featId">
-                <div :class="['card uni-card', { 'uni-bg bg-blur': isDialog }]">
                     <template v-if="!isEditor">
-                        <div class="tile card-body d-block">
+                        <div class="tile d-block">
                             <div class="tile-header flex-center justify-between">
                                 <div class="article-header text-gray text-tiny w-100 d-flex align-center">
                                     <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
@@ -824,7 +823,7 @@ const $modules = new function () {
                                         <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle text-gray" tabindex="0">
                                             <i class="dashicons dashicons-ellipsis"></i>
                                         </a>
-                                        <ul class="menu menu-left uni-card uni-bg bg-blur" style="overflow: unset; min-width: 6rem;">
+                                        <ul class="menu menu-left uni-card uni-bg uni-shadow bg-blur" style="overflow: unset; min-width: 6rem;">
                                             <div v-if="loading" class="loading loading-full"></div>
                                             <div class="text-center">
                                                 <li v-if="!item.hide" :class="['menu-item d-inline-block tooltip mt-0', { 'ml-1': index}]" v-for="(item, index) in menus.icons" :key="item.id"
@@ -877,7 +876,7 @@ const $modules = new function () {
                             <button slot="send-l" class="btn btn-link btn-sm mr-2" @click="isEditor=false">取消</button>
                         </editor>
                     </template>
-                </div>
+                <div class="divider"></div>
             </div>
         `,
         components: {
@@ -1087,7 +1086,7 @@ const $modules = new function () {
             },
         });
         const vm = new Append({ el: document.createElement('div') });
-        document.querySelector(`.feat-${featId} .card`).appendChild(vm.$el);
+        document.querySelector(`.feat-${featId} > div`).appendChild(vm.$el);
         return vm;
     }
 

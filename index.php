@@ -3,13 +3,13 @@
     <div class="article-list">
 		<?php if ( have_posts() ) {
 			while ( have_posts() ) : the_post(); ?>
-                <article class="card uni-card article-item">
+                <article class="article-item">
                     <a href="<?php the_permalink(); ?>" class="article-mask">
 						<?php if ( ! post_password_required() && $thumbnail = get_thumbnail() ) { ?>
                             <div class="article-thumbnail" style="background-image: url('<?= $thumbnail; ?>');"></div>
 						<?php } else { ?>
                             <div class="article-thumbnail">
-                                <main class="card-body <?= ( post_password_required() ? 'flex-center' : '' ) ?>">
+                                <main class="article-body <?= ( post_password_required() ? 'flex-center' : '' ) ?>">
                                     <p class="text-tiny text-gray">
 										<?php if ( post_password_required() ) : ?>
                                             <span class="d-block text-center mt-2" style="font-size: 3rem;">
@@ -22,11 +22,11 @@
                                 </main>
                             </div>
 						<?php }; ?>
-                        <header class="card-header">
-                            <h2 class="card-title h5 text-dark text-ellipsis">
+                        <header class="article-header">
+                            <h2 class="article-title h5 text-dark text-ellipsis">
 								<?php the_title(); ?>
                             </h2>
-                            <div class="card-subtitle text-gray">
+                            <div class="article-subtitle text-gray">
                                 <ul class="d-flex text-tiny text-gray reset-ul">
                                     <li class="time">
                                         <i class="czs-time"></i>
