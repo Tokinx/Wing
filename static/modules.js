@@ -786,7 +786,11 @@ const $modules = new function () {
                     query: { action: 'get_topics' }
                 })
                   .then(({ data }) => {
-                      this.topics = data.map(item => item.replace(/&nbsp;/g, ''));
+                      console.log(data)
+                      this.topics = data.map(item => ({
+                          ...item,
+                          name: item.name.replace(/&nbsp;/g, '')
+                      }));
                   }).finally(() => {
                     this.loading = false;
                 });
