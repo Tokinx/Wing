@@ -405,7 +405,7 @@ function get_readers_wall( $count = 12 ) {
 new ThemeUpdateChecker( THEME_NAME, "https://dev.biji.io/update?" . http_build_query( [
         'theme'     => THEME_NAME,
         'version'   => THEME_VERSION,
-        'preview'   => get_theme_mod( 'biji_setting_preview_update' ),
+        'preview'   => true, // get_theme_mod( 'biji_setting_preview_update' )
         'url'       => home_url(),
         'email'     => get_option( 'admin_email' ),
         'wordpress' => $GLOBALS['wp_version'],
