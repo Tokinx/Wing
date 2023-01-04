@@ -16,7 +16,7 @@ if ( have_posts() ) {
 				$alt = mb_substr( $comment->comment_author, 0, 1 );
 				$avatar = get_avatar_url( $comment->comment_author_email ); ?>
                 <li class="column col-3 col-sm-4 col-xs-6 p-2">
-                    <div class="card uni-card flex-center text-center p-2">
+                    <div class="card uni-card uni-shadow flex-center text-center p-2">
                         <a class="text-gray text-tiny m-2" href="<?= ( $url ?: 'javascript:void(0);' ); ?>"
                            target="<?= ( $url ? '_blank' : '_self' ); ?>">
                             <figure class="avatar avatar-xl bg-gray badge" data-badge="<?= $comment->cnt ?>"

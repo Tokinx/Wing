@@ -195,7 +195,7 @@ function comment_mail_notify( $comment_id ) {
                         <tbody>
                             <tr>
                                 <td style="color: #000; line-height: 1.6;">
-                                    ' . ( $title ? "<h1 style=\"font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center;\">' . $title . '</h1>" : "" ) . '
+                                    ' . ( $title ? "<h1 style=\"font-size: 28px; font-weight: bold; margin: 28px auto; text-align: center;\">$title</h1>" : "" ) . '
                                     <div style="height: 240px;background-color: #3274ff;"></div>
                                     <div style="margin: -120px 4% 0;background-color: #fff;font-size: 18px;padding: 8%;box-shadow: 0 0 0 1px rgb(0, 85, 255, 0.1), 3px 3px 0 rgb(0, 85, 255, 0.1);font-size: 14px;">
                                         <div style="margin-bottom: 8%;text-align: right;">
@@ -332,7 +332,7 @@ function the_friendly_links( $post_id = null ) {
     $links   = json_decode( get_post_meta( $post_id, 'links', true ) ?: "[]" );
     foreach ( $links as $link ) : ?>
         <li class="column col-4 col-sm-6 p-2">
-            <a class="card uni-card flex-center text-center" href="<?= $link->url ?? 'javascript:void(0);' ?>"
+            <a class="card uni-card uni-shadow flex-center text-center" href="<?= $link->url ?? 'javascript:void(0);' ?>"
                target="_blank">
                 <span class="text-break mt-2"><?= $link->name ?? '--' ?></span>
                 <span class="text-gray text-tiny text-break mb-2"><?= $link->description ?? '' ?></span>

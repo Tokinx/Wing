@@ -117,7 +117,7 @@ const $modules = new function () {
                             <i class="dashicons dashicons-smiley"></i>
                         </button>
                         <div class="editor-tool-emoji popover-container">
-                            <div class="card uni-card card uni-card uni-bg bg-blur">
+                            <div class="card uni-card card uni-card uni-bg uni-shadow bg-blur">
                                 <div class="card-body flex-center" style="flex-wrap: wrap">
                                     <button v-for="emoji in emojis" :key="emoji" class="btn btn-link btn-action flex-center" @click="$emit('emoji', emoji)">{{ emoji }}</button>
                                 </div>
@@ -786,7 +786,7 @@ const $modules = new function () {
                     query: { action: 'get_topics' }
                 })
                   .then(({ data }) => {
-                      this.topics = data;
+                      this.topics = data.map(item => item.replace(/&nbsp;/g, ''));
                   }).finally(() => {
                     this.loading = false;
                 });
@@ -979,7 +979,7 @@ const $modules = new function () {
             handleDelegate(e) {
                 const { dataset } = e.target;
                 if ( dataset && dataset.topic ) {
-                    this.$emit('topic', dataset.topic.replace('#', ''));
+                    this.$emit('topic', dataset.topic.replace('#', '').replace(/&nbsp;/g, ''));
                 }
                 if ( dataset && dataset.quote ) {
                     this.openArticleDialog(dataset.quote);
@@ -1177,7 +1177,7 @@ const $modules = new function () {
         // 创建&编辑笔记
         setNotes(form, { content, images }) {
             // 从content提取topic：#topic1 #topic2 ...
-            const topics = (content.match(/#([^#|^<\s]+)/g) || []).map(item => item.replace('#', '')).filter(item => !!item);
+            const topics = (content.match(/#([^#|^<\s]+)/g) || []).map(item => item.replace('#', '').replace(/&nbsp;/g, '')).filter(item => !!item);
             const fields = [];
             if ( (images || []).length ) {
                 fields.push({ name: 'images', value: images.map(item => item.id).join(',') });

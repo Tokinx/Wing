@@ -4094,7 +4094,14 @@ body .layout .single-note .affiliate .tile-content {
   text-align: left;
 }
 body .layout .article-dialog .notes-item {
-  background: unset !important;
+  position: relative;
+  background: #fff;
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem;
+}
+body .layout .article-dialog .notes-item > .divider {
+  display: none;
 }
 body .layout .article-dialog .loading {
   border-radius: 0.5rem;
@@ -4102,12 +4109,6 @@ body .layout .article-dialog .loading {
 body .layout .article-dialog .btn-clear {
   transform: scale(1.2);
   flex-shrink: 0;
-}
-body .layout .article-dialog .notes-item {
-  position: relative;
-  background: #fff;
-  width: 100%;
-  max-width: 600px;
 }
 body .layout .article-list {
   display: flex;
