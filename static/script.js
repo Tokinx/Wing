@@ -251,14 +251,23 @@ window.$vm = new Vue({
             }
             if ( window.IntersectionObserver ) {
                 const _probes = document.querySelector("#aside .probes");
-                (new IntersectionObserver(
+                if ( _probes ) (new IntersectionObserver(
                     ([e]) => {
                         const aside = document.querySelector("#aside .sticky");
                         aside.classList.toggle("active", e.intersectionRatio < 1);
+
                         // TODO: Scroll to top
                     },
                     { threshold: [1] }
                 )).observe(_probes);
+
+                const _tabbar = document.querySelector(".notes-tabbar");
+                if ( _tabbar ) (new IntersectionObserver(
+                    ([e]) => {
+                        e.target.classList.toggle("active", e.intersectionRatio < 1);
+                    },
+                    { threshold: [1] }
+                )).observe(_tabbar);
             }
 
             // Safari Hack

@@ -33,7 +33,7 @@
                     <div id="notes" class="d-flex">
                         <main class="notes-core single-note">
                             <div class="loading" v-if="loading"></div>
-                            <note-card v-else v-bind="{ lately, note }" />
+                            <note-card v-else v-bind="{ lately, note }" hide-divider />
                             <comment-area ref="comments" />
                         </main>
                         <aside class="notes-aside">

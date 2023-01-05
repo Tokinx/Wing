@@ -136,18 +136,49 @@ const $modules = new function () {
                     <button v-else-if="name === 'italic'" class="btn btn-link btn-action btn-sm flex-center">
                         <i class="dashicons dashicons-editor-italic"></i>
                     </button>
-                    <button v-else-if="name === 'image'" class="btn btn-link btn-action btn-sm flex-center">
-                        <i class="dashicons dashicons-format-gallery"></i>
+                    <button v-else-if="name === 'upload'" class="btn btn-link btn-action btn-sm flex-center">
+                        <i class="dashicons dashicons-cloud-upload"></i>
                     </button>
                 `,
                 props: { name: String },
                 data() {
                     return {
                         emojis: ['🥳', '😀', '😂', '😉', '😘', '😍', '🤪', '😓', '🙁', '😕', '😳', '😱', '😧', '😡', '👨🏻‍💻', '🙅🏻‍♂️', '🎉', '👏', '🎁', '🚀', '🌈'],
-                        images: [],
                     }
                 },
             },
+            'attachment-chips': {
+                name: 'attachment-chips',
+                props: ['attachments', 'showClose'],
+                template: `
+                    <div v-if="(attachments || []).length" class="attachment" style="margin: -0.2rem; margin-top: 1%;">
+                        <span v-for="(item, index) in files" :key="item.id" class="chip bg-gray text-gray m-1 tooltip" :data-tooltip="item.filename" style="overflow: unset;">
+                            <i class="dashicons dashicons-media-default"></i>
+                            <div class="divider-vert px-1"></div>
+                            <a :href="item.source_url" target="_blank" style="color: currentColor">{{ item.name }}</a>
+                            <template v-if="showClose">
+                                <div v-if="item.loading" class="loading ml-1" style="width: 1rem;"></div>
+                                <a v-else href="javascript:void(0);" class="btn btn-clear" aria-label="Close" role="button" @click="remove(index)"></a>
+                            </template>
+                        </span>
+                    </div>`,
+                computed: {
+                    files() {
+                        return (this.attachments || []).map(item => {
+                            const filename = item.source_url.split('/').pop();
+                            return { ...item, filename, name: this.truncation(filename) };
+                        });
+                    },
+                },
+                methods: {
+                    remove(index) {
+                        this.$emit('remove', index);
+                    },
+                    truncation(str, len = 18) {
+                        return str.length > len ? str.slice(0, Math.floor(len / 2)) + '...' + str.slice(-Math.ceil(len / 2)) : str;
+                    }
+                }
+            }
         },
         template: `
             <div class="editor-box d-flex">
@@ -166,28 +197,22 @@ const $modules = new function () {
                         <p><br></p>
                     </div>
                     
-                    <input v-if="features.indexOf('image') > -1" ref="upload" class="d-none" type="file" accept="image/*" multiple @change="handleUpload" />
-                    <div v-if="images.length" class="editor-preview mx-2 mb-1">
-                        <div class="editor-preview-box flex-center">
-                            <div v-for="(image, index) in images" :key="image.id" class="editor-preview__item d-flex">
-                                <img :src="image.source_url" class="s-rounded" />
-                                <a href="javascript:void(0);" class="editor-preview__item-remove btn btn-clear bg-error m-0" @click="handleRemoveImage(index)"></a>
-                            </div>
-                        </div>
-                    </div>
+                    <input v-if="features.includes('upload')" ref="upload" class="d-none" type="file" multiple @change="handleUpload" />
+                    
+                    <attachment-chips v-if="files.length" v-bind="{ attachments: files, showClose: true }" @remove="handleRemoveFile" style="margin: 0" />
                     
                     <div class="editor-footer flex-center justify-between">
                         <div class="editor-tool d-flex">
                             <slot name="tool">
                                 <slot name="tool-l"></slot>
-                                <tools v-for="name in features" :key="name" :name="name" :class="{ loading: name === 'image' && uploading }" @click.native="e => handleTools(name, e)" @emoji="insertText" />
+                                <tools v-for="name in features" :key="name" :name="name" :disabled="name === 'upload' && uploading" @click.native="e => handleTools(name, e)" @emoji="insertText" />
                                 <slot name="tool-r"></slot>
                             </slot>
                         </div>
                         <div class="flex-center">
                             <slot name="send">
                                 <slot name="send-l"></slot>
-                                <button class="editor-send btn btn-primary btn-sm flex-center" @click="submit">
+                                <button class="editor-send btn btn-primary btn-sm flex-center" @click="submit" :disabled="uploading">
                                     <i class="dashicons dashicons-edit-page mr-1"></i> {{ sendText }}
                                 </button>
                                 <slot name="send-r"></slot>
@@ -209,7 +234,7 @@ const $modules = new function () {
                 loading: false,
                 uploading: false,
                 content: '',
-                images: [],
+                files: [],
             }
         },
         computed: {
@@ -222,7 +247,7 @@ const $modules = new function () {
                 // this.content 去除html标签和空格
                 const content = this.content.replace(/<[^>]+>/g, '').replace(/\s+/g, '');
                 if ( content.length ) {
-                    this.$emit('submit', { content: this.content, images: this.images, id: this.id });
+                    this.$emit('submit', { content: this.content, files: this.files, id: this.id });
                 } else {
                     this.$toast({ message: '内容不能为空' });
                 }
@@ -236,7 +261,7 @@ const $modules = new function () {
             },
             clear() {
                 this.clearText();
-                this.images = [];
+                this.files = [];
             },
             handleTools(name, e) {
                 switch (name) {
@@ -255,7 +280,7 @@ const $modules = new function () {
                     case 'italic':
                         this.execCommand('italic');
                         break;
-                    case 'image':
+                    case 'upload':
                         this.$refs.upload.click();
                         break;
                 }
@@ -269,15 +294,24 @@ const $modules = new function () {
                 Array.from(files).forEach(file => {
                     const formData = new FormData();
                     formData.append("file", file);
+                    file.id = Math.random().toString(32).substring(2);
+                    this.files.push({ id: file.id, source_url: file.name, loading: true });
                     $h.rest('wp/v2/media', {
                         method: 'POST',
                         headers: {
                             'Content-Type': null,
-                            'Content-Disposition': `attachment; filename=${file.name}`
+                            'Content-Disposition': `attachment; filename=${encodeURI(file.name)}`
                         },
                         body: formData,
-                    }).then(({ id, source_url, mime_type }) => {
-                        this.images.push({ id, source_url, mime_type });
+                    }).then(({ id, guid, mime_type }) => {
+                        const name = guid.raw.split('/').pop();
+                        // 根据id替换
+                        this.files = this.files.map(item => {
+                            if ( item.id === file.id ) {
+                                item = { id, source_url: guid.raw, mime_type, loading: false };
+                            }
+                            return item;
+                        });
                     }).finally(() => {
                         if ( ++len.flag === len.count ) {
                             this.uploading = false;
@@ -286,13 +320,13 @@ const $modules = new function () {
                 });
                 e.target.value = ""; // 清空input
             },
-            handleRemoveImage(index) {
-                const { id } = this.images[index];
+            handleRemoveFile(index) {
+                const { id } = this.files[index];
                 $h.rest(`wp/v2/media/${id}`, {
                     method: 'DELETE',
                     query: { force: true }
                 });
-                this.images.splice(index, 1);
+                this.files.splice(index, 1);
             },
             onInput(e) {
                 const editor = this.editor;
@@ -452,7 +486,7 @@ const $modules = new function () {
             },
         },
         methods: {
-            submit({ content, images }) {
+            submit({ content, upload }) {
                 if ( !content ) return;
                 this.form.comment = content;
                 this.sending = true;
@@ -760,7 +794,7 @@ const $modules = new function () {
         template: `
             <ul class="topic-list menu">
                 <li v-for="topic in topics" :key="topic.id" class="menu-item" @click="handleTopic(topic)">
-                    <a href="javascript:void(0);" :class="{ active: active ===topic.name }">#{{ topic.name }}</a>
+                    <a href="javascript:void(0);" :class="{ active: active ===topic.name }">{{ topic.name }}</a>
                     <div class="menu-badge">
                         <label class="label text-tiny">{{ topic.count }}</label>
                     </div>
@@ -786,7 +820,6 @@ const $modules = new function () {
                     query: { action: 'get_topics' }
                 })
                   .then(({ data }) => {
-                      console.log(data)
                       this.topics = data.map(item => ({
                           ...item,
                           name: item.name.replace(/&nbsp;/g, '')
@@ -812,18 +845,20 @@ const $modules = new function () {
                                     <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
                                         <a :href="note.permalink">{{ note.title }}</a>
                                     </h3>
-                                    <ul v-else class="article-info d-flex text-gray text-tiny reset-ul m-0">
-                                        <li>
-                                            <time :datetime="note.date" itemprop="datePublished" pubdate>{{ noteDate }}</time>
-                                        </li>
-                                        <li :class="['c-hand', { 'text-error': praise }]" @click="handleMenuClick({ id: 'praise' })">
+                                    <div v-else class="flex-center">
+                                        <time class="mr-2" :datetime="note.date" itemprop="datePublished" pubdate>{{ noteDate }}</time>
+                                        <button class="btn btn-link btn-sm text-gray mr-2" @click="handleComment">
+                                            <i class="czs-talk"></i> {{ note.comment_count }}
+                                        </button>
+                                        <button :class="['btn btn-link btn-sm text-gray mr-2', { 'text-error': praise }]"  @click="handleMenuClick({ id: 'praise' })">
                                             <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ notePraise }}</span>
-                                        </li>
-                                    </ul>
+                                        </button>
+                                        <span v-if="note.status === 'private'" class="chip bg-gray text-gray">{{ note.status.toLocaleUpperCase() }}</span>
+                                    </div>
                                 </div>
         
                                 <slot name="right-icon">
-                                    <div v-if="!isPost" class="dropdown" hover-show>
+                                    <div v-if="!isPost && logged" class="dropdown" hover-show>
                                         <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle text-gray" tabindex="0">
                                             <i class="dashicons dashicons-ellipsis"></i>
                                         </a>
@@ -832,13 +867,13 @@ const $modules = new function () {
                                             <div class="text-center">
                                                 <li v-if="!item.hide" :class="['menu-item d-inline-block tooltip mt-0', { 'ml-1': index}]" v-for="(item, index) in menus.icons" :key="item.id"
                                                     :data-tooltip="item.name" @click="debounceMenuClick(item)">
-                                                    <a  :href="item.href || 'javascript:void(0);'" class="align-center" style="display: flex;">
+                                                    <a :href="item.href || 'javascript:void(0);'" class="align-center" style="display: flex;">
                                                         <i v-if="item.icon" :class="[item.icon]"></i>
                                                     </a>
                                                 </li>
                                             </div>
-                                            <div class="divider my-1" v-if="menus.texts.length"></div>
-                                            <li class="menu-item" v-for="item in menus.texts" :key="item.id"  @click="debounceMenuClick(item)">
+                                            <div class="divider my-2" v-if="menus.texts.length"></div>
+                                            <li :class="['menu-item', item.class]" v-for="item in menus.texts" :key="item.id"  @click="debounceMenuClick(item)">
                                                 <a :href="item.href || 'javascript:void(0);'" class="align-center" style="display: flex;">
                                                     <i v-if="item.icon" :class="[item.icon, 'mr-2']"></i> {{ item.name }}
                                                 </a>
@@ -852,15 +887,16 @@ const $modules = new function () {
                                     <img v-if="note.thumbnail" class="thumbnail s-rounded" :src="note.thumbnail" alt=""/>
                                     <div :class="['article-content', { 'w-100': isPost }]" v-html="superContent" @click="handleDelegate"></div>
                                 </div>
-                                <div v-if="note.images" class="notes-item-images flex-center justify-start mt-2 w-100">
+                                <div v-if="note.images" class="notes-item-images flex-center justify-start">
                                     <div class="notes-item-images__item c-zoom-in" v-for="item in note.images" :key="item.id">
                                         <img class="s-rounded" :src="item.source_url" alt @click="handleViewImage(item.source_url)"/>
                                     </div>
                                 </div>
+                                <attachment-chips v-if="note.attachment" :attachments="note.attachment"></attachment-chips>
                             </div>
-                            <div class="tile-footer text-gray text-tiny flex-center justify-between">
+                            <div v-if="isPost" class="tile-footer text-gray text-tiny flex-center justify-between">
                                 <div class="flex-center">
-                                    <time v-if="isPost" class="mr-2">{{ noteDate }}</time>
+                                    <time class="mr-2">{{ noteDate }}</time>
                                     <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleComment">
                                         <i class="czs-talk mr-1"></i> {{ note.comment_count }}
                                     </button>
@@ -880,15 +916,17 @@ const $modules = new function () {
                             <button slot="send-l" class="btn btn-link btn-sm mr-2" @click="isEditor=false">取消</button>
                         </editor>
                     </template>
-                <div class="divider"></div>
+                <div v-if="!hideDivider" class="divider"></div>
             </div>
         `,
         components: {
             Editor: that.Editor,
+            'attachment-chips': that.Editor.components['attachment-chips'],
         },
         props: {
             logged: { type: Boolean, default: false },
             lately: { type: Boolean, default: true },
+            hideDivider: { type: Boolean, default: false },
             note: { type: Object, default: () => ({}) },
             isDialog: { type: Boolean, default: false },
         },
@@ -903,27 +941,26 @@ const $modules = new function () {
         },
         computed: {
             menus() {
-                const praise_icon = `czs-heart${this.praise ? ' text-error' : '-l'}`;
                 const detail_href = this.note.permalink;
-                const texts = !this.logged ? [] : [
-                    { id: 'quote', icon: 'czs-bookmark-l', name: 'Quote' },
-                    { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
-                ];
+                const texts = [];
                 const status = this.note.status;
-                if ( this.logged && ['private', 'trash'].includes(status) ) {
+                if ( ['private'].includes(status) ) {
                     texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Publish' });
                 }
-                if ( this.logged && ['publish', 'trash'].includes(status) ) {
+                if ( ['publish'].includes(status) ) {
                     texts.push({ id: 'private', icon: 'czs-lock-l', name: 'Private' });
                 }
-                if ( this.logged && status !== 'trash' ) {
-                    texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive' });
+                if ( status === 'trash' ) {
+                    texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Restore' });
+                    texts.push({ id: 'delete', icon: 'czs-trash-l', name: 'Delete', class: 'text-error' });
+                } else {
+                    texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive', class: 'text-error' });
                 }
                 return {
                     texts,
                     icons: [
-                        { id: 'links', icon: 'czs-share', name: 'Copy Link' },
-                        { id: 'praise', icon: praise_icon, name: 'Like' },
+                        { id: 'quote', icon: "czs-bookmark-l", name: 'Quote' },
+                        { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
                         { id: 'detail', icon: 'czs-talk-l', name: 'View Detail', href: detail_href },
                     ]
                 };
@@ -940,14 +977,18 @@ const $modules = new function () {
                 if ( !content ) return '';
                 if ( this.isPost ) return `<p>${content}</p>`;
                 // 高亮话题 #话题1 话题2
-                (content.match(/#([^#|^<\s]+)/g) || []).forEach(topic => {
-                    content = content.replace(topic, `<span class="chip c-hand text-primary" data-topic="${topic}">${topic}</span>`);
-                });
+                Array.from(new Set(content.match(/.?#([^#|^<\s]+)/g) || []))
+                     .filter(text => ["#", " ", ">"].includes(text[0]))
+                     .map(text => text.replace(/\s|&nbsp;|>/g, ''))
+                     .filter(item => !!item)
+                     .forEach(topic => {
+                         content = content.replaceAll(topic, `<span class="chip c-hand text-primary" data-topic="${topic}">${topic.replace("#", "")}</span>`);
+                     });
 
                 // 高亮引用 /note/5841
-                (content.match(/(\/note\/\d+)/g) || []).forEach(quote => {
+                new Set((content.match(/(\/note\/\d+)/g) || [])).forEach(quote => {
                     const id = quote.replace('/note/', '');
-                    content = content.replace(quote, `<a href="javascript:void(0);" class="text-primary" data-quote="${id}">${quote}</a>`);
+                    content = content.replaceAll(quote, `<a href="javascript:void(0);" class="text-primary" data-quote="${id}">~${quote}</a>`);
                 });
 
                 // url转link
@@ -955,7 +996,7 @@ const $modules = new function () {
                 let url_match = content.match(url_regex);
                 if ( url_match ) {
                     url_match.forEach(url => {
-                        content = content.replace(url, `<a href="${url}" target="_blank" class="chip text-primary" style="text-decoration: none;"><i class="dashicons dashicons-external"></i> Link</a>`);
+                        content = content.replaceAll(url, `<a href="${url}" target="_blank" class="chip text-primary tooltip" data-tooltip="${url}" style="text-decoration: none;overflow: unset"><i class="dashicons dashicons-external"></i> Link</a>`);
                     });
                 }
 
@@ -1003,7 +1044,7 @@ const $modules = new function () {
             handleMenuClick(item) {
                 // 防抖
                 if ( this.loading ) return;
-                const { id, type, content, images, permalink } = this.note;
+                const { id, type, content, images, videos, attachment, permalink } = this.note;
                 switch (item.id) {
                     case 'quote':
                         this.$emit('event', { event: item.id });
@@ -1015,27 +1056,27 @@ const $modules = new function () {
                             const target = e.$refs[e.refName];
                             target.innerHTML = content;
                             e.content = content;
-                            e.images = images || [];
+                            e.files = [...(images || []), ...(videos || []), ...(attachment || [])];
                             // 将光标定位到最后
                             getSelection().collapse(target, target.childNodes.length);
                         });
                         break;
                     case 'publish':
                     case 'private':
-                    // case 'draft':
                     case 'trash':
-                        let request = Promise.reject;
-                        if ( item.id === 'trash' ) {
-                            request = $h.rest(`wp/v2/${type}s/${id}`, { method: 'DELETE', query: { force: false } });
-                        } else if ( ['publish', 'private'].includes(item.id) ) {
-                            request = $h.rest(`wp/v2/${type}s/${id}`, { method: 'POST', query: { status: item.id } });
-                        }
+                    case 'delete':
                         this.loading = true;
-                        request.then(({ code, message }) => {
+                        let options = {};
+                        if ( ['trash', 'delete'].includes(item.id) ) {
+                            options = { method: 'DELETE', query: { force: item.id === 'delete' } };
+                        } else if ( ['publish', 'private'].includes(item.id) ) {
+                            options = { method: 'POST', query: { status: item.id } };
+                        }
+                        $h.rest(`wp/v2/${type}s/${id}`, options).then(({ code, message }) => {
                             if ( !!code ) {
                                 this.$toast({ type: 'error', message });
                             } else {
-                                this.$toast({ type: 'success', message: 'successfully' });
+                                this.$toast({ type: 'success', message: 'Successfully' });
                                 this.$emit('event', { event: item.id });
                             }
                         }).finally(() => {
@@ -1057,16 +1098,17 @@ const $modules = new function () {
             handleViewImage(url) {
                 window.ViewImage && ViewImage.display(this.note.images.map(({ source_url }) => source_url), url);
             },
-            handleSubmit({ content, images }) {
+            handleSubmit({ content, files }) {
                 const e = this.$refs.editor;
                 e.setLoading(true);
-                that.actions.setNotes(this.note, { content, images })
+                that.actions.setNotes(this.note, { content, files })
                     .then(({ content }) => {
                         this.isEditor = false;
-                        this.$emit('event', { event: 'update', content: content.rendered, images })
-                    }).finally(() => {
-                    e.setLoading(false);
-                });
+                        this.$emit('event', { event: 'update', content: content.rendered, files })
+                    })
+                    .finally(() => {
+                        e.setLoading(false);
+                    });
             },
         }
     };
@@ -1118,7 +1160,7 @@ const $modules = new function () {
                 <div class="modal active article-dialog">
                     <a href="javascript:void(0);" class="modal-overlay" @click="destroy()"></a>
                     <div v-if="loading" class="loading"></div>
-                    <note-card v-else v-bind="{ lately, note, isDialog: true }">
+                    <note-card v-else v-bind="{ lately, note, isDialog: true }" class="uni-bg uni-shadow bg-blur">
                         <button slot="right-icon" href="javascript:void(0);" class="btn btn-clear" @click="destroy()"></button>
                     </note-card>
                 </div>
@@ -1179,12 +1221,35 @@ const $modules = new function () {
             });
         },
         // 创建&编辑笔记
-        setNotes(form, { content, images }) {
+        setNotes(form, { content, files }) {
             // 从content提取topic：#topic1 #topic2 ...
-            const topics = (content.match(/#([^#|^<\s]+)/g) || []).map(item => item.replace('#', '').replace(/&nbsp;/g, '')).filter(item => !!item);
+            const topics = Array.from(new Set(content.match(/.?#([^#|^<\s]+)/g) || []))
+                                .filter(text => ["#", " "].includes(text[0]))
+                                .map(text => text.replace(/#|\s|&nbsp;/g, ''))
+                                .filter(item => !!item);
             const fields = [];
-            if ( (images || []).length ) {
+            const images = [];
+            const videos = [];
+            const attachment = [];
+
+            files && files.forEach((item) => {
+                if ( item.mime_type.includes("image/") ) {
+                    images.push(item);
+                } else if ( item.mime_type.includes("video/") ) {
+                    videos.push(item);
+                } else {
+                    attachment.push(item);
+                }
+            });
+
+            if ( images.length ) {
                 fields.push({ name: 'images', value: images.map(item => item.id).join(',') });
+            }
+            if ( videos.length ) {
+                fields.push({ name: 'videos', value: videos.map(item => item.id).join(',') });
+            }
+            if ( attachment.length ) {
+                fields.push({ name: 'attachment', value: attachment.map(item => item.id).join(',') });
             }
             return $h.rest(`wp/v2/notes/${form.id || ''}`, {
                 method: !form.id ? 'POST' : 'PUT',

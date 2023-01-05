@@ -11,7 +11,7 @@ function check_nonce() {
 }
 
 // 检查并获取真实value
-function _get_value( $key, $default = '' ) {
+function tryGetValue( $key, $default = '' ) {
     return $_GET[ $key ] ?? $default;
 }
 
@@ -20,10 +20,10 @@ function ajax_get_all_posts_callback() {
     check_nonce();
 
     // 参数
-    $type = _get_value( 'type', 'single' );
-    $ids  = _get_value( 'ids' );
-    $rows = _get_value( 'rows', 10 );
-    $page = _get_value( 'page', 1 );
+    $type = tryGetValue( 'type', 'single' );
+    $ids  = tryGetValue( 'ids' );
+    $rows = tryGetValue( 'rows', 10 );
+    $page = tryGetValue( 'page', 1 );
 
     // 查询条件
     $args = [
@@ -80,11 +80,11 @@ function ajax_get_all_posts_callback() {
         $args['post_type'] = [ 'post', 'note' ];
         $args['post__in']  = explode( ',', $ids );
     }
-    if ( _get_value( 'topics' ) ) {
+    if ( tryGetValue( 'topics' ) ) {
         $args['tax_query'][] = [
             'taxonomy' => 'topic',
             'field'    => 'name',
-            'terms'    => explode( ',', _get_value( 'topics' ) ),
+            'terms'    => explode( ',', tryGetValue( 'topics' ) ),
         ];
     }
 
@@ -108,18 +108,29 @@ function ajax_get_all_posts_callback() {
         $post->category = get_the_terms( $post->id, 'category' );
         // 获取自定义字段
         $post->fields = get_post_meta( $post->id, '', true );
-        // 获取图片
+        // 获取图片、视频、附件
+        $get_media = function ( $var ) {
+            $ids = explode( ',', $var );
+
+            return array_map( function ( $id ) {
+                $attachment = get_post( $id );
+
+                return [
+                    'id'         => $id,
+                    'mime_type'  => $attachment->post_mime_type,
+                    'source_url' => replace_domain( $attachment->guid )
+                ];
+            }, $ids );
+        };
         foreach ( $post->fields as $key => $value ) {
             if ( $key === 'images' && is_array( $value ) ) {
-                $ids          = explode( ',', $value[0] );
-                $post->images = array_map( function ( $id ) {
-                    $url = wp_get_attachment_url( $id );
-
-                    return [
-                        'id'         => $id,
-                        'source_url' => replace_domain( $url ),
-                    ];
-                }, $ids );
+                $post->images = $get_media( $value[0] );
+            }
+            if ( $key === 'videos' && is_array( $value ) ) {
+                $post->videos = $get_media( $value[0] );
+            }
+            if ( $key === 'attachment' && is_array( $value ) ) {
+                $post->attachment = $get_media( $value[0] );
             }
         }
         // 格式化文章内容
@@ -128,7 +139,7 @@ function ajax_get_all_posts_callback() {
                 $post->content = static_cdn_replace( $post->content );
                 $post->content = dangopress_esc_html( $post->content );
             } else {
-                $post->content = mb_strimwidth( strip_shortcodes( strip_tags( $post->content ) ), 0, 200, '...' );
+                $post->content = mb_strimwidth( strip_shortcodes( strip_tags( $post->content ) ), 0, 220, '...' );
             }
         }
 
@@ -521,7 +532,7 @@ add_action( 'comment_post', 'update_cache' );
 // 获取访客信息
 function ajax_get_visitor_info_callback() {
     check_nonce();
-    $email = _get_value( 'email' );
+    $email = tryGetValue( 'email' );
     $key   = md5( $email );
 
     if ( false === ( $result = get_transient( $key ) ) ) {

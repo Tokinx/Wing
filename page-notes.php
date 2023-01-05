@@ -14,7 +14,7 @@ get_header(); ?>
                 lately: <?= json_encode( get_theme_mod( 'biji_setting_lately', true ) ) ?>,
                 editor: {
                     placeholder: '在想什么，记下来吧？',
-                    features: ['topic', 'emoji', 'ul', 'ol', 'bold', 'italic', 'image']
+                    features: ['topic', 'emoji', 'ul', 'ol', 'bold', 'italic', 'upload']
                 },
                 search: { type: 'all', topics: '', },
                 tabs: [{ name: '全部', id: 'all' }, { name: '笔记', id: 'note' }, { name: '文章', id: 'post' }],
@@ -52,9 +52,10 @@ get_header(); ?>
                     <div id="notes" class="d-flex">
                         <main class="notes-core">
                             <editor v-if="logged" class="mb-2" ref="editor" @submit="submitNote" v-bind="editor">
-                                <a slot="send-l" href="javascript:void(0);" class="btn-private btn btn-link btn-action btn-sm flex-center mr-2"
-                                    :class="{ active: private }" @click="handlePrivate">
-                                    <i class="dashicons dashicons-privacy"></i>
+                                <a slot="send-l" href="javascript:void(0);" class="btn-private btn btn-link btn-sm flex-center mr-2"
+                                    :class="{ active: private }" @click="private = !private">
+                                    <!-- <i class="dashicons dashicons-privacy"></i>-->
+                                    {{ private ? '私密' : '公开' }}
                                 </a>
                             </editor>
 
@@ -65,7 +66,7 @@ get_header(); ?>
                                     </li>
                                     <div v-if="loading" class="loading"></div>
                                     <span v-else-if="search.topics" class="chip text-primary">
-                                        #{{ search.topics }}
+                                        {{ search.topics }}
                                         <a href="javascript: void(0);" class="btn btn-clear" @click="handleTopic('')" aria-label="Close" role="button"></a>
                                     </span>
                                 </ul>
@@ -146,38 +147,45 @@ get_header(); ?>
                         this.search.topics = '';
                         this.paging.page = 1;
                     },
-                    handlePrivate() {
-                        this.private = !this.private;
-                        this.$toast({
-                            type: (this.private ? 'primary' : ''),
-                            message: '私密笔记已' + (this.private ? '开启' : '关闭')
-                        });
-                    },
                     // 点击话题
                     handleTopic(topic) {
+                        $h.scrollTo();
                         this.reset();
                         this.search.topics = topic;
                         this.getNoteList(false);
                     },
                     // 笔记卡片一些操作
-                    handleNoteCard({ event, content, images }, note, index) {
+                    handleNoteCard({ event, content, files }, note, index) {
                         switch (event) {
                             // 引用
                             case 'quote':
                                 $h.scrollTo({
                                     callback: () => {
-                                        this.$refs.editor.insertText(['', note.type, note.id].join('/'));
+                                        this.$refs.editor.insertText(['', note.type, note.id].join('/') + " ");
                                     }
                                 });
                                 break;
                             // 新内容更新到节点上
                             case 'update':
                                 note.content = content;
-                                note.images = images;
+                                note.images = [];
+                                note.videos = [];
+                                note.attachment = [];
+
+                                files && files.forEach((item) => {
+                                    if ( item.mime_type.includes("image/") ) {
+                                        note.images.push(item);
+                                    } else if ( item.mime_type.includes("video/") ) {
+                                        note.videos.push(item);
+                                    } else {
+                                        note.attachment.push(item);
+                                    }
+                                });
                                 break;
                             case 'publish':
                             case 'private':
                             case 'trash':
+                            case 'delete':
                                 note.status = event;
                                 if(event === 'trash') {
                                     this.noteList.splice(index, 1);
@@ -212,9 +220,9 @@ get_header(); ?>
                         });
                     },
                     // 提交笔记
-                    submitNote({ content, images }) {
+                    submitNote({ content, files }) {
                         this.$refs.editor.setLoading(true);
-                        $modules.actions.setNotes(this.form, { content, images }).then(() => {
+                        $modules.actions.setNotes(this.form, { content, files }).then(() => {
                             this.$refs.editor.clear();
                             this.reset();
                             this.search.type = this.private ? 'private' : 'note';
