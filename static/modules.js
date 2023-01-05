@@ -1224,8 +1224,8 @@ const $modules = new function () {
         setNotes(form, { content, files }) {
             // 从content提取topic：#topic1 #topic2 ...
             const topics = Array.from(new Set(content.match(/.?#([^#|^<\s]+)/g) || []))
-                                .filter(text => ["#", " "].includes(text[0]))
-                                .map(text => text.replace(/#|\s|&nbsp;/g, ''))
+                                .filter(text => ["#", " ", ">"].includes(text[0]))
+                                .map(text => text.replace(/#|\s|&nbsp;|>/g, ''))
                                 .filter(item => !!item);
             const fields = [];
             const images = [];
