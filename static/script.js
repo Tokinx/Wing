@@ -251,12 +251,13 @@ window.$vm = new Vue({
             }
             if ( window.IntersectionObserver ) {
                 const _probes = document.querySelector("#aside .probes");
+                const _scroll = document.querySelector("#footer .scroll-top");
                 if ( _probes ) (new IntersectionObserver(
                     ([e]) => {
                         const aside = document.querySelector("#aside .sticky");
                         aside.classList.toggle("active", e.intersectionRatio < 1);
 
-                        // TODO: Scroll to top
+                        if ( _scroll ) _scroll.classList.toggle("show", e.intersectionRatio < 1);
                     },
                     { threshold: [1] }
                 )).observe(_probes);

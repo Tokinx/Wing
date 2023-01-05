@@ -4501,6 +4501,25 @@ body .layout #footer a.theme-name::after {
   background-color: red;
   box-shadow: 4px 0 orange, 8px 0 yellow, 12px 0 green, 16px 0 blue, 20px 0 purple;
 }
+body .layout #footer .scroll-top {
+  display: none;
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 999;
+  opacity: 0.5;
+  transition: 300ms;
+}
+body .layout #footer .scroll-top.show {
+  display: block;
+}
+body .layout #footer .scroll-top:hover {
+  opacity: 1;
+}
+body .layout #footer .scroll-top i {
+  display: inline-block;
+  transform: scale(2);
+}
 @media (min-width: 960px) {
   body .layout #aside {
     background: none !important;

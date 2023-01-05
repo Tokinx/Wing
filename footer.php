@@ -20,6 +20,10 @@
             <span class="mx-1"><a href="https://www.beian.gov.cn/portal/registerSystemInfo" target="_blank"><?= $code; ?></a></span>
         <?php } ?>
     </div>
+
+    <a class="scroll-top btn btn-link btn-action flex-center" href="javascript: $h.scrollTo();">
+        <i class="czs-rocket"></i>
+    </a>
 </footer>
 
 <script data-no-instant>
