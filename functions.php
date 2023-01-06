@@ -39,17 +39,19 @@ function biji_enqueue_scripts() {
         wp_enqueue_script( 'prettify', '//cdn.staticfile.org/prettify/r298/prettify.js', [], THEME_VERSION, true );
     }
     wp_enqueue_script( 'helper', get_template_directory_uri() . '/static/helper.js', [], THEME_VERSION, false );
-    wp_enqueue_script( 'package', get_template_directory_uri() . '/static/package.js', [], THEME_VERSION, true );
+    wp_enqueue_script( 'package', get_template_directory_uri() . '/static/package.js', [], THEME_VERSION, false );
+    wp_enqueue_script( 'language', get_template_directory_uri() . '/static/lang.js', [], THEME_VERSION, false );
     wp_enqueue_script( 'modules', get_template_directory_uri() . '/static/modules.js', [], THEME_VERSION, true );
     wp_enqueue_script( 'script', get_template_directory_uri() . '/static/script.js', [], THEME_VERSION, true );
     $avatar_url = parse_url( get_avatar_url( null ) );
-    wp_localize_script( 'script', 'BaseData', [
+    wp_localize_script( 'helper', 'BaseData', [
         'origin' => site_url(),
         'avatar' => "//" . $avatar_url["host"],
         'ajax'   => admin_url( 'admin-ajax.php' ),
         'rest'   => rest_url(),
         'nonce'  => wp_create_nonce( 'wp_rest' ),
-        'pjax'   => get_theme_mod( 'biji_setting_pjax', true )
+        'pjax'   => get_theme_mod( 'biji_setting_pjax', true ),
+        'lang'   => get_locale(),
     ] );
 }
 
@@ -175,7 +177,7 @@ function comment_mail_notify( $comment_id ) {
         $wp_email = 'no-reply@' . preg_replace( '#^www.#', '', strtolower( $_SERVER['SERVER_NAME'] ) ); // e-mail 发出点, no-reply 可改为可用的 e-mail.
         $parent   = get_comment( $comment->comment_parent );
         $to       = trim( $parent->comment_author_email );
-        $subject  = '您在 [' . get_option( "blogname" ) . '] 的留言有了新回复';
+        $subject  = 'Your message in [' . get_option( "blogname" ) . '] has a new reply';
         $title    = trim( get_the_title( $comment->comment_post_ID ) );
         $message  = '<table cellspacing="0" border="0" cellpadding="0" align="center" width="100%" bgcolor="transparent" style="border-collapse: separate; border-spacing: 0; letter-spacing: 0; max-width: 580px;">
         <tbody>
@@ -219,7 +221,7 @@ function comment_mail_notify( $comment_id ) {
                                         <div style="border-top: 1px dashed #ddd;text-align: center;">
                                             <a target="_blank" href="' . htmlspecialchars( get_comment_link( $comment_id ) ) . '"
                                                 style="background-color: #3274ff; border: none; color: white !important; margin: 8% auto 0; padding: 3% 0; width: 120px; display: inline-block;text-decoration: none;"
-                                                rel="noopener">立即回复</a>
+                                                rel="noopener">Reply now</a>
                                         </div>
                                     </div>
                                 </td>
@@ -241,7 +243,7 @@ function comment_mail_notify( $comment_id ) {
                             <tr>
                                 <td valign="top" align="center" style="font-size: 12px; color: #aaa;">
                                     <div>
-                                        <p>这是由系统自动发送的电子邮件，请勿直接回复。</p>
+                                        <p>This is an automatic email sent by the system, please do not reply directly.</p>
                                         <p>© ' . date( "Y" ) . ' <a href="' . get_option( "home" ) . '" style="color: #aaa;" target="_blank">' . get_option( "blogname" ) . '</a></p>
                                     </div>
                                 </td>
@@ -265,12 +267,12 @@ function password_protected_change( $content ) {
     if ( post_password_required() ) {
         return '<form action="' . get_option( 'siteurl' ) . '/wp-login.php?action=postpass" method="post" class="post_password_form">
             <div class="form-group">
-                <label class="form-label text-warning text-tiny" for="post_password">本篇文章需输入密码后查看</label>
+                <label class="form-label text-warning text-tiny" for="post_password">This article requires a password to view</label>
                 <div class="d-flex">
-                  <input class="form-input" id="post_password" name="post_password" type="password" size="20" placeholder="请输入密码">
+                  <input class="form-input" id="post_password" name="post_password" type="password" size="20" placeholder="Please enter your password">
                   <input type="hidden" name="_wp_http_referer" value="' . get_permalink() . '" />
                   <div class="mx-1"></div>
-                  <button class="btn btn-primary" type="submit" name="Submit">立即查看</button>
+                  <button class="btn btn-primary" type="submit" name="Submit">View Now</button>
                 </div>
             </div>
         </form>';
@@ -332,7 +334,8 @@ function the_friendly_links( $post_id = null ) {
     $links   = json_decode( get_post_meta( $post_id, 'links', true ) ?: "[]" );
     foreach ( $links as $link ) : ?>
         <li class="column col-4 col-sm-6 p-2">
-            <a class="card uni-card uni-shadow flex-center text-center" href="<?= $link->url ?? 'javascript:void(0);' ?>"
+            <a class="card uni-card uni-shadow flex-center text-center"
+               href="<?= $link->url ?? 'javascript:void(0);' ?>"
                target="_blank">
                 <span class="text-break mt-2"><?= $link->name ?? '--' ?></span>
                 <span class="text-gray text-tiny text-break mb-2"><?= $link->description ?? '' ?></span>

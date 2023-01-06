@@ -13,11 +13,15 @@ get_header(); ?>
                 // 时间格式化
                 lately: <?= json_encode( get_theme_mod( 'biji_setting_lately', true ) ) ?>,
                 editor: {
-                    placeholder: '在想什么，记下来吧？',
+                    placeholder: $lang.translate("What are you thinking, write it down?"),
                     features: ['topic', 'emoji', 'ul', 'ol', 'bold', 'italic', 'upload']
                 },
                 search: { type: 'all', topics: '', },
-                tabs: [{ name: '全部', id: 'all' }, { name: '笔记', id: 'note' }, { name: '文章', id: 'post' }],
+                tabs: [
+                    { name: $lang.translate("All"), id: 'all' },
+                    { name: $lang.translate("Notes"), id: 'note' },
+                    { name: $lang.translate("Articles"), id: 'post' }
+                ],
                 paging: { page: 1, rows: 10, total: 0 },
                 // 评论配置
                 comment: {
@@ -55,7 +59,7 @@ get_header(); ?>
                                 <a slot="send-l" href="javascript:void(0);" class="btn-private btn btn-link btn-sm flex-center mr-2"
                                     :class="{ active: private }" @click="private = !private">
                                     <!-- <i class="dashicons dashicons-privacy"></i>-->
-                                    {{ private ? '私密' : '公开' }}
+                                    {{ private ? $lang.translate('Private') : $lang.translate('Publish') }}
                                 </a>
                             </editor>
 
@@ -71,9 +75,9 @@ get_header(); ?>
                                     </span>
                                 </ul>
                             </div>
-                            <div class="notes-list" :style="{opacity:loading?0.5:1}">
+                            <div class="notes-list" :style="{ opacity: loading ? 0.5 : 1 }">
                                 <note-card v-for="(note, index) in filterNoteList" :key="note.id" v-bind="{ logged, lately, note }" @event="data => handleNoteCard(data, note, index)" @topic="handleTopic" />
-                                <div v-if="paging.total && !loading && theEnd" class="text-center" style="opacity: 0.5;">没有更多了</div>
+                                <div v-if="paging.total && !loading && theEnd" class="text-center" style="opacity: 0.5;">{{ $lang.translate('No more') }}</div>
                             </div>
                         </main>
                         <aside class="notes-aside">
@@ -103,9 +107,9 @@ get_header(); ?>
                         const tabs = [];
                         if ( this.logged ) {
                             tabs.push(...[
-                                { name: '回顾', id: 'review' },
-                                { name: '私密', id: 'private' },
-                                { name: '归档', id: 'trash' }
+                                { name: $lang.translate("Review"), id: 'review' },
+                                { name: $lang.translate("Private"), id: 'private' },
+                                { name: $lang.translate("Archive"), id: 'trash' }
                             ]);
                         }
                         return [...$config.tabs, ...tabs];
@@ -187,7 +191,7 @@ get_header(); ?>
                             case 'trash':
                             case 'delete':
                                 note.status = event;
-                                if(event === 'trash') {
+                                if ( event === 'trash' ) {
                                     this.noteList.splice(index, 1);
                                 }
                                 break;

@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.7.31
+	Version: 0.7.32
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -3421,6 +3421,7 @@ body .layout .uni-bg, body .layout #notes .notes-tabbar, body .layout #aside #ta
   transition: 300ms;
 }
 body .layout .uni-shadow, body .layout #notes .notes-tabbar.active .tab, body .layout #aside #tab-nav:checked ~ .aside-tab .nav-active label, body .layout #aside #tab-toc:checked ~ .aside-tab .toc-active label {
+  border: none;
   box-shadow: 0 0 0 0.5px rgba(188, 195, 206, 0.1), 0 2px 10px rgba(48, 55, 66, 0.06);
 }
 body .layout .uni-card {
@@ -3543,24 +3544,10 @@ body .layout #header .logo .fullname a {
 body .layout #header .header__right {
   position: absolute;
   top: 50%;
-  height: 2rem;
   margin-top: -1rem;
   right: 4%;
   color: #66758c;
   z-index: 99;
-}
-body .layout #header .header__right .mode-switch {
-  min-width: 100px;
-}
-body .layout #header .header__right .mode-switch a {
-  display: flex;
-}
-body .layout #header .header__right .s-circle {
-  width: 2rem;
-  height: 2rem;
-  border: none;
-  background: rgba(188, 195, 206, 0.1);
-  transition: 300ms;
 }
 body .layout #header .header__right .search {
   position: relative;
@@ -3571,6 +3558,8 @@ body .layout #header .header__right .search [class*=czs-] {
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 202;
+  pointer-events: none;
 }
 body .layout #header .header__right .search-key {
   position: relative;
@@ -3585,16 +3574,17 @@ body .layout #header .header__right .search-key:not(body .layout #header .header
 }
 body .layout #header .header__right .search-key:focus {
   width: 12rem;
-  padding: 0 1rem 0 2rem;
+  padding: 0 1rem 0 1.8rem;
   background: #fff;
   box-shadow: 0 0 0 9999rem rgba(48, 55, 66, 0.1);
+  text-align: left;
 }
 body .layout #header .header__right .search-key:focus::placeholder {
   opacity: 0.5;
 }
 body .layout #header .header__right .search-key:focus ~ [class*=czs-] {
   justify-content: flex-start;
-  left: 0.8rem;
+  left: 0.5rem;
   right: unset;
   z-index: 202;
 }
@@ -3604,7 +3594,6 @@ body .layout #header .header__right .right-btn {
 }
 body .layout #header .header__right .menu-btn {
   display: none;
-  font-size: 1.5rem;
 }
 body .layout #core {
   position: relative;
@@ -4501,24 +4490,28 @@ body .layout #footer a.theme-name::after {
   background-color: red;
   box-shadow: 4px 0 orange, 8px 0 yellow, 12px 0 green, 16px 0 blue, 20px 0 purple;
 }
-body .layout #footer .scroll-top {
+body .layout #footer .scroll-tools {
   display: none;
   position: fixed;
-  right: 1rem;
-  bottom: 1rem;
+  right: 0;
+  top: 50%;
   z-index: 999;
-  opacity: 0.5;
   transition: 300ms;
+  display: flex;
+  flex-direction: column;
 }
-body .layout #footer .scroll-top.show {
+body .layout #footer .scroll-tools .scroll-top {
+  display: none;
+}
+body .layout #footer .scroll-tools.show {
   display: block;
 }
-body .layout #footer .scroll-top:hover {
-  opacity: 1;
+body .layout #footer .scroll-tools.show .scroll-top {
+  display: block;
 }
-body .layout #footer .scroll-top i {
-  display: inline-block;
-  transform: scale(2);
+body .layout #footer .scroll-tools .dropdown[hover-show] .menu {
+  top: 0;
+  right: 110%;
 }
 @media (min-width: 960px) {
   body .layout #aside {

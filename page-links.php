@@ -33,7 +33,7 @@ get_header();
                     <div class="modal-container uni-shadow" style="max-width: 980px;">
                         <div class="modal-header">
                             <a href="javascript: void(0);" class="btn btn-clear text-gray float-right" @click="hide" aria-label="Close"></a>
-                            <div class="modal-title h5 text-gray">友情链接设置</div>
+                            <div class="modal-title h5 text-gray">{{ $lang.translate('Link Settings') }}</div>
                         </div>
                         <form method="post" action @submit="e => e.preventDefault()">
                             <div class="modal-body article wp-block-table is-style-stripes" ref="body">
@@ -51,8 +51,8 @@ get_header();
                                                 </template>
                                                 <template v-else>
                                                     <template v-if="prop === 'operate'">
-                                                        <button class="btn btn-link btn-sm" @click="handleEditLink(index)">{{ rows.edit ? '确定' : '编辑' }}</button>
-                                                        <button class="btn btn-link btn-sm text-error" @click="handleRemoveLink(index)">删除</button>
+                                                        <button class="btn btn-link btn-sm" @click="handleEditLink(index)">{{ rows.edit ? $lang.translate('Confirm') : $lang.translate('Edit') }}</button>
+                                                        <button class="btn btn-link btn-sm text-error" @click="handleRemoveLink(index)">{{ $lang.translate('Delete') }}</button>
                                                     </template>
                                                     <template v-else-if="prop === 'drag-handle'">
                                                         <div v-show="!rows.edit" class="drag-handle dashicons dashicons-menu c-move"></div>
@@ -64,8 +64,8 @@ get_header();
                                 </table>
                             </div>
                             <div class="modal-footer">
-                                <div class="btn btn-link float-left" @click="handleAddLinks">添加链接</div>
-                                <button class="btn btn-primary" :disabled="loading" @click="submit">全部保存</button>
+                                <div class="btn btn-link float-left" @click="handleAddLinks">{{ $lang.translate('Add Links') }}</div>
+                                <button class="btn btn-primary" :disabled="loading" @click="submit">{{ $lang.translate('Save All') }}</button>
                             </div>
                         </form>
                     </div>
@@ -93,28 +93,28 @@ get_header();
                             //     }
                             // },
                             {
-                                name: '名称',
+                                name: $lang.translate('Name'),
                                 prop: 'name',
                                 bind: {
                                     style: { minWidth: '200px' }
                                 }
                             },
                             {
-                                name: '地址',
+                                name: $lang.translate('Url'),
                                 prop: 'url',
                                 bind: {
                                     style: { minWidth: '240px' }
                                 }
                             },
                             {
-                                name: '描述',
+                                name: $lang.translate('Description'),
                                 prop: 'description',
                                 bind: {
                                     style: { width: '100%', minWidth: '240px' }
                                 }
                             },
                             {
-                                name: '操作',
+                                name: $lang.translate('Operate'),
                                 prop: 'operate',
                                 slot: true,
                                 bind: {
@@ -171,7 +171,7 @@ get_header();
                         })
                           .then((html) => {
                               this.reRender(html);
-                              this.$toast({ type: 'success', message: '保存成功！' });
+                              this.$toast({ type: 'success', message: $lang.translate('Successfully') });
                               this.hide();
                           })
                           .finally(() => {

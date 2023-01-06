@@ -178,11 +178,17 @@ window.$vm = new Vue({
         return {
             animation: "",
             modeList: [
-                { name: 'Auto', icon: 'czs-bot', mode: 'auto' },
-                { name: 'Light', icon: 'czs-sun', mode: 'light' },
-                { name: 'Dark', icon: 'czs-moon', mode: 'dark' },
+                { name: $lang.translate('Auto'), icon: 'czs-bot', mode: 'auto' },
+                { name: $lang.translate('Light'), icon: 'czs-sun', mode: 'light' },
+                { name: $lang.translate('Dark'), icon: 'czs-moon', mode: 'dark' },
                 // { name: 'Relax', icon: 'czs-eye', mode: 'relax' },
             ],
+            langList: [
+                { name: '🇨🇳 简体中文', mode: 'zh_CN' },
+                { name: '🇭🇰 繁体中文', mode: 'zh_TC' },
+                { name: '🇯🇵 Japanese', mode: 'ja' },
+                { name: '🇺🇸 English', mode: 'en' },
+            ]
         };
     },
     mounted() {
@@ -251,13 +257,13 @@ window.$vm = new Vue({
             }
             if ( window.IntersectionObserver ) {
                 const _probes = document.querySelector("#aside .probes");
-                const _scroll = document.querySelector("#footer .scroll-top");
+                const _tools = document.querySelector("#footer .scroll-tools");
                 if ( _probes ) (new IntersectionObserver(
                     ([e]) => {
                         const aside = document.querySelector("#aside .sticky");
                         aside.classList.toggle("active", e.intersectionRatio < 1);
 
-                        if ( _scroll ) _scroll.classList.toggle("show", e.intersectionRatio < 1);
+                        if ( _tools ) _tools.classList.toggle("show", e.intersectionRatio < 1);
                     },
                     { threshold: [1] }
                 )).observe(_probes);
@@ -287,6 +293,14 @@ window.$vm = new Vue({
                 body.remove('auto', 'light', 'dark');
                 body.add(mode);
             })(document.documentElement.classList);
+        },
+        toggleLanguage(e) {
+            const target = e.target;
+            if ( !target.closest('a') ) return;
+            const lang = target.dataset.mode;
+            Cookies.set('lang', lang);
+            // 刷新页面
+            location.reload();
         },
         sleep(timer = 300) {
             return new Promise(resolve => {

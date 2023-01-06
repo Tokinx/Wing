@@ -223,8 +223,8 @@ const $modules = new function () {
             </div>
         `,
         props: {
-            placeholder: { type: String, default: '在想什么，记下来吧？' },
-            sendText: { type: String, default: '发送' },
+            placeholder: { type: String, default: $lang.translate('What are you thinking, write it down?') },
+            sendText: { type: String, default: $lang.translate('Send') },
             features: { type: Array, default: ['emoji'] }
         },
         data() {
@@ -249,7 +249,7 @@ const $modules = new function () {
                 if ( content.length ) {
                     this.$emit('submit', { content: this.content, files: this.files, id: this.id });
                 } else {
-                    this.$toast({ message: '内容不能为空' });
+                    this.$toast({ message: $lang.translate('Please enter content') });
                 }
             },
             setLoading(loading) {
@@ -348,7 +348,7 @@ const $modules = new function () {
                     // IE
                     text = window.clipboardData.getData('text');
                 } else {
-                    text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+                    text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt($lang.translate('Please enter:'));
                 }
                 this.insertText(text);
             },
@@ -444,7 +444,7 @@ const $modules = new function () {
                 sending: false,
                 inputs: [
                     {
-                        bind: { name: 'email', placeholder: 'Email', required: true },
+                        bind: { name: 'email', placeholder: $lang.translate('Email'), required: true },
                         event: $h.debounce(() => {
                             $h.visitor(this.form.email, ({ author, avatar, url }) => {
                                 this.avatar = avatar;
@@ -453,8 +453,8 @@ const $modules = new function () {
                             });
                         }, 600),
                     },
-                    { bind: { name: 'author', placeholder: 'Name', required: true } },
-                    { bind: { name: 'url', placeholder: 'Url' } },
+                    { bind: { name: 'author', placeholder: $lang.translate('Name'), required: true } },
+                    { bind: { name: 'url', placeholder: $lang.translate('Url') } },
                 ],
                 avatar: 'data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=',
                 userId: '',
@@ -498,7 +498,7 @@ const $modules = new function () {
                 })
                   .then(({ data }) => {
                       this.$refs.editor.clear();
-                      this.$toast({ type: 'success', message: '提交成功' });
+                      this.$toast({ type: 'success', message: $lang.translate('Successfully') });
                       this.$emit('append', data);
                   }).finally(() => {
                     this.sending = false;
@@ -531,7 +531,7 @@ const $modules = new function () {
                             <time class="tile-title__time tooltip" :data-tooltip="comment.date">{{ commentDate }}</time>
                         </div>
                         <div class="tile-action flex-center">
-                            <span v-if="comment.approved == 0" class="text-error mr-2">待审核</span>
+                            <span v-if="comment.approved == 0" class="text-error mr-2">{{ $lang.translate("Pending review") }}</span>
                             <button class="btn btn-link btn-sm flex-center" @click="showReply = true">
                                 <i class="czs-comment"></i>
                              </button>
@@ -588,7 +588,7 @@ const $modules = new function () {
             metas() {
                 const metas = [];
                 const { ip_city, agent } = this.comment;
-                if ( ip_city ) metas.push({ name: `来自${ip_city}` });
+                if ( ip_city ) metas.push({ name: `${$lang.translate("From")}${ip_city}` });
                 if ( this.info.browser || this.info.os ) {
                     const { browser, os } = new UAParser(agent).getResult();
                     if ( this.info.os ) metas.push({
@@ -632,10 +632,10 @@ const $modules = new function () {
                     </ol>
                     <div class="text-center load-next-comments">
                         <button v-if="isNextPage || loading" class="btn btn-link" :class="{ loading }" @click="loadNextComments">
-                            {{ !parameter.page ? '加载评论' : '继续加载' }}
+                            {{ !parameter.page ? $lang.translate('Load comments') : $lang.translate('Continue load') }}
                         </button>
-                        <span v-else-if="commentList.length">🎉加载完毕</span>
-                        <span v-else>🌈快来抢沙发吧~</span>
+                        <span v-else-if="commentList.length">{{ $lang.translate('No more') }}</span>
+                        <span v-else>{{ $lang.translate('Looking forward to your comments') }}</span>
                     </div>
                 </section>
             </div>
@@ -841,7 +841,7 @@ const $modules = new function () {
                     <template v-if="!isEditor">
                         <div class="tile d-block">
                             <div class="tile-header flex-center justify-between">
-                                <div class="article-header text-gray text-tiny w-100 d-flex align-center">
+                                <div class="article-header text-gray text-tiny d-flex align-center">
                                     <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
                                         <a :href="note.permalink">{{ note.title }}</a>
                                     </h3>
@@ -858,7 +858,7 @@ const $modules = new function () {
                                 </div>
         
                                 <slot name="right-icon">
-                                    <div v-if="!isPost && logged" class="dropdown" hover-show>
+                                    <div v-if="!isPost && logged" class="dropdown mr-1" hover-show>
                                         <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle text-gray" tabindex="0">
                                             <i class="dashicons dashicons-ellipsis"></i>
                                         </a>
@@ -903,17 +903,17 @@ const $modules = new function () {
                                 </div>
         
                                 <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
-                                    Read Article <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
+                                    {{ $lang.translate('Read Article') }} <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
                                 </a>
                                 <span v-else class="flex-center">
-                                    <i class="dashicons dashicons-laptop mr-1"></i> Write from Webpage
+                                    <i class="dashicons dashicons-laptop mr-1"></i> {{ $lang.translate('Write from') }} Webpage
                                 </span>
                             </div>
                         </div>
                     </template>
                     <template v-else>
                         <editor class="edit-status" ref="editor" v-bind="{ ...bindEditor }" @submit="handleSubmit">
-                            <button slot="send-l" class="btn btn-link btn-sm mr-2" @click="isEditor=false">取消</button>
+                            <button slot="send-l" class="btn btn-link btn-sm mr-2" @click="isEditor=false">{{ $lang.translate("Cancel") }}</button>
                         </editor>
                     </template>
                 <div v-if="!hideDivider" class="divider"></div>
@@ -945,23 +945,33 @@ const $modules = new function () {
                 const texts = [];
                 const status = this.note.status;
                 if ( ['private'].includes(status) ) {
-                    texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Publish' });
+                    texts.push({ id: 'publish', icon: 'czs-read-l', name: $lang.translate("Publish") });
                 }
                 if ( ['publish'].includes(status) ) {
-                    texts.push({ id: 'private', icon: 'czs-lock-l', name: 'Private' });
+                    texts.push({ id: 'private', icon: 'czs-lock-l', name: $lang.translate('Private') });
                 }
                 if ( status === 'trash' ) {
-                    texts.push({ id: 'publish', icon: 'czs-read-l', name: 'Restore' });
-                    texts.push({ id: 'delete', icon: 'czs-trash-l', name: 'Delete', class: 'text-error' });
+                    texts.push({ id: 'publish', icon: 'czs-read-l', name: $lang.translate('Restore') });
+                    texts.push({
+                        id: 'delete',
+                        icon: 'czs-trash-l',
+                        name: $lang.translate('Delete'),
+                        class: 'text-error'
+                    });
                 } else {
-                    texts.push({ id: 'trash', icon: 'czs-box-l', name: 'Archive', class: 'text-error' });
+                    texts.push({
+                        id: 'trash',
+                        icon: 'czs-box-l',
+                        name: $lang.translate('Archive'),
+                        class: 'text-error'
+                    });
                 }
                 return {
                     texts,
                     icons: [
-                        { id: 'quote', icon: "czs-bookmark-l", name: 'Quote' },
-                        { id: 'edit', icon: 'czs-pen-write', name: 'Edit' },
-                        { id: 'detail', icon: 'czs-talk-l', name: 'View Detail', href: detail_href },
+                        { id: 'quote', icon: "czs-bookmark-l", name: $lang.translate('Quote') },
+                        { id: 'edit', icon: 'czs-pen-write', name: $lang.translate('Edit') },
+                        { id: 'detail', icon: 'czs-talk-l', name: $lang.translate('View Detail'), href: detail_href },
                     ]
                 };
             },
@@ -1076,7 +1086,7 @@ const $modules = new function () {
                             if ( !!code ) {
                                 this.$toast({ type: 'error', message });
                             } else {
-                                this.$toast({ type: 'success', message: 'Successfully' });
+                                this.$toast({ type: 'success', message: $lang.translate('Successfully') });
                                 this.$emit('event', { event: item.id });
                             }
                         }).finally(() => {
@@ -1091,7 +1101,7 @@ const $modules = new function () {
                     case 'links':
                         // 复制链接
                         $h.copyText(permalink);
-                        this.$toast({ type: 'success', message: 'Copied!' });
+                        this.$toast({ type: 'success', message: $lang.translate('Copied!') });
                         break;
                 }
             },
@@ -1185,7 +1195,7 @@ const $modules = new function () {
                               history.replaceState(history.state, null, permalink);
                           } else {
                               this.destroy();
-                              this.$toast({ type: 'warning', message: '资源已被删除' });
+                              this.$toast({ type: 'warning', message: $lang.translate('The resource has been deleted') });
                           }
                       }).finally(() => {
                         this.loading = false;
@@ -1212,7 +1222,7 @@ const $modules = new function () {
             return $h.ajax({ query: { action: 'submit_praise', post_id } }).then(num => {
                 Array.from(document.querySelectorAll(`.praise-${post_id}`)).forEach((el, i) => {
                     if ( !i && (+num) > (+el.innerText) ) {
-                        new Vue().$toast({ type: 'success', message: '祝你财源广进' });
+                        new Vue().$toast({ type: 'success', message: $lang.translate('Good luck') });
                     }
                     el.parentNode.classList.toggle('text-error');
                     el && (el.innerHTML = num);

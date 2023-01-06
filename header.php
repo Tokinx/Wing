@@ -27,25 +27,13 @@
             </h1>
         </hgroup>
         <section class="header__right d-flex">
-            <form method="get" action="<?php bloginfo( 'url' ); ?>" class="search mr-2">
-                <input class="search-key s-circle" name="s" placeholder="输入关键词..." type="text"
+            <form method="get" action="<?php bloginfo( 'url' ); ?>" class="search">
+                <input class="search-key btn btn-link btn-action right-btn uni-bg uni-shadow" name="s" placeholder="Please enter..." type="text"
                        required="required"/>
                 <i class="text-small czs-search-l flex-center"></i>
             </form>
-            <div class="dropdown" hover-show perspective>
-                <a class="right-btn dropdown-toggle flex-center s-circle" href="javascript:void(0);" tabindex="0">
-                    <i class="czs-clothes-l text-small"></i>
-                </a>
-                <ul class="menu menu-left mode-switch uni-card uni-bg bg-blur uni-shadow" @click="toggleSkinMode">
-                    <li v-for="item of modeList" class="menu-item">
-                        <a class="flex-center" :data-mode="item.mode" href="javascript:void(0);">
-                            <i :class="[item.icon, 'mr-1']"></i>{{ item.name }}
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <a class="right-btn menu-btn off-canvas-toggle flex-center ml-2" href="#aside">
-                <i class="czs-menu-l"></i>
+            <a class="btn btn-link btn-action right-btn uni-bg uni-shadow menu-btn off-canvas-toggle flex-center ml-2" href="#aside">
+                <i class="text-large czs-menu-l flex-center"></i>
             </a>
         </section>
     </header>
