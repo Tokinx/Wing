@@ -21,7 +21,7 @@ const $modules = new function () {
                             <div class="tile-title text-ellipsis">{{ author.display_name }}</div>
                             <small class="text-gray d-block">{{ author.description }}</small>
                         </div>
-                        
+
                         <div class="tile-action flex-center">
                             <button class="btn btn-action btn-link text-gray flex-center mx-1" @click="handlePraise" :class="{ 'text-error': praise }">
                                 <i :class="'czs-heart' + (praise ? '' : '-l')"></i>
@@ -196,11 +196,11 @@ const $modules = new function () {
                     >
                         <p><br></p>
                     </div>
-                    
+
                     <input v-if="features.includes('upload')" ref="upload" class="d-none" type="file" multiple @change="handleUpload" />
-                    
+
                     <attachment-chips v-if="files.length" v-bind="{ attachments: files, showClose: true }" @remove="handleRemoveFile" style="margin: 0" />
-                    
+
                     <div class="editor-footer flex-center justify-between">
                         <div class="editor-tool d-flex">
                             <slot name="tool">
@@ -541,7 +541,7 @@ const $modules = new function () {
                     <div v-if="metas.length" class="comment-metas flex-center justify-start mt-1">
                         <span v-for="item of metas" :key="item.name" :class="['text-gray mr-2', { tooltip: !!item.tooltip }]" :data-tooltip="item.tooltip">{{ item.name }}</span>
                     </div>
-                    
+
                     <template v-if="showReply">
                         <div class="divider"></div>
                         <div class="text-tiny">
@@ -842,6 +842,7 @@ const $modules = new function () {
                         <div class="tile d-block">
                             <div class="tile-header flex-center justify-between">
                                 <div class="article-header text-gray text-tiny d-flex align-center">
+                                    <span v-if="note.is_sticky"class="sticky-icon mt-2">{{ $lang.translate('Sticky') }}</span>
                                     <h3 v-if="isPost" class="text-dark h5 mt-2 mb-0">
                                         <a :href="note.permalink">{{ note.title }}</a>
                                     </h3>
@@ -856,7 +857,7 @@ const $modules = new function () {
                                         <span v-if="note.status === 'private'" class="chip bg-gray text-gray">{{ note.status.toLocaleUpperCase() }}</span>
                                     </div>
                                 </div>
-        
+
                                 <slot name="right-icon">
                                     <div v-if="!isPost && logged" class="dropdown mr-1" hover-show>
                                         <a href="javascript:void(0);" class="btn btn-link btn-action btn-sm flex-center dropdown-toggle text-gray" tabindex="0">
@@ -901,7 +902,7 @@ const $modules = new function () {
                                         <i class="czs-talk mr-1"></i> {{ note.comment_count }}
                                     </button>
                                 </div>
-        
+
                                 <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
                                     {{ $lang.translate('Read Article') }} <i class="dashicons dashicons-arrow-right-alt ml-1"></i>
                                 </a>
