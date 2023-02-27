@@ -242,6 +242,11 @@ class Language {
             "zh_TC": "全部儲存",
             "ja": "全部を保存"
         },
+        "Sticky": {
+            "zh_SC": "置顶",
+            "zh_TC": "置頂",
+            "ja": "上"
+        },
     }
 }
 

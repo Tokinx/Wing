@@ -3892,6 +3892,18 @@ body .layout #notes .notes-list {
 body .layout #notes .notes-item {
   border-radius: 0.5rem;
 }
+
+body .layout #notes .notes-item  .sticky-icon {
+  padding: .2rem .4rem;
+  font-size: .6rem;
+  background-color: #3366ff;
+  color: #fff;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+  margin-right: .4rem;
+}
+
 body .layout #notes .notes-item:not(:last-child) .divider {
   margin: 1rem 0;
 }
