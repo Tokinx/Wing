@@ -846,6 +846,7 @@ const $modules = new function () {
                                         <a :href="note.permalink">{{ note.title }}</a>
                                     </h3>
                                     <div v-else class="flex-center">
+                                        <time class="mr-2" :datetime="note.date" itemprop="datePublished" pubdate>{{ noteDate }}</time>
                                         <span v-if="note.status === 'private'" class="chip bg-gray text-gray">{{ note.status.toLocaleUpperCase() }}</span>
                                     </div>
                                 </div>
@@ -888,22 +889,19 @@ const $modules = new function () {
                                 <attachment-chips v-if="note.attachment" :attachments="note.attachment"></attachment-chips>
                             </div>
                             <div class="tile-footer text-gray text-tiny flex-center justify-between">
-                                <div class="flex-center">
-                                    <div v-if="isPost">
-                                        <time class="mr-2">{{ noteDate }}</time>
-                                        <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleComment">
-                                            <i class="czs-talk mr-1"></i> {{ note.comment_count }}
-                                        </button>
-                                    </div>
-                                    <div v-else>
-                                        <time class="mr-2" :datetime="note.date" itemprop="datePublished" pubdate>{{ noteDate }}</time>
-                                        <button class="btn btn-link btn-sm text-gray mr-2" @click="handleComment">
-                                            <i class="czs-talk"></i> {{ note.comment_count }}
-                                        </button>
-                                        <button :class="['btn btn-link btn-sm text-gray mr-2', { 'text-error': praise }]"  @click="handleMenuClick({ id: 'praise' })">
-                                            <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ notePraise }}</span>
-                                        </button>
-                                    </div>
+                                <div v-if="isPost" class="flex-center">
+                                    <time class="mr-2">{{ noteDate }}</time>
+                                    <button class="btn btn-link btn-sm text-gray d-flex align-center" @click="handleComment">
+                                        <i class="czs-talk mr-1"></i> {{ note.comment_count }}
+                                    </button>
+                                </div>
+                                <div v-else class="flex-center">
+                                    <button class="btn btn-link btn-sm text-gray mr-2" @click="handleComment">
+                                        <i class="czs-talk"></i> {{ note.comment_count }}
+                                    </button>
+                                    <button :class="['btn btn-link btn-sm text-gray mr-2', { 'text-error': praise }]"  @click="handleMenuClick({ id: 'praise' })">
+                                        <i class="czs-heart"></i> <span :class="'praise-' + note.id">{{ notePraise }}</span>
+                                    </button>
                                 </div>
         
                                 <a v-if="isPost" class="btn btn-link btn-sm text-gray d-flex align-center" :href="note.permalink">
