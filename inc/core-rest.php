@@ -27,6 +27,8 @@ function ajax_get_all_posts_callback() {
 
     // 查询条件
     $args = [
+//         'post__in'       => ["5826"],
+//         'ignore_sticky_posts' => 1,
         'post_type'      => $type,
         'posts_per_page' => $rows,
         'offset'         => ( $page - 1 ) * $rows,
@@ -112,15 +114,17 @@ function ajax_get_all_posts_callback() {
         $get_media = function ( $var ) {
             $ids = explode( ',', $var );
 
-            return array_map( function ( $id ) {
+            return array_filter(array_map( function ( $id ) {
                 $attachment = get_post( $id );
-
+                if(!$attachment->post_mime_type) return false;
                 return [
                     'id'         => $id,
                     'mime_type'  => $attachment->post_mime_type,
                     'source_url' => replace_domain( $attachment->guid )
                 ];
-            }, $ids );
+            }, $ids ), function ($item){
+				return $item;
+			});
         };
         foreach ( $post->fields as $key => $value ) {
             if ( $key === 'images' && is_array( $value ) ) {
@@ -561,5 +565,20 @@ function ajax_get_visitor_info_callback() {
 
 add_action( 'wp_ajax_get_visitor_info', 'ajax_get_visitor_info_callback' );
 add_action( 'wp_ajax_nopriv_get_visitor_info', 'ajax_get_visitor_info_callback' );
+
+// test
+function ajax_test_callback() {
+$like_query = get_posts(array(
+	'post_type'		=> array('post','note'),
+	'post__in'		=> get_option( 'sticky_posts' ),
+	'posts_per_page'	=> 999,
+	'ignore_sticky_posts'	=> 0
+) );
+    var_dump($like_query);
+    die();
+}
+
+add_action( 'wp_ajax_test', 'ajax_test_callback' );
+add_action( 'wp_ajax_nopriv_test', 'ajax_test_callback' );
 
 // End of page.
