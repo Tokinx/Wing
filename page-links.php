@@ -4,23 +4,23 @@ Template Name: 友情链接
 */
 get_header();
 ?>
-    <section class="article">
+    <article class="article" itemscope itemtype="https://schema.org/Article">
         <?php
         if ( have_posts() ) :
             while ( have_posts() ) : the_post();
                 require_once( "inc/article-header.php" ); ?>
-                <article class="article-content" itemscope itemtype="https://schema.org/Article">
+                <div class="article-content" itemprop="articleBody">
                     <ul id="<?= ( is_super_admin() ? 'Links' : '' ) ?>"
                         class="article-cards article-links columns reset-ul">
                         <?php the_friendly_links(); ?>
                     </ul>
                     <?php the_content(); ?>
-                </article>
+                </div>
             <?php
             endwhile;
         endif;
         ?>
-    </section>
+    </article>
     <!--判断是否登录-->
 <?php if ( is_super_admin() ): ?>
     <script>

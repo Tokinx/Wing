@@ -1,15 +1,15 @@
 <!-- Content -->
-<section class="article">
+<article class="article" itemscope="itemscope" itemtype="http://schema.org/Article">
     <?php
     if ( have_posts() ) :
         while ( have_posts() ) : the_post();
             require_once( "article-header.php" ); ?>
-            <article class="article-content" itemscope itemtype="https://schema.org/Article" view-image>
+            <div class="article-content" itemprop="articleBody" view-image>
                 <?php the_content(); ?>
-            </article>
+            </div>
         <?php
         endwhile;
     endif;
     echo get_theme_mod( 'biji_setting_article_foot' ) ?: "";
     ?>
-</section>
+</article>

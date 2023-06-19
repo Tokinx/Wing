@@ -21,10 +21,12 @@
 <div id="app" :class="['layout', animation, '<?= ( $_background ? 'less-animation' : '' ) ?>']" style="display: none;"
      v-show="true">
     <header id="header" class="flex-center justify-between">
-        <hgroup class="logo">
-            <h1 class="fullname">
+        <hgroup class="logo" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization">
+            <h1 class="fullname" itemprop="logo" itemscope="" itemtype="https://schema.org/ImageObject">
                 <a href="<?php bloginfo( 'url' ); ?>"><?php bloginfo( 'name' ); ?></a>
             </h1>
+            <meta itemprop="name" content="<?php bloginfo( 'name' ); ?>">
+            <meta itemprop="url" content="<?php bloginfo( 'url' ); ?>">
         </hgroup>
         <section class="header__right d-flex">
             <form method="get" action="<?php bloginfo( 'url' ); ?>" class="search">

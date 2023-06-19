@@ -1,5 +1,5 @@
 <header class="article-header">
-    <h1 itemprop="name headline" class="article-title h2 mb-2"><?php the_title(); ?></h1>
+    <h1 itemprop="headline" class="article-title h2 mb-2"><?php the_title(); ?></h1>
     <ul class="article-info d-flex text-gray reset-ul m-0">
 		<?php if ( get_the_author_meta( 'display_name' ) ) : ?>
             <li>
@@ -18,6 +18,13 @@
         </li>
     </ul>
     <div class="divider"></div>
+
+    <meta itemprop="author" content="<?php the_author_meta( 'display_name' ); ?>">
+    <meta itemprop="publisher" content="<?php bloginfo( 'name' ); ?>">
+    <meta itemprop="dateModified" content="<?php the_modified_time( 'c' ); ?>">
+    <?php if($thumbnail = get_thumbnail()):?>
+        <meta itemprop="image" content="<?=$thumbnail?>">
+    <?php endif; ?>
 </header>
 <script>
     function onPraise() {

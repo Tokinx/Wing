@@ -3,14 +3,16 @@
 Template Name: 读者排行
 */
 get_header();
-if ( have_posts() ) {
-	while ( have_posts() ) {
-		the_post();
-		require_once( "inc/article-header.php" );
-	}
-}; ?>
+?>
     <article class="article" itemscope itemtype="https://schema.org/Article">
-        <ul class="article-cards columns reset-ul">
+        <?php
+        if ( have_posts() ) {
+            while ( have_posts() ) {
+                the_post();
+                require_once( "inc/article-header.php" );
+            }
+        }; ?>
+        <ul class="article-cards columns reset-ul" itemprop="articleBody">
 			<?php foreach ( get_readers_wall() as $comment ) :
 				$url = $comment->comment_author_url;
 				$alt = mb_substr( $comment->comment_author, 0, 1 );

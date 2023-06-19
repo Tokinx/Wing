@@ -3,14 +3,16 @@
 Template Name: 文章归档
 */
 get_header();
-if ( have_posts() ) {
-	while ( have_posts() ) {
-		the_post();
-		require_once( "inc/article-header.php" );
-	}
-}; ?>
+?>
     <article class="article archives" itemscope itemtype="https://schema.org/Article">
-        <div class="timeline">
+        <?php
+        if ( have_posts() ) {
+            while ( have_posts() ) {
+                the_post();
+                require_once( "inc/article-header.php" );
+            }
+        }; ?>
+        <div class="timeline" itemprop="articleBody">
 			<?php foreach ( get_my_archives() as $block ): ?>
                 <div class="timeline-item">
                     <div class="timeline-left">
