@@ -2996,6 +2996,11 @@ a.text-error:visited {
   margin-top: 0.4rem !important;
 }
 
+.my-4 {
+  margin-bottom: 1.6rem !important;
+  margin-top: 1.6rem !important;
+}
+
 .p-0 {
   padding: 0 !important;
 }
@@ -4350,6 +4355,10 @@ body .layout .affiliate .pagination li {
 }
 body .layout .affiliate .pagination li:first-child {
   border-right: 1px solid rgba(188, 195, 206, 0.2);
+}
+body .layout .affiliate .license p{
+  font-size: 12px;
+  color: #797979;
 }
 body .layout .modal-links .modal {
   background: #000;

@@ -197,6 +197,24 @@ function theme_customize_register( $wp_customize ) {
                     ]
                 ],
                 [
+                    "id"      => "biji_setting_article_bottom_cc_license_enable",
+                    "setting" => [ "default" => false ],
+                    "control" => [
+                        'label'       => '开启文章底部版权信息',
+                        'description' => '开启后文章底部显示版权信息',
+                        'type'        => 'checkbox',
+                    ]
+                ],
+                [
+                    "id"    =>"biji_setting_article_bottom_cc_license",
+                    "setting" => [ "default" => "" ],
+                    "control" => [
+                        'label'       => '文章底部版权信息',
+                        'description' => '文章底部版权信息，支持HTML代码，如：本页采用 知识共享署名-相同方式共享 4.0 国际许可协议 进行许可。<br><b>%title%</b>为文章标题<br><b>%link%</b>为文章链接<br><b>%author%</b>为作者名字',
+                        'type'        => 'textarea',
+                    ]
+                ],
+                [
                     "id"      => "biji_setting_article_foot",
                     "setting" => [ "default" => "" ],
                     "control" => [

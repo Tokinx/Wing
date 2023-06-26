@@ -195,6 +195,17 @@ function ajax_affiliate_info_callback() {
             "avatar"       => get_avatar_url( $post->post_author ),
         ];
 
+        //底部版权信息
+        $licenseHtml=get_theme_mod( 'biji_setting_article_bottom_cc_license' );
+        // 对里面的内容进行替换，%title%替换为文章标题，%link%替换为文章链接，%author%替换为作者名字
+        $licenseHtml=str_replace("%title%",$post->post_title,$licenseHtml);
+        $licenseHtml=str_replace("%link%",get_permalink($post->ID),$licenseHtml);
+        $licenseHtml=str_replace("%author%",$data->author->display_name,$licenseHtml);
+        $data->license = (object) [
+            "enable" => get_theme_mod( 'biji_setting_article_bottom_cc_license_enable' ),
+            "html"  => $licenseHtml,
+        ];
+
         wp_send_json_success( $data );
     } else {
         wp_send_json_error( "Parameter error", 400 );
