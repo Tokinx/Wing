@@ -470,9 +470,9 @@ function ajax_get_heatmap_callback() {
         $_posts = wp_count_posts( 'post' );
         // 获取笔记总数
         $_notes = wp_count_posts( 'note' );
-        // 最老一篇笔记
+        // 最老一篇文章和笔记
         $last = get_posts( [
-            'post_type'      => 'note',
+            'post_type'      => [ 'post', 'note' ],
             'posts_per_rows' => 1,
             'orderby'        => 'date',
             'order'          => 'ASC',
