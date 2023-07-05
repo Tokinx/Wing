@@ -120,7 +120,8 @@ function ajax_get_all_posts_callback() {
                 return [
                     'id'         => $id,
                     'mime_type'  => $attachment->post_mime_type,
-                    'source_url' => replace_domain( $attachment->guid )
+                    'source_url' => replace_domain( $attachment->guid ),
+                    'thumbnail'  => replace_domain( wp_get_attachment_image_url($id, "medium_large") ),
                 ];
             }, $ids ), function ($item){
 				return $item;
