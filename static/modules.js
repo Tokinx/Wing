@@ -897,7 +897,7 @@ const $modules = new function () {
                                 </div>
                                 <div v-if="note.images" class="notes-item-images flex-center justify-start">
                                     <div class="notes-item-images__item c-zoom-in" v-for="item in note.images" :key="item.id">
-                                        <img class="s-rounded" :src="item.source_url" alt @click="handleViewImage(item.source_url)"/>
+                                        <img class="s-rounded" :src="item.thumbnail" alt @click="handleViewImage(item.source_url)"/>
                                     </div>
                                 </div>
                                 <attachment-chips v-if="note.attachment" :attachments="note.attachment"></attachment-chips>
