@@ -38,7 +38,12 @@ const $modules = new function () {
                                 <i class="czs-setting-l"></i>
                             </button>
                         </div>
+                        
                     </div>
+                </div>
+                
+                <div v-if="license.enable" class="license tile tile-centered my-4 p-0">
+                    <p v-html="license.html"></p>
                 </div>
                 <ul v-if="adjacent_articles && adjacent" class="pagination">
                     <li v-for="key of Object.keys(adjacent)" :key="key" :class="'page-item w-0 page-' + key">
@@ -73,6 +78,9 @@ const $modules = new function () {
             },
             settings() {
                 return !!document.querySelector("#Links");
+            },
+            license() {
+                return this.affiliateInfo.license;
             }
         },
         created() {
@@ -666,6 +674,12 @@ const $modules = new function () {
                 pagination: { rows: 10, rolling: true, autoload: true },
                 visitor: {},
                 author: {},
+
+                // 版权
+                license: {
+                    enable: false,
+                    html: null,
+                }
             };
         },
         computed: {
