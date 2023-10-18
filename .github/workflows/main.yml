@@ -10,6 +10,6 @@ jobs:
     steps:
       - name: Notify theme updates
         run: |
-          curl --fail --request GET --header "Authorization: Bearer $SIGN" --url "https://dev.biji.io/actions?url=https://github.com/Tokinx/Wing/archive/${{ github.ref }}.zip"
+          curl --fail --request GET --header "Authorization: Bearer $SIGN" --url "https://dev.biji.io/actions?url=https://github.com/Tokinx/Wing/archive/refs/heads/main.zip"
         env:
           SIGN: ${{ secrets.SIGN }}
