@@ -7,9 +7,9 @@ class Language {
     translate(text) {
         // 从字典中获取译文，如果没有则原样返回 (English)
         const translation = this.dictionary[text] ?? {};
-        if ( this.lang.includes("zh_") && !translation[this.lang] ) {
-            console.log(text)
-        }
+        // if ( this.lang.includes("zh_") && !translation[this.lang] ) {
+        //     console.log(text)
+        // }
         return translation[this.lang] ?? text;
     }
 

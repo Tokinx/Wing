@@ -42,7 +42,7 @@ const $modules = new function () {
                     </div>
                 </div>
                 
-                <div v-if="license.enable" class="license tile tile-centered my-4 p-0">
+                <div v-if="license && license.enable" class="license tile tile-centered my-4 p-0">
                     <p v-html="license.html"></p>
                 </div>
                 <ul v-if="adjacent_articles && adjacent" class="pagination">

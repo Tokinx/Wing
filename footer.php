@@ -63,9 +63,7 @@
         <?php if (get_theme_mod( 'biji_setting_lately', true )) { ?>
         (() => {
             let _op = undefined;
-            console.log($lang.lang)
             if ( !["zh_SC", "zh_CN"].includes($lang.lang) ) {
-                console.log($lang.options("Lately"))
                 _op = { target: 'time', lang: $lang.options("Lately") }
             }
             window.Lately && Lately.init(_op);
