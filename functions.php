@@ -154,8 +154,8 @@ function bark_push_msg( $comment_id ) {
         'avatar' => get_avatar_url( $comment->comment_author_email ),
         'url'    => htmlspecialchars( get_comment_link( $comment_id ) ),
     ];
-    $title   = trim( get_the_title( $comment->comment_post_ID ) ) ?: $query['group'];
-    $message = trim( $comment->comment_author . '：' . $comment->comment_content );
+    $title   = urlencode(trim( get_the_title( $comment->comment_post_ID ) ) ?: $query['group']);
+    $message = urlencode(trim( $comment->comment_author . '：' . $comment->comment_content ));
     if ( strpos( $query['avatar'], 'http' ) !== 0 ) {
         $query['avatar'] = 'https:' . $query['avatar'];
     }
