@@ -151,7 +151,7 @@ function bark_push_msg( $comment_id ) {
     $token   = trim( get_theme_mod( 'biji_setting_bark' ) );
     $query   = [
         'group'  => trim( get_bloginfo( 'name' ) ),
-        'avatar' => get_avatar_url( $comment->comment_author_email ),
+        'icon' => get_avatar_url( $comment->comment_author_email ),
         'url'    => htmlspecialchars( get_comment_link( $comment_id ) ),
     ];
     $title   = urlencode(trim( get_the_title( $comment->comment_post_ID ) ) ?: $query['group']);
