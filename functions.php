@@ -144,7 +144,8 @@ function bark_push_msg( $comment_id ) {
         return false;
     }
     $comment = get_comment( $comment_id );
-    if ( (int) $comment->comment_parent <= 0 || $comment->comment_approved === 'spam' ) {
+    // 如果是垃圾评论，则不推送
+    if ( $comment->comment_approved === 'spam' ) {
         return false;
     }
     $token   = trim( get_theme_mod( 'biji_setting_bark' ) );
