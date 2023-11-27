@@ -250,7 +250,7 @@ window.$vm = new Vue({
             window._exReload && _exReload();
 
             // IntersectionObserver polyfill
-            if ( !!window.IntersectionObserver ) {
+            if ( !window.IntersectionObserver ) {
                 const script = document.createElement('script');
                 script.src = "https://cdn.jsdelivr.net/npm/intersection-observer@0.12.2/intersection-observer.min.js";
                 document.body.appendChild(script);
