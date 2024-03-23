@@ -5,7 +5,7 @@
 	Description: Simple, smooth, data-driven, responsive WordPress theme
 	Author: Tokin
 	Author URI: https://biji.io
-	Version: 0.8.0
+	Version: 0.8.1
 	Tested up to: 5.9.3
 	Requires at least: 5.8
 	Requires PHP: 7.0
@@ -4245,6 +4245,14 @@ body .layout .article-content .blocks-gallery-item figcaption {
 body .layout .article-content .blocks-gallery-item:hover figcaption {
   padding-bottom: 0.6rem;
   opacity: 1;
+}
+body .layout .article-content table{
+	overflow: auto;
+  width: 100%;
+  display: inline-block;
+}
+body .layout .article-content table td{
+	text-wrap: nowrap;
 }
 body .layout .article-links li {
   align-content: space-around;
