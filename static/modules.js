@@ -1008,13 +1008,13 @@ const $modules = new function () {
                      .map(text => text.replace(/\s|&nbsp;|>/g, ''))
                      .filter(item => !!item)
                      .forEach(topic => {
-                         content = content.replaceAll(topic, `<span class="chip c-hand text-primary" data-topic="${topic}">${topic.replace("#", "")}</span>`);
+                        content = content.replace(new RegExp(topic, "g"), `<span class="chip c-hand text-primary" data-topic="${topic}">${topic.replace("#", "")}</span>`);
                      });
 
                 // 高亮引用 /note/5841
                 new Set((content.match(/(\/note\/\d+)/g) || [])).forEach(quote => {
                     const id = quote.replace('/note/', '');
-                    content = content.replaceAll(quote, `<a href="javascript:void(0);" class="text-primary" data-quote="${id}">~${quote}</a>`);
+                    content = content.replace(new RegExp(quote, "g"), `<a href="javascript:void(0);" class="text-primary" data-quote="${id}">~${quote}</a>`);
                 });
 
                 // url转link
@@ -1022,7 +1022,7 @@ const $modules = new function () {
                 let url_match = content.match(url_regex);
                 if ( url_match ) {
                     url_match.forEach(url => {
-                        content = content.replaceAll(url, `<a href="${url}" target="_blank" class="chip text-primary tooltip" data-tooltip="${url}" style="text-decoration: none;overflow: unset"><i class="dashicons dashicons-external"></i> Link</a>`);
+                        content = content.replace(new RegExp(url, "g"), `<a href="${url}" target="_blank" class="chip text-primary tooltip" data-tooltip="${url}" style="text-decoration: none;overflow: unset"><i class="dashicons dashicons-external"></i> Link</a>`);
                     });
                 }
 
