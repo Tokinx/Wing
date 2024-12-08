@@ -156,8 +156,8 @@ function bark_push_msg( $comment_id ) {
     ];
     $title   = urlencode(trim( get_the_title( $comment->comment_post_ID ) ) ?: $query['group']);
     $message = urlencode(trim( $comment->comment_author . '：' . $comment->comment_content ));
-    if ( strpos( $query['avatar'], 'http' ) !== 0 ) {
-        $query['avatar'] = 'https:' . $query['avatar'];
+    if ( strpos( $query['icon'], 'http' ) !== 0 ) {
+        $query['icon'] = 'https:' . $query['icon'];
     }
 
     $stream = stream_context_create( [
