@@ -54,7 +54,7 @@ https://github.com/Tokinx/Wing/wiki
 | ViewImage     | MIT | 图片灯箱插件，用于点击图片放大查看            |
 | caomei icon   | PRO | 草莓图标库，已购买PRO版授权，仅限设计笔记系列主题使用 |
 | prettify      | MIT | 用于主题代码高亮                     |
-| UAParser.js   | MIT | 用于访客UA解析                     |
+| browser.js    | MIT | 用于访客UA解析                     |
 
 ## Star History
 

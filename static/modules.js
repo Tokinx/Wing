@@ -598,14 +598,14 @@ const $modules = new function () {
                 const { ip_city, agent } = this.comment;
                 if ( ip_city ) metas.push({ name: `${$lang.translate("From")}${ip_city}` });
                 if ( this.info.browser || this.info.os ) {
-                    const { browser, os } = new UAParser(agent).getResult();
+                    const _data = browser.parse(agent);
                     if ( this.info.os ) metas.push({
-                        name: os.name,
-                        tooltip: [os.name, os.version].join(' '),
+                        name: _data.system,
+                        tooltip: [_data.system, _data.systemVersion].join(' '),
                     });
                     if ( this.info.browser ) metas.push({
-                        name: browser.name,
-                        tooltip: [browser.name, browser.version].join(' '),
+                        name: _data.browser,
+                        tooltip: [_data.browser, _data.browserVersion].join(' '),
                     });
                 }
                 return metas;
