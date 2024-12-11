@@ -597,7 +597,7 @@ const $modules = new function () {
                 const metas = [];
                 const { ip_city, agent } = this.comment;
                 if ( ip_city ) metas.push({ name: `${$lang.translate("From")}${ip_city}` });
-                if ( this.info.browser || this.info.os ) {
+                if ( (this.info.browser || this.info.os) && browser ) {
                     const _data = browser.parse(agent);
                     if ( this.info.os ) metas.push({
                         name: _data.system,
