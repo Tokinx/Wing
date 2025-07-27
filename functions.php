@@ -33,10 +33,10 @@ function biji_enqueue_scripts() {
     // 禁用jQuery
     wp_deregister_script( 'jquery' );
     // 咱们的主题使用Vue
-    wp_enqueue_script( 'vue', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/2.6.14/vue.min.js', [], THEME_VERSION, true );
+    wp_enqueue_script( 'vue', '//cdnjs.loli.net/ajax/libs/vue/2.7.16/vue.min.js', [], THEME_VERSION, true );
     // 开启代码高亮
     if ( get_theme_mod( 'biji_setting_prettify', true ) ) {
-        wp_enqueue_script( 'prettify', '//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/prettify/r298/prettify.min.js', [], THEME_VERSION, true );
+        wp_enqueue_script( 'prettify', '//cdnjs.loli.net/ajax/libs/prettify/r298/prettify.min.js', [], THEME_VERSION, true );
     }
     wp_enqueue_script( 'helper', get_template_directory_uri() . '/static/helper.js', [], THEME_VERSION, false );
     wp_enqueue_script( 'package', get_template_directory_uri() . '/static/package.js', [], THEME_VERSION, false );
