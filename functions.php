@@ -32,11 +32,11 @@ function biji_enqueue_scripts() {
 
     // 禁用jQuery
     wp_deregister_script( 'jquery' );
-    // 咱们的主题使用Vue
-    wp_enqueue_script( 'vue', '//cdn.staticfile.net/vue/2.6.14/vue.min.js', [], THEME_VERSION, true );
+    // Vue
+    wp_enqueue_script( 'vue', '//mirrors.sustech.edu.cn/cdnjs/ajax/libs/vue/2.6.14/vue.min.js', [], THEME_VERSION, true );
     // 开启代码高亮
     if ( get_theme_mod( 'biji_setting_prettify', true ) ) {
-        wp_enqueue_script( 'prettify', '//cdn.staticfile.net/prettify/r298/prettify.min.js', [], THEME_VERSION, true );
+        wp_enqueue_script( 'prettify', '//mirrors.sustech.edu.cn/cdnjs/ajax/libs/prettify/r298/prettify.min.js', [], THEME_VERSION, true );
     }
     wp_enqueue_script( 'helper', get_template_directory_uri() . '/static/helper.js', [], THEME_VERSION, false );
     wp_enqueue_script( 'package', get_template_directory_uri() . '/static/package.js', [], THEME_VERSION, false );
@@ -54,8 +54,20 @@ function biji_enqueue_scripts() {
         'lang'   => get_locale(),
     ] );
 }
-
 add_action( 'wp_enqueue_scripts', 'biji_enqueue_scripts', 1 );
+
+function add_sri_to_script( $html, $handle ) {
+    if ( 'vue' === $handle ) {
+        $integrity_hash = 'sha512-XdUZ5nrNkVySQBnnM5vzDqHai823Spoq1W3pJoQwomQja+o4Nw0Ew1ppxo5bhF2vMug6sfibhKWcNJsG8Vj9tg=='; 
+        $html = str_replace( 'src=', 'integrity="' . $integrity_hash . '" crossorigin="anonymous" src=', $html );
+    }
+    if ( 'prettify' === $handle ) {
+        $integrity_hash = 'sha512-/9uQgrROuVyGVQMh4f61rF2MTLjDVN+tFGn20kq66J+kTZu/q83X8oJ6i4I9MCl3psbB5ByQfIwtZcHDHc2ngQ=='; 
+        $html = str_replace( 'src=', 'integrity="' . $integrity_hash . '" crossorigin="anonymous" src=', $html );
+    }
+    return $html;
+}
+add_filter( 'script_loader_tag', 'add_sri_to_script', 10, 2 );
 
 // 添加特色缩略图支持
 if ( function_exists( 'add_theme_support' ) ) {
