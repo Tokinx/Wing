@@ -2,7 +2,7 @@
 
 简洁流畅、数据驱动，响应式的WordPress主题。
 
-![Wing](https://biji-cdn.wuzii.com/wp-content/uploads/图像2022-5-3-20.36-scaled.jpg)
+![Wing](./screenshot.png)
 
 ## 重要！
 
@@ -16,8 +16,6 @@ BUG可以提 [Issues](https://github.com/Tokinx/Wing/issues)，但不保证采�
 
 想法、建议或 **使用问题** 请 [Discussions](https://github.com/Tokinx/Wing/discussions) 发帖
 
-付费咨询与技术支持请联系：dev@biji.io <em style="font-size: 12px; color: #ccc;">非付费不回复</em>
-
 不对任何BUG负责，不提供无偿服务。
 
 ### 开发计划
@@ -29,14 +27,6 @@ https://github.com/Tokinx/Wing/projects/2
 https://github.com/Tokinx/Wing/wiki
 
 完善中...
-
-### 赞助这个项目
-
-你的支持是这个项目维护下去的坚实动力。
-
-| WeChat                                                                   | AliPay                                                                   |
-|----------------------------------------------------------------------|-----------------------------------------------------------------------|
-| ![WeChat](https://biji-cdn.wuzii.com/wp-content/uploads/c_wxpay.png) | ![AliPay](https://biji-cdn.wuzii.com/wp-content/uploads/c_alipay.png) |
 
 ### 鸣谢
 
