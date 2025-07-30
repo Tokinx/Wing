@@ -63,15 +63,21 @@ function static_cdn() {
 }
 
 // 替换资源
-function static_cdn_replace( $content ) {
+function static_cdn_replace( $content, $is_replace = false ) {
     if ( get_theme_mod( 'biji_setting_cdn' ) ) {
-        $regex   = function ( $dirs, $type ) {
-            return '/' . str_replace( '/', '\/', preg_replace( '#^\w+://#', '//', site_url() ) ) . '\/((' . $dirs . ')\/[^\s\?\\\'\"\;\>\<]{1,}.(' . $type . '))([\"\\\'\s\?]{1})/';
+        $host    = preg_replace( '#^\w+://#', '//', site_url() );
+        $cdn     = preg_replace( '#^\w+://#', '//', get_theme_mod( 'biji_setting_cdn' ) );
+        $regex   = function ( $dirs, $type ) use ($is_replace, $host) {
+            $host_escaped = preg_quote($host, '/');
+            if($is_replace) return '/'.$host_escaped.'\/((' . $dirs . ')\/[^\s\?\\\'\"\;\>\<]+\.(' . $type . '))([\"\\\'\s\?]?)/i';
+            return '/'.$host_escaped.'\/((' . $dirs . ')\/[^\s\?\\\'\"\;\>\<]{1,}\.(' . $type . '))([\"\\\'\s\?]{1})/';
         };
-        $cdn     = get_theme_mod( 'biji_setting_cdn' );
-        $suffix  = 'png|jpg|jpeg|gif|bmp|zip|rar|7z|gz';
+        $image_suffix  = 'png|jpg|jpeg|gif|webp|avif';
+        $files_suffix  = 'js|css|bmp|zip|rar|7z|gz|tar|iso|mp4|webm|ogg|mp3|wav|flac|aac|exe|doc|docx|xls|xlsx|ppt|pptx|pdf|txt|md|json|svg|ico|mpeg|mp3';
         $dirs    = str_replace( '-', '\-', 'wp-content|wp-includes' );
-        $content = preg_replace( $regex( $dirs, $suffix ), '' . preg_replace( '#^\w+://#', '//', $cdn ) . '/$1$4', $content );
+        $webp    = '?imageView2/0/format/webp';
+        $content = preg_replace( $regex($dirs, $image_suffix), '' . $cdn . '/$1' . $webp . '$4', $content );
+        $content = preg_replace( $regex( $dirs, $files_suffix ), '' . $cdn . '/$1$4', $content );
     }
 
     return $content;
@@ -81,12 +87,7 @@ add_action( 'template_redirect', 'static_cdn' );
 
 // 替换域名
 function replace_domain( $url ) {
-    if ( get_theme_mod( 'biji_setting_cdn' ) ) {
-        $cdn = get_theme_mod( 'biji_setting_cdn' );
-        $url = str_replace( site_url(), $cdn, $url );
-    }
-
-    return $url;
+    return static_cdn_replace($url, true);
 }
 
 // 首页过滤分类文章
