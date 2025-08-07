@@ -98,7 +98,13 @@ get_header(); ?>
                             comment_status: "open", // 允许评论
                             ping_status: "open", // 允许ping
                         },
-                        noteList: [],
+                        noteList: (() => {
+                            try { 
+                                return JSON.parse(localStorage.getItem('noteList'));
+                            } catch (err) {
+                                return [];
+                            }
+                        })(),
                         ...$config
                     };
                 },
@@ -219,6 +225,7 @@ get_header(); ?>
                             if ( append ) this.noteList.push(...data);
                             else this.noteList = data;
                             this.paging.total = total;
+                            localStorage.setItem('noteList', JSON.stringify(this.noteList));
                         }).finally(() => {
                             this.loading = false;
                         });
