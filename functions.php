@@ -176,8 +176,12 @@ function bark_push_msg( $comment_id ) {
         "ssl"  => [ "verify_peer" => false, "verify_peer_name" => false ], // 忽略SSL
         "http" => [ "timeout" => 10 ], // 超时时间-秒
     ] );
-
-    return file_get_contents( "https://api.day.app/$token/$title/$message?" . http_build_query( $query ), false, $stream );
+    try {
+        $content = @file_get_contents( "https://api.day.app/$token/$title/$message?" . http_build_query( $query ), false, $stream );
+        return $content;
+    } catch (Exception $e) {
+        return $e->getMessage();
+    }
 }
 
 add_action( 'comment_post', 'bark_push_msg' );
