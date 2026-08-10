@@ -394,7 +394,7 @@ function get_readers_wall( $count = 12 ) {
     global $wpdb;
     if ( false === ( $result = get_transient( 'readers_wall' ) ) ) {
         // 根据评论邮箱查询排名前N名评论者
-        $sql    = "SELECT COUNT(comment_ID) AS cnt, comment_author, comment_author_url, comment_author_email FROM $wpdb->comments LEFT OUTER JOIN $wpdb->posts ON ($wpdb->posts.ID=$wpdb->comments.comment_post_ID) WHERE comment_date > date_sub( NOW(), INTERVAL 3 MONTH ) AND user_id='0' AND post_password='' AND comment_approved='1' AND comment_type='comment' GROUP BY comment_author_email ORDER BY cnt DESC LIMIT $count";
+        $sql    = $wpdb->prepare( "SELECT COUNT(comment_ID) AS cnt, comment_author, comment_author_url, comment_author_email FROM $wpdb->comments LEFT OUTER JOIN $wpdb->posts ON ($wpdb->posts.ID=$wpdb->comments.comment_post_ID) WHERE comment_date > date_sub( NOW(), INTERVAL 3 MONTH ) AND user_id='0' AND post_password='' AND comment_approved='1' AND comment_type='comment' GROUP BY comment_author_email ORDER BY cnt DESC LIMIT %d", $count );
         $result = $wpdb->get_results( $sql );
         set_transient( 'readers_wall', $result, DAY_IN_SECONDS );
     }
