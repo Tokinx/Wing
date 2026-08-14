@@ -48,4 +48,4 @@ https://github.com/Tokinx/Wing/wiki
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Tokinx/Wing&type=Date)](https://star-history.com/#Tokinx/Wing&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=Tokinx/Wing&type=Date)](https://star-history.dera.page/#Tokinx/Wing&Date)
